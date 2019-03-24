@@ -1,6 +1,6 @@
 import Vue from 'vue'
-import { Button } from 'iview'
+import iView from 'iview'
 
-Vue.component('Button', Button)
+Vue.use(iView)
 
 import 'iview/dist/styles/iview.css'

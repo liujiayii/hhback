@@ -1,58 +1,85 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from './components/login.vue'
-import Index from './components/index'
-import Aa1 from './page/1-1'
-import Aa2 from './page/1-2'
-import Aa3 from './page/1-3'
-import Aa4 from './page/1-4-1'
+
+import Layout from './views/layout/layout'
+import Login from './views/login/login'
+import Home from './views/home/home'
+
+const OuYe = () => import('@/views/forum/ouYe')
+const ZhiLaiYun = () => import('@/views/forum/zhiLaiYun')
+const WoJia = () => import('@/views/forum/woJia')
+const WoChi = () => import('@/views/forum/woChi')
+const YuQiong = () => import('@/views/forum/yuQiong')
+const ShanDian = () => import('@/views/forum/shanDian')
+
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
-  base: process.env.BASE_URL,
   routes: [
-  
-   {
-   path: '/',
-   name: 'login',
-   component: Login
-  },
-  {
-   path: '/index',
-   name: 'index',
-   component: Index,
-   redirect: '/index/aa2' ,
-      children:[
-        {
-          path: 'aa1',
-          name: 'aa1',
-          component: Aa1
-        },
-        {
-          path: 'aa2',
-          name: 'aa2',
-          component: Aa2
-        },
-        {
-          path: 'aa3',
-          name: 'aa3',
-          component: Aa3
-        },
-        {
-          path: 'aa4',
-          name: 'aa4',
-          component: Aa4
-        },
-      ]
-  },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      path: '/',
+      redirect: '/login',
+      children: []
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login,
+      children: []
+    }, {
+      path: '/index',
+      name: 'index',
+      component: Layout,
+      children: [
+        {
+          path: '/home',
+          name: '首页',
+          component: Home,
+          meta: {bread: true},
+          children: []
+        }
+      ]
+    }, {
+      path: '/forum',
+      name: '云阙论坛',
+      component: Layout,
+      children: [{
+        path: 'ouYe',
+        name: '讴业普惠',
+        component: OuYe,
+        children: [],
+        meta: {title: '云阙论坛', name: 'forum'}
+      }, {
+        path: 'zhiLaiYun',
+        name: '智莱云',
+        component: ZhiLaiYun,
+        meta: {title: '云阙论坛', name: 'forum'},
+        children: []
+      }, {
+        path: 'woJia',
+        name: '喔家房产',
+        component: WoJia,
+        meta: {title: '云阙论坛', name: 'forum'},
+        children: []
+      }, {
+        path: 'woChi',
+        name: '喔驰汽车',
+        component: WoChi,
+        meta: {title: '云阙论坛', name: 'forum'},
+        children: []
+      }, {
+        path: 'yuQiong',
+        name: '玉琼斋餐饮',
+        component: YuQiong,
+        meta: {title: '云阙论坛', name: 'forum'},
+        children: []
+      }, {
+        path: 'shanDian',
+        name: '闪电传媒',
+        component: ShanDian,
+        meta: {title: '云阙论坛', name: 'forum'},
+        children: []
+      }]
     }
   ]
 })

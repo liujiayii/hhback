@@ -1,70 +1,55 @@
 <template>
   <div id="app">
-
-    <router-view/>
+    <transition name="fade" mode="out-in">
+      <router-view/>
+    </transition>
   </div>
 </template>
 
 <script>
-//import HelloWorld from './components/HelloWorld.vue'
 
-export default {
-  name: 'app',
-  components: {
-  //  HelloWorld
+  export default {
+    name: 'app'
   }
-}
 </script>
 
 <style>
-@charset "UTF-8";
-/*
-***重置样式***
-*/
-html,body,h1,h2,h3,h4,h5,h6,div,dl,dt,dd,ul,ol,li,p,pre,hr,table,th,td,form,input,button,textarea{margin:0;padding:0;}
-header,footer,section,article,aside,nav,hgroup,address,figure,figcaption,menu,details{display:block;}
-table{border-collapse:collapse;border-spacing:0;}
-img,iframe{border:0;}
-i,em{font-style:normal;}
-li,ul,ol{list-style:none;}
-h1,h2,h3,h4,h5,h6{font-size:100%;}
-textarea{overflow:auto;resize:none;}
-label{cursor:default;}
-button,input[type="button"], input[type="submit"]{cursor:pointer;}
-h1,h2,h3,h4,h5,h6,em,strong,b{font-weight:bold;}
-a,a:hover,a:active{color:#333;text-decoration:none;}
-input,textarea,button{ background:none;  border:none; outline:none; font-family:"Microsoft YaHei", Helvetica, Arial, sans-serif; font-size:12px; }
-/*select{-webkit-appearance:none; appearance:none;}*/
+  #app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-/*
-***全局公共样式***
-*/
-html {  font-size: 62.5%;}
-body{font-size: 14px; font-size: 1.4rem;  color: #333;  margin: 0 auto;  font-family: 'Microsoft YaHei',Helvetica,Arial,sans-serif;  -webkit-tap-highlight-color: transparent;}
-/*浮动*/
-.fl ,.lt {  float: left;  }
-.fr ,.rt {  float: right;  }
-/*清除浮动*/
-.clearfix:after{content:"";display:block;clear:both;}
-.clearfix{zoom:1;}
-.clear {clear:both;}
-.flex{display: flex;display:-webkit-flex;justify-content: space-between;flex-wrap: wrap}
-/*placeholder 颜色*/
-:-moz-placeholder { color: #666; }
-::-moz-placeholder { color: #666;}
-input:-ms-input-placeholder{ color: #666;}
-input::-webkit-input-placeholder{ color: #666;}
+  html, body, #app {
+    height: 100%;
+    width: 100%;
+  }
 
-/****主体宽度****/
-.wrap{width:1200px;margin: 0 auto;}
+  .ivu-layout, .layout {
+    height: 100%;
+  }
 
+  .main-enter, .main-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
 
-@media(max-width:1219px){
-    .wrap{width: 90%;}
-}
+  .main-enter-active {
+    transition: all 0.2s;
+  }
 
+  .main-leave-active {
+    position: absolute;
+    transition: all 0.3s;
+  }
 
-@media(max-width:767px){
-    .wrap{width: 96%;}
-}
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: all .2s ease;
+  }
+
+  .fade-enter,
+  .fade-leave-active {
+    opacity: 0;
+  }
 </style>
