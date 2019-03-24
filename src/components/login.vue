@@ -80,7 +80,8 @@ export default {
               success: (res) => {
                 console.log(res)
                 if (res.code == 1) {
-                  window.location.href = '/'
+                   this.$router.push({path: '/'})
+                  // window.location.href = '/'
                 } else {
                   this.error(res.msg)
                 }
