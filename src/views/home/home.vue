@@ -1,43 +1,46 @@
 <template>
-  <div class="">
+  <div>
     <div class="main">
-      <Card class="card" style="">
-        <div class="card-main">
-          <div>
-            <div class="num">2121313次</div>
-            <div class="info">浏览网页次数</div>
-          </div>
-          <div class="shape">
-            <img src="/mock/home/glass.png" alt="">
-          </div>
-        </div>
-      </Card>
-      <Card class="card" style="">
-        <div class="card-main">
-          <div>
-            <div class="num">2121313次</div>
-            <div class="info">查看次数</div>
-          </div>
-          <div class="shape">
-            <img src="/mock/home/glass.png" alt="">
-          </div>
-        </div>
-      </Card>
-      <Card class="card" style="">
-        <div class="card-main">
-          <div>
-            <div class="num">2121313次</div>
-            <div class="info">联系次数</div>
-          </div>
-          <div class="shape">
-            <img src="/mock/home/glass.png" alt="">
-          </div>
-        </div>
-      </Card>
-    </div>
+       <Card style="width: 500px;height: 130px;">
+         <div class="card-main">
+           <div>
+             <div class="num">2121313次</div>
+             <div class="info">浏览网页次数</div>
+           </div>
+           <div class="shape">
+             <img src="../../assets/images/glass.png" alt="">
+           </div>
+         </div>
+       </Card>
+       <Card style="width: 500px;height: 130px;">
+         <div class="card-main">
+           <div>
+             <div class="num">2121313次</div>
+             <div class="info">查看次数</div>
+           </div>
+           <div class="shape">
+             <img src="../../assets/images/glass.png" alt="">
+           </div>
+         </div>
+       </Card>
+       <Card style="width: 500px;height: 130px;">
+         <div class="card-main">
+           <div>
+             <div class="num">2121313次</div>
+             <div class="info">联系次数</div>
+           </div>
+           <div class="shape">
+             <img src="../../assets/images/glass.png" alt="">
+           </div>
+         </div>
+       </Card>
+     </div>
     <div class="main">
-      <Card style="width: 540px;height: 350px">
+      <Card style="width: 540px;height: 350px;margin-right: 20px">
         <div id="myChart_a" :style="{width: '540px', height: '350px'}"></div>
+      </Card>
+      <Card style="width: 100%;height: 350px">
+        <div id="myChart_b" :style="{width: '100%', height: '350px'}"></div>
       </Card>
     </div>
     <homeTable></homeTable>
@@ -112,11 +115,6 @@
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
-  }
-
-  .card {
-    width: 500px;
-    height: 130px;
   }
 
   .card-main {

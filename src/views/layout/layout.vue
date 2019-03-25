@@ -4,7 +4,7 @@
     <Layout>
       <Header>
         <Menu mode="horizontal" theme="dark" active-name="1" class="top-nav" @on-select="menuSelect">
-          <div class="layout-logo"/>
+          <div class="layout-logo"><img src="../../assets/images/logo.png" height="47" width="150"/></div>
           <Submenu name="1">
             <template slot="title">
               <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg"/>
@@ -16,49 +16,29 @@
       <Layout>
         <Sider hide-trigger :style="{background: '#fff'}">
           <Menu :active-name="$route.name" theme="light" width="auto" :open-names="[$route.meta.name]" accordion>
-            <MenuItem name="首页" to="/home">
-              <Icon type="md-home"/>
-              首页
-            </MenuItem>
-            <Submenu name="forum">
-              <template slot="title">
-                <Icon type="md-paw"/>
-                云阙论坛
+            <template v-for="(item,index) in menu">
+              <template v-if="item.name!=''">
+                <Submenu :name="item.name" :key="index+99">
+                  <template slot="title">
+                    <Icon :type="item.Ico"/>
+                    {{item.name}}
+                  </template>
+                  <template v-for="(item_c,index_c) in item.children">
+                    <MenuItem :name="item_c.name" :to="item.path+'/'+item_c.path" :key="index_c">
+                      {{item_c.name}}
+                    </MenuItem>
+                  </template>
+                </Submenu>
               </template>
-              <MenuItem name="讴业普惠" to="/forum/ouYe">
-                讴业普惠
-              </MenuItem>
-              <MenuItem name="智莱云" to="/forum/zhiLaiYun">
-                智莱云
-              </MenuItem>
-              <MenuItem name="喔家房产" to="/forum/woJia">
-                喔家房产
-              </MenuItem>
-              <MenuItem name="喔驰汽车" to="/forum/woChi">
-                喔驰汽车
-              </MenuItem>
-              <MenuItem name="玉琼斋餐饮" to="/forum/yuQiong">
-                玉琼斋餐饮
-              </MenuItem>
-              <MenuItem name="闪电传媒" to="/forum/shanDian">
-                闪电传媒
-              </MenuItem>
-            </Submenu>
-            <Submenu name="mall">
-              <template slot="title">
-                <Icon type="md-basket"/>
-                商城
+              <template v-else>
+                <template v-for="(item_m,index_m) in item.children">
+                  <MenuItem :name="item_m.name" :to="item_m.path" :key="index_m+index">
+                    <Icon :type="item_m.Ico"/>
+                    {{item_m.name}}
+                  </MenuItem>
+                </template>
               </template>
-              <MenuItem name="商品列表">
-                商品列表
-              </MenuItem>
-              <MenuItem name="订单处理">
-                订单处理
-              </MenuItem>
-              <MenuItem name="客户档案">
-                客户档案
-              </MenuItem>
-            </Submenu>
+            </template>
           </Menu>
         </Sider>
         <Layout :style="{padding: '0 24px 24px'}">
@@ -82,19 +62,26 @@
 
 
 <script>
+  import Menu from '../../router'
+
   export default {
-    name: 'Index',
+    name: 'layout',
     data() {
-      return {}
+      return {
+        menu: Menu.options.routes.splice(2) || this.$store.state.menu
+      }
     },
     methods: {
       menuSelect(menu) {
-        if (menu == '1-1') {
-          this.$router.push({path: '/'})
+        if (menu) {
+          this.$router.push({path: '/login'})
         }
       }
     },
     components: {},
+    mounted() {
+      this.$store.state.menu = Menu.options.routes.splice(2)
+    }
   }
 </script>
 
@@ -112,15 +99,10 @@
   .top-nav {
     display: flex;
     justify-content: space-between;
-    align-items: center;
   }
 
   .layout-logo {
-    width: 100px;
-    height: 30px;
-    background: url("/mock/home/logo.png");
-    background-size: cover;
-    border-radius: 3px;
+    margin-top: 6px;
   }
 
 </style>

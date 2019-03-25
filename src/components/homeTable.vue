@@ -75,6 +75,16 @@
             name: 'Jon Snow',
             age: 26,
             address: 'Ottawa No. 2 Lake Park'
+          },
+          {
+            name: 'Jon Snow',
+            age: 26,
+            address: 'Ottawa No. 2 Lake Park'
+          },
+          {
+            name: 'Jon Snow',
+            age: 26,
+            address: 'Ottawa No. 2 Lake Park'
           }
         ]
       }

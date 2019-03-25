@@ -2,11 +2,11 @@
   <div class="bg">
     <div class="cont">
       <div class="aside">
-        <img src="/mock/login/loginAside.png" alt="">
+        <img src="../../assets/images/loginAside.png" alt="">
       </div>
       <div class="main">
         <div class="logo">
-          <img src="/mock/login/loginLogo.png" alt="">
+          <img src="../../assets/images/loginLogo.png" alt="">
         </div>
         <Form ref="formVal" :model="formVal" :rules="rulesForm">
           <FormItem prop="username">
@@ -14,9 +14,6 @@
           </FormItem>
           <FormItem prop="password">
             <Input v-model="formVal.password" size="large" prefix="md-key" placeholder="Enter your password"/>
-          </FormItem>
-          <FormItem prop="code">
-            <Input v-model="formVal.code" size="large" prefix="md-images" placeholder="Enter your code"/>
           </FormItem>
           <FormItem>
             <Button type="primary" size="large" shape="circle" long @click="submit('formVal')">Submit</Button>
@@ -28,14 +25,14 @@
 </template>
 
 <script>
+
   export default {
     name: 'Login',
     data() {
       return {
         formVal: {
           username: 'username',
-          password: 'password',
-          code: 'code'
+          password: 'password'
         },
         rulesForm: {
           username: [
@@ -51,7 +48,7 @@
       submit(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            this.$router.push({path: '/home'})
+            this.$router.push({path: '/forum/ouYe'})
           } else {
             alert('错误')
           }
@@ -69,7 +66,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url("/mock/login/loginBg.png");
+    background: url("../../assets/images/loginBg.png");
   }
 
   .cont {
