@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="top">
+      <Input search placeholder="Enter something..." style="width: 300px"/>
+      <Button type="primary" shape="circle" icon="md-add">添加</Button>
+    </div>
     <Table border :columns="columns12" :data="data6">
       <template slot-scope="{ row }" slot="name">
         <strong>{{ row.name }}</strong>
@@ -9,6 +13,9 @@
         <Button type="error" size="small" @click="remove(index)">删除</Button>
       </template>
     </Table>
+    <div class="page-box">
+      <Page :total="40" size="small" show-elevator show-total />
+    </div>
   </div>
 </template>
 
@@ -84,5 +91,14 @@
 </script>
 
 <style scoped>
-
+  .top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .page-box{
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+  }
 </style>

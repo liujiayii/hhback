@@ -15,7 +15,7 @@
       </Header>
       <Layout>
         <Sider hide-trigger :style="{background: '#fff'}">
-          <Menu :active-name="$route.name" theme="light" width="auto" :open-names="[$route.meta.name]" accordion>
+          <Menu :active-name="$route.name" theme="light" width="auto" :open-names="[$route.meta.title]" accordion>
             <template v-for="(item,index) in menu">
               <template v-if="item.name!=''">
                 <Submenu :name="item.name" :key="index+99">
@@ -60,15 +60,13 @@
   </div>
 </template>
 
-
 <script>
-  import Menu from '../../router'
 
   export default {
     name: 'layout',
     data() {
       return {
-        menu: Menu.options.routes.splice(2) || this.$store.state.menu
+        menu: []
       }
     },
     methods: {
@@ -76,11 +74,13 @@
         if (menu) {
           this.$router.push({path: '/login'})
         }
+      },
+      getMenu() {
+        this.menu = JSON.parse(window.sessionStorage.getItem("SkyLarkBack"))
       }
     },
-    components: {},
     mounted() {
-      this.$store.state.menu = Menu.options.routes.splice(2)
+      this.getMenu()
     }
   }
 </script>

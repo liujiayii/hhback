@@ -16,7 +16,7 @@
             <Input v-model="formVal.password" size="large" prefix="md-key" placeholder="Enter your password"/>
           </FormItem>
           <FormItem>
-            <Button type="primary" size="large" shape="circle" long @click="submit('formVal')">Submit</Button>
+            <Button type="primary" size="large" shape="circle" long @click="submit('formVal')">登录</Button>
           </FormItem>
         </Form>
       </div>
@@ -25,14 +25,15 @@
 </template>
 
 <script>
+  import Menu from '../../router'
 
   export default {
     name: 'Login',
     data() {
       return {
         formVal: {
-          username: 'username',
-          password: 'password'
+          username: 'liujiayi',
+          password: '12345678'
         },
         rulesForm: {
           username: [
@@ -48,13 +49,40 @@
       submit(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            this.$router.push({path: '/forum/ouYe'})
+            this.$ajax({
+              method: 'post',
+              url: 'admin',
+              data: this.formVal
+            }).then((res) => {
+              if (res.data.code == 1) {
+                this.$router.push({path: '/home'})
+              } else {
+                this.$Notice.error({
+                  title: res.data.msg,
+                })
+              }
+            }).catch((res) => {
+              this.$Notice.error({
+                title: res.data.msg,
+              })
+            })
           } else {
-            alert('错误')
+            this.$Notice.error({
+              title: '校验错误',
+            })
           }
         })
+      },
+      setMenu() {
+        const menu = Menu.options.routes.splice(2)
+        if (menu.length > 0) {
+          window.sessionStorage.setItem("SkyLarkBack", JSON.stringify(menu))
+        }
       }
     },
+    mounted() {
+      this.setMenu()
+    }
   }
 
 </script>
@@ -79,9 +107,6 @@
     border-radius: 26px;
     box-shadow: 0 0 20px 20px #4057f9;
     background: #fff;
-  }
-
-  .aside {
   }
 
   .logo {

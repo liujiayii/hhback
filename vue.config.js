@@ -1,5 +1,5 @@
 module.exports = {
-  /*publicPath: '/views/backer/',*/
+ publicPath: './',
   outputDir: undefined,
   assetsDir: undefined,
   runtimeCompiler: undefined,

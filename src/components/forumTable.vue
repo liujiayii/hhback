@@ -1,6 +1,10 @@
 <template>
   <div>
     <Divider>{{forumName}}</Divider>
+    <div class="top">
+      <Input search placeholder="Enter something..." style="width: 300px"/>
+      <Button type="primary" shape="circle" icon="md-add">添加</Button>
+    </div>
     <Table border :columns="columns12" :data="data6">
       <template slot-scope="{ row }" slot="name">
         <strong>{{ row.name }}</strong>
@@ -10,6 +14,9 @@
         <Button type="error" size="small" @click="remove(index)">删除</Button>
       </template>
     </Table>
+    <div class="page-box">
+      <Page :total="40" size="small" show-elevator show-total />
+    </div>
   </div>
 </template>
 
@@ -29,7 +36,7 @@
             key: 'age'
           },
           {
-            title: '主题',
+            title: '贴吧主题',
             key: 'address'
           },
           {
@@ -75,12 +82,31 @@
         })
       },
       remove(index) {
-        this.data6.splice(index, 1);
+        this.$Modal.confirm({
+          title: '提示',
+          content: '<p>是否删除帖子</p>',
+          onOk: () => {
+            this.$Message.info('Clicked ok');
+            this.data6.splice(index, 1);
+          },
+          onCancel: () => {
+            this.$Message.info('Clicked cancel');
+          }
+        });
       }
     }
   }
 </script>
 
 <style scoped>
-
+  .top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .page-box{
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+  }
 </style>
