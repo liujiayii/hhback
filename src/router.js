@@ -5,22 +5,6 @@ import Layout from './views/layout/layout'
 import Login from './views/login/login'
 import Home from './views/home/home'
 
-const HomePage = () => import('@/views/website/homePage')
-const About = () => import('@/views/website/about')
-const Contact = () => import('@/views/website/contact')
-
-const OuYe = () => import('@/views/forum/ouYe')
-const ZhiLaiYun = () => import('@/views/forum/zhiLaiYun')
-const WoJia = () => import('@/views/forum/woJia')
-const WoChi = () => import('@/views/forum/woChi')
-const YuQiong = () => import('@/views/forum/yuQiong')
-const ShanDian = () => import('@/views/forum/shanDian')
-
-const Order = () => import('@/views/mall/order')
-const Custom = () => import('@/views/mall/custom')
-const Ware = () => import('@/views/mall/ware')
-const Account = () => import('@/views/account/account')
-
 Vue.use(Router)
 let defaultRouter = [{
   path: '/',
@@ -52,21 +36,21 @@ let defaultRouter = [{
     children: [{
       path: 'homePage',
       name: '主页',
-      component: HomePage,
+      component: () => import('@/views/website/homePage'),
       children: [],
-      meta: {title: '云阙官网', name: '/website'}
+      meta: {title: '云阙官网'}
     }, {
       path: 'about',
       name: '关于我们',
-      component: About,
+      component: () => import('@/views/website/about'),
       children: [],
-      meta: {title: '云阙官网', name: '/website'}
+      meta: {title: '云阙官网'}
     }, {
       path: 'contact',
       name: '联系我们',
-      component: Contact,
+      component: () => import('@/views/website/contact'),
       children: [],
-      meta: {title: '云阙官网', name: '/website'}
+      meta: {title: '云阙官网'}
     }]
   }, {
     path: '/forum',
@@ -76,38 +60,38 @@ let defaultRouter = [{
     children: [{
       path: 'ouYe',
       name: '讴业普惠',
-      component: OuYe,
+      component: () => import('@/views/forum/ouYe'),
       children: [],
-      meta: {title: '云阙论坛', name: '/forum'}
+      meta: {title: '云阙论坛'}
     }, {
       path: 'zhiLaiYun',
       name: '智莱云',
-      component: ZhiLaiYun,
-      meta: {title: '云阙论坛', name: '/forum'},
+      component: () => import('@/views/forum/zhiLaiYun'),
+      meta: {title: '云阙论坛'},
       children: []
     }, {
       path: 'woJia',
       name: '喔家房产',
-      component: WoJia,
-      meta: {title: '云阙论坛', name: '/forum'},
+      component: () => import('@/views/forum/woJia'),
+      meta: {title: '云阙论坛'},
       children: []
     }, {
       path: 'woChi',
       name: '喔驰汽车',
-      component: WoChi,
-      meta: {title: '云阙论坛', name: '/forum'},
+      component: () => import('@/views/forum/woChi'),
+      meta: {title: '云阙论坛'},
       children: []
     }, {
       path: 'yuQiong',
       name: '玉琼斋餐饮',
-      component: YuQiong,
-      meta: {title: '云阙论坛', name: '/forum'},
+      component: () => import('@/views/forum/yuQiong'),
+      meta: {title: '云阙论坛'},
       children: []
     }, {
       path: 'shanDian',
       name: '闪电传媒',
-      component: ShanDian,
-      meta: {title: '云阙论坛', name: '/forum'},
+      component: () => import('@/views/forum/shanDian'),
+      meta: {title: '云阙论坛'},
       children: []
     }]
   }, {
@@ -118,21 +102,51 @@ let defaultRouter = [{
     children: [{
       path: 'ware',
       name: '商品列表',
-      component: Ware,
+      component: () => import('@/views/mall/ware'),
       children: [],
-      meta: {title: '云阙商城', name: '/mall'}
+      meta: {title: '云阙商城'}
+    }, {
+      path: 'sort',
+      name: '商品分类',
+      component: () => import('@/views/mall/sort'),
+      children: [],
+      meta: {title: '云阙商城'}
+    }, {
+      path: 'stock',
+      name: '库存管理',
+      component: () => import('@/views/mall/stock'),
+      children: [],
+      meta: {title: '云阙商城'}
+    }, {
+      path: 'discount',
+      name: '满减优惠',
+      component: () => import('@/views/mall/discount'),
+      children: [],
+      meta: {title: '云阙商城'}
     }, {
       path: 'order',
       name: '订单处理',
-      component: Order,
+      component: () => import('@/views/mall/order'),
       children: [],
-      meta: {title: '云阙商城', name: '/mall'}
+      meta: {title: '云阙商城'}
     }, {
-      path: 'custom',
-      name: '客户档案',
-      component: Custom,
+      path: 'return',
+      name: '退货订单',
+      component: () => import('@/views/mall/return'),
       children: [],
-      meta: {title: '云阙商城', name: '/mall'}
+      meta: {title: '云阙商城'}
+    }, {
+      path: 'rate',
+      name: '商品评价',
+      component: () => import('@/views/mall/rate'),
+      children: [],
+      meta: {title: '云阙商城'}
+    }, {
+      path: 'express',
+      name: '运费管理',
+      component: () => import('@/views/mall/express'),
+      children: [],
+      meta: {title: '云阙商城'}
     }]
   }, {
     path: '/',
@@ -142,13 +156,21 @@ let defaultRouter = [{
       path: '/account',
       name: '账号管理',
       Ico: 'md-person-add',
-      component: Account,
+      component: () => import('@/views/account/account'),
       meta: {bread: false}
-    }
-    ]
+    }]
+  }, {
+    path: '/404',
+    component: () => import('@/views/error/error'),
+    name: '404',
+    Ico: 'md-bug',
+    children: []
+  }, {
+    path: '*',
+    redirect: '/404',
+    children: []
   }]
 
 export default new Router({
   routes: defaultRouter
 })
-

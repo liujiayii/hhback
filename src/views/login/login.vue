@@ -49,12 +49,14 @@
       submit(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
+            this.$router.push({path: '/home'})
             this.$ajax({
               method: 'post',
               url: 'admin',
               data: this.formVal
             }).then((res) => {
               if (res.data.code == 1) {
+                window.sessionStorage.setItem('userName', this.formVal.username)
                 this.$router.push({path: '/home'})
               } else {
                 this.$Notice.error({
@@ -74,7 +76,7 @@
         })
       },
       setMenu() {
-        const menu = Menu.options.routes.splice(2)
+        const menu = Menu.options.routes.slice(2, Menu.options.routes.length - 2)
         if (menu.length > 0) {
           window.sessionStorage.setItem("SkyLarkBack", JSON.stringify(menu))
         }

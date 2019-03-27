@@ -2,14 +2,34 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import axios from 'axios'
+import ajax from 'axios'
 import './plugins/iview.js'
-import echarts from 'echarts'
-
-axios.defaults.baseURL = 'http://192.168.1.110:8080/'
-Vue.prototype.$ajax = axios
-Vue.prototype.$echarts = echarts
+import echart from 'echarts'
+/*注册Axios*/
+const instance = ajax.create({
+  baseURL:/*'/'*/ /*'http://192.168.1.103:8080/'*/'http://192.168.1.125:8080/',
+  transformRequest: [/*将JSON字符串转换成FormData*/
+    function (data) {
+      let ret = '';
+      for (let it in data) {
+        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
+      }
+      return ret;
+    }
+  ]
+})
+Vue.prototype.$ajax = instance
+Vue.prototype.$echarts = echart
 Vue.config.productionTip = false
+
+/*路由守卫*/
+router.beforeEach((to, form, next) => {
+  if (!window.sessionStorage.getItem('userName') && to.path !== '/login') {
+    return next({path: '/login'});
+  } else {
+    next()
+  }
+})
 
 new Vue({
   router,

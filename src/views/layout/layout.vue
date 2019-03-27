@@ -1,6 +1,5 @@
 <template>
   <div class="layout">
-    <BackTop></BackTop>
     <Layout>
       <Header>
         <Menu mode="horizontal" theme="dark" active-name="1" class="top-nav" @on-select="menuSelect">
@@ -17,26 +16,24 @@
         <Sider hide-trigger :style="{background: '#fff'}">
           <Menu :active-name="$route.name" theme="light" width="auto" :open-names="[$route.meta.title]" accordion>
             <template v-for="(item,index) in menu">
-              <template v-if="item.name!=''">
+              <template v-if="item.name!==''">
                 <Submenu :name="item.name" :key="index+99">
                   <template slot="title">
                     <Icon :type="item.Ico"/>
                     {{item.name}}
                   </template>
-                  <template v-for="(item_c,index_c) in item.children">
-                    <MenuItem :name="item_c.name" :to="item.path+'/'+item_c.path" :key="index_c">
-                      {{item_c.name}}
-                    </MenuItem>
-                  </template>
+                  <MenuItem v-for="(item_c,index_c) in item.children" :name="item_c.name"
+                            :to="item.path+'/'+item_c.path" :key="index_c">
+                    {{item_c.name}}
+                  </MenuItem>
                 </Submenu>
               </template>
               <template v-else>
-                <template v-for="(item_m,index_m) in item.children">
-                  <MenuItem :name="item_m.name" :to="item_m.path" :key="index_m+index">
-                    <Icon :type="item_m.Ico"/>
-                    {{item_m.name}}
-                  </MenuItem>
-                </template>
+                <MenuItem v-for="(item_c,index_c) in item.children" :name="item_c.name" :to="item_c.path"
+                          :key="index_c+index">
+                  <Icon :type="item_c.Ico"/>
+                  {{item_c.name}}
+                </MenuItem>
               </template>
             </template>
           </Menu>
@@ -72,6 +69,7 @@
     methods: {
       menuSelect(menu) {
         if (menu) {
+          window.sessionStorage.removeItem('userName')
           this.$router.push({path: '/login'})
         }
       },
