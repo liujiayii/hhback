@@ -56,7 +56,7 @@
     methods: {
       drawLine() {
         // 基于准备好的dom，初始化echarts实例
-        let myChart_a = this.$echarts.init(document.getElementById('myChart_a'))
+        let myChart_a = this.$Echarts.init(document.getElementById('myChart_a'))
         // 绘制图表
         myChart_a.setOption({
           tooltip: {

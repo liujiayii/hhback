@@ -14,8 +14,7 @@ let defaultRouter = [{
   {
     path: '/login',
     name: 'login',
-    component: Login,
-    children: []
+    component: Login
   }, {
     path: '/',
     name: '',
@@ -32,24 +31,21 @@ let defaultRouter = [{
     path: '/website',
     name: '云阙官网',
     component: Layout,
-    Ico: 'md-planet',
+    Ico: 'md-paw',
     children: [{
       path: 'homePage',
       name: '主页',
       component: () => import('@/views/website/homePage'),
-      children: [],
       meta: {title: '云阙官网'}
     }, {
       path: 'about',
       name: '关于我们',
       component: () => import('@/views/website/about'),
-      children: [],
       meta: {title: '云阙官网'}
     }, {
       path: 'contact',
       name: '联系我们',
       component: () => import('@/views/website/contact'),
-      children: [],
       meta: {title: '云阙官网'}
     }]
   }, {
@@ -61,38 +57,32 @@ let defaultRouter = [{
       path: 'ouYe',
       name: '讴业普惠',
       component: () => import('@/views/forum/ouYe'),
-      children: [],
       meta: {title: '云阙论坛'}
     }, {
       path: 'zhiLaiYun',
       name: '智莱云',
       component: () => import('@/views/forum/zhiLaiYun'),
-      meta: {title: '云阙论坛'},
-      children: []
+      meta: {title: '云阙论坛'}
     }, {
       path: 'woJia',
       name: '喔家房产',
       component: () => import('@/views/forum/woJia'),
-      meta: {title: '云阙论坛'},
-      children: []
+      meta: {title: '云阙论坛'}
     }, {
       path: 'woChi',
       name: '喔驰汽车',
       component: () => import('@/views/forum/woChi'),
-      meta: {title: '云阙论坛'},
-      children: []
+      meta: {title: '云阙论坛'}
     }, {
       path: 'yuQiong',
       name: '玉琼斋餐饮',
       component: () => import('@/views/forum/yuQiong'),
-      meta: {title: '云阙论坛'},
-      children: []
+      meta: {title: '云阙论坛'}
     }, {
       path: 'shanDian',
       name: '闪电传媒',
       component: () => import('@/views/forum/shanDian'),
-      meta: {title: '云阙论坛'},
-      children: []
+      meta: {title: '云阙论坛'}
     }]
   }, {
     path: '/mall',
@@ -103,49 +93,41 @@ let defaultRouter = [{
       path: 'ware',
       name: '商品列表',
       component: () => import('@/views/mall/ware'),
-      children: [],
       meta: {title: '云阙商城'}
     }, {
       path: 'sort',
-      name: '商品分类',
+      name: '商品专区',
       component: () => import('@/views/mall/sort'),
-      children: [],
       meta: {title: '云阙商城'}
     }, {
       path: 'stock',
       name: '库存管理',
       component: () => import('@/views/mall/stock'),
-      children: [],
       meta: {title: '云阙商城'}
     }, {
       path: 'discount',
       name: '满减优惠',
       component: () => import('@/views/mall/discount'),
-      children: [],
       meta: {title: '云阙商城'}
     }, {
       path: 'order',
       name: '订单处理',
       component: () => import('@/views/mall/order'),
-      children: [],
       meta: {title: '云阙商城'}
     }, {
       path: 'return',
       name: '退货订单',
       component: () => import('@/views/mall/return'),
-      children: [],
       meta: {title: '云阙商城'}
     }, {
       path: 'rate',
       name: '商品评价',
       component: () => import('@/views/mall/rate'),
-      children: [],
       meta: {title: '云阙商城'}
     }, {
       path: 'express',
       name: '运费管理',
       component: () => import('@/views/mall/express'),
-      children: [],
       meta: {title: '云阙商城'}
     }]
   }, {
@@ -163,12 +145,10 @@ let defaultRouter = [{
     path: '/404',
     component: () => import('@/views/error/error'),
     name: '404',
-    Ico: 'md-bug',
-    children: []
+    Ico: 'md-bug'
   }, {
     path: '*',
-    redirect: '/404',
-    children: []
+    redirect: '/404'
   }]
 
 export default new Router({

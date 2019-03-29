@@ -2,7 +2,7 @@
   <div>
     <div class="top">
       <Input search placeholder="Enter something..." style="width: 300px"/>
-      <Button type="primary" shape="circle" icon="md-add">添加</Button>
+      <Button type="primary" shape="circle" icon="md-add" disabled>添加</Button>
     </div>
     <Table border :columns="columns" :data="tableData.data">
       <template slot-scope="{row}" slot="action">
@@ -13,7 +13,7 @@
     <div class="page-box">
       <Page :total="tableData.count" @on-change="pageChange" size="small" show-elevator show-total/>
     </div>
-    <Drawer title="编辑" v-model="drawerShow" width="720" :mask-closable="false" :styles="styles">
+    <Drawer title="编辑" v-model="drawerShow" @on-close="closeDrawer" width="720" :mask-closable="false" :styles="styles">
       <Form :model="formData">
         <Row :gutter="32">
           <Col span="12">
@@ -37,6 +37,8 @@
 </template>
 
 <script>
+  import {formatDate} from "../../plugins/utils";
+
   export default {
     name: "stock",
     data() {
@@ -64,7 +66,12 @@
           },
           {
             title: '创建时间',
-            key: 'create_time'
+            key: 'create_time',
+            render: (h, params) => {
+              return h('div',
+                formatDate(new Date(params.row.create_time), 'yyyy-MM-dd')
+              )
+            }
           },
           {
             title: '操作',
@@ -80,6 +87,9 @@
       }
     },
     methods: {
+      closeDrawer() {
+        this.formData = {}
+      },
       submit() {
         this.$ajax({
           method: 'post',
@@ -91,6 +101,7 @@
               title: res.data.msg,
             })
             this.drawerShow = false
+            this.pageChange(1)
           } else {
             this.$Notice.error({
               title: res.data.msg,
@@ -120,6 +131,7 @@
                 this.$Notice.success({
                   title: res.data.msg,
                 })
+                this.pageChange(1)
               } else {
                 this.$Notice.error({
                   title: res.data.msg,

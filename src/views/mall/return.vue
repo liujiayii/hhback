@@ -6,8 +6,8 @@
     </div>
     <Table border :columns="columns" :data="tableData.data">
       <template slot-scope="{ row }" slot="action">
-        <Button type="primary" size="small" style="margin-right: 5px" @click="show(row)">查看</Button>
-        <Button type="error" size="small" @click="remove(index)" disabled>删除</Button>
+        <Button type="primary" size="small" style="margin-right: 5px" @click="show(row)" disabled>查看</Button>
+        <Button type="error" size="small" @click="remove(row)">退货</Button>
       </template>
     </Table>
     <div class="page-box">
@@ -19,7 +19,7 @@
         <Row :gutter="32">
           <Col span="12">
             <FormItem label="姓名">
-              <Input v-model="formData.goods_name" size="large" readonly/>
+              <Input v-model="formData.nickname" size="large" readonly/>
             </FormItem>
           </Col>
           <Col span="12">
@@ -66,13 +66,15 @@
       </Form>
       <div class="demo-drawer-footer">
         <Button style="margin-right: 8px" @click="drawerShow = false">取消</Button>
-        <Button type="primary" @click="submit">保存</Button>
+        <Button type="primary" @click="submit">退货</Button>
       </div>
     </Drawer>
   </div>
 </template>
 
 <script>
+  import {formatState} from "../../plugins/utils";
+
   export default {
     name: "return",
     data() {
@@ -122,7 +124,12 @@
           },
           {
             title: "订单状态",
-            key: "order_state"
+            key: "order_state",
+            render: (h, params) => {
+              return h('div',
+                formatState(params.row.order_state)
+              )
+            }
           },
           {
             title: "操作",
@@ -141,10 +148,40 @@
     methods: {
       show(row) {
         console.log(row);
+        Object(this.formData, row)
         this.drawerShow = true;
       },
-      remove(index) {
-        this.data6.splice(index, 1);
+      remove(row) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '<p>是否退货</p>',
+          onOk: () => {
+            this.$ajax({
+              method: 'post',
+              url: '/t_order/ordercan',
+              data: {order_id: row.order_id, order_state: 6}
+            }).then((res) => {
+              if (res.data.code === 1) {
+                this.$Notice.success({
+                  title: res.data.msg,
+                })
+                this.pageChange(1)
+              } else {
+                this.$Notice.error({
+                  title: res.data.msg,
+                })
+              }
+            }).catch((res) => {
+              this.$Notice.error({
+                title: res.data.msg,
+              })
+            })
+          },
+          onCancel: () => {
+            this.$Message.info('Clicked cancel');
+          }
+        });
+
       },
       pageChange(page) {
         this.$ajax({
@@ -168,26 +205,7 @@
           });
       },
       submit() {
-        this.$ajax({
-          method: 'post',
-          url: '/t_order/ordercan',
-          data: {order_id: this.formData.order_id, order_state: 2, order_shouhuo_id: this.formData.order_shouhuo_id}
-        }).then((res) => {
-          if (res.data.code === 1) {
-            this.$Notice.success({
-              title: res.data.msg,
-            })
-            this.drawerShow = false
-          } else {
-            this.$Notice.error({
-              title: res.data.msg,
-            })
-          }
-        }).catch((res) => {
-          this.$Notice.error({
-            title: res.data.msg,
-          })
-        })
+
       },
     },
     mounted() {

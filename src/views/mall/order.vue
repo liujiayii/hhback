@@ -52,133 +52,129 @@
               <Input v-model="formData.order_shouhuo_id" size="large"/>
             </FormItem>
           </Col>
-          <Col span="12" v-show="formData.order_state>0">
-            <FormItem label="货物状态">
-              <Input v-model="formData.order_state" size="large"/>
-            </FormItem>
-          </Col>
-          <Col span="12" v-show="formData.order_state>4">
-            <FormItem label="退款原因">
-              <Input v-model="formData.sales_cause" size="large"/>
-            </FormItem>
-          </Col>
         </Row>
       </Form>
       <div class="demo-drawer-footer">
         <Button style="margin-right: 8px" @click="drawerShow = false">取消</Button>
-        <Button type="primary" @click="submit">保存</Button>
+        <Button v-show="formData.order_state==1" type="primary" @click="submit">发货</Button>
       </div>
     </Drawer>
   </div>
 </template>
 
 <script>
-export default {
-  name: "order",
-  data() {
-    return {
-      drawerShow: false,
-      styles: {
-        height: "calc(100% - 55px)",
-        overflow: "auto",
-        paddingBottom: "53px",
-        position: "static"
-      },
-      formData: {},
-      columnsGoods: [
-        {
-          title: "订单编号",
-          key: "order_id"
+  import {formatState} from '../../plugins/utils'
+
+  export default {
+    name: "order",
+    data() {
+      return {
+        drawerShow: false,
+        styles: {
+          height: "calc(100% - 55px)",
+          overflow: "auto",
+          paddingBottom: "53px",
+          position: "static"
         },
-        {
-          title: "商品名称",
-          key: "name"
+        formData: {},
+        columnsGoods: [
+          {
+            title: "订单编号",
+            key: "order_id"
+          },
+          {
+            title: "商品名称",
+            key: "name"
+          },
+          {
+            title: "单价",
+            key: "danjia"
+          },
+          {
+            title: "优惠金额",
+            key: "youhuijine"
+          },
+          {
+            title: "总价",
+            key: "zongjia"
+          }
+        ],
+        columns: [
+          {
+            title: "订单编号",
+            key: "order_id"
+          },
+          {
+            title: "订单金额(元)",
+            key: "order_money"
+          },
+          {
+            title: "订单状态",
+            key: "order_state",
+            render: (h, params) => {
+              return h('div',
+                formatState(params.row.order_state)
+              )
+            }
+          },
+          {
+            title: "操作",
+            slot: "action",
+            width: 150,
+            align: "center"
+          }
+        ],
+        tableData: {
+          data: [],
+          count: 0
         },
-        {
-          title: "单价",
-          key: "danjia"
-        },
-        {
-          title: "优惠金额",
-          key: "youhuijine"
-        },
-        {
-          title: "总价",
-          key: "zongjia"
-        }
-      ],
-      columns: [
-        {
-          title: "订单编号",
-          key: "order_id"
-        },
-        {
-          title: "订单金额(元)",
-          key: "order_money"
-        },
-        {
-          title: "订单状态",
-          key: "order_state"
-        },
-        {
-          title: "操作",
-          slot: "action",
-          width: 150,
-          align: "center"
-        }
-      ],
-      tableData: {
-        data: [],
-        count: 0
-      },
-      tableDataGoods: []
-    };
-  },
-  methods: {
-    show(row) {
-      console.log(row);
-      this.drawerShow = true;
-      this.tableDataGoods = row.shping;
-      this.formData.order_id = row.order_id;
-      this.formData.goods_name = row.t_goods.goods_name;
-      this.formData.goods_address = row.t_goods.goods_address;
-      this.formData.goods_tel = row.t_goods.goods_tel;
-      this.formData.order_state = row.order_state;
+        tableDataGoods: []
+      };
     },
-    remove(index) {
-      this.data6.splice(index, 1);
-    },
-    pageChange(page) {
-      this.$ajax({
-        method: "post",
-        url: "t_order/orderweblist",
-        data: { page, limit: 10 }
-      })
-        .then(res => {
-          if (res.data.code === 1) {
-            this.tableData = res.data;
-          } else {
+    methods: {
+      show(row) {
+        console.log(row);
+        this.drawerShow = true;
+        this.tableDataGoods = row.shping;
+        this.formData.order_id = row.order_id;
+        this.formData.goods_name = row.t_goods.goods_name;
+        this.formData.goods_address = row.t_goods.goods_address;
+        this.formData.goods_tel = row.t_goods.goods_tel;
+        this.formData.order_state = row.order_state;
+        this.formData.order_shouhuo_id = row.order_shouhuo_id;
+      },
+      pageChange(page) {
+        this.$ajax({
+          method: "post",
+          url: "t_order/orderweblist",
+          data: {page, limit: 10}
+        })
+          .then(res => {
+            if (res.data.code === 1) {
+              this.tableData = res.data;
+            } else {
+              this.$Notice.error({
+                title: res.data.msg
+              });
+            }
+          })
+          .catch(res => {
             this.$Notice.error({
               title: res.data.msg
             });
-          }
-        })
-        .catch(res => {
-          this.$Notice.error({
-            title: res.data.msg
           });
-        });
-    },
-    submit() {
+      },
+      submit() {
         this.$ajax({
           method: 'post',
           url: '/t_order/ordercan',
-          data: {order_id:this.formData.order_id,order_state:2,order_shouhuo_id:this.formData.order_shouhuo_id}
+          data: {order_id: this.formData.order_id, order_state: 2, order_shouhuo_id: this.formData.order_shouhuo_id}
         }).then((res) => {
           if (res.data.code === 1) {
             this.$Notice.success({
               title: res.data.msg,
             })
+            this.pageChange(1)
             this.drawerShow = false
           } else {
             this.$Notice.error({
@@ -191,34 +187,34 @@ export default {
           })
         })
       },
-  },
-  mounted() {
-    this.pageChange(1);
-  }
-};
+    },
+    mounted() {
+      this.pageChange(1);
+    }
+  };
 </script>
 
 <style scoped>
-.top {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
+  .top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
 
-.demo-drawer-footer {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  border-top: 1px solid #e8e8e8;
-  padding: 10px 16px;
-  text-align: right;
-  background: #fff;
-}
+  .demo-drawer-footer {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-top: 1px solid #e8e8e8;
+    padding: 10px 16px;
+    text-align: right;
+    background: #fff;
+  }
 
-.page-box {
-  display: flex;
-  justify-content: center;
-  margin: 20px auto;
-}
+  .page-box {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+  }
 </style>

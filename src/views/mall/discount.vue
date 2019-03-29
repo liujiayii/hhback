@@ -12,7 +12,7 @@
     <div class="page-box">
       <Page :total="tableData.count" @on-change="pageChange" size="small" show-elevator show-total/>
     </div>
-    <Drawer title="编辑" v-model="drawerShow" width="720" :mask-closable="false" :styles="styles">
+    <Drawer title="编辑" v-model="drawerShow" @on-close="clearDrawer" width="720" :mask-closable="false" :styles="styles">
       <Form :model="formData">
         <Row :gutter="32">
           <Col span="12">
@@ -75,6 +75,9 @@
       }
     },
     methods: {
+      clearDrawer() {
+        this.formData = {}
+      },
       submit() {
         this.$ajax({
           method: 'post',
@@ -85,6 +88,7 @@
             this.$Notice.success({
               title: res.data.msg,
             })
+            this.pageChange(1)
             this.drawerShow = false
           } else {
             this.$Notice.error({
@@ -114,6 +118,7 @@
                 this.$Notice.success({
                   title: res.data.msg,
                 })
+                this.pageChange(1)
               } else {
                 this.$Notice.error({
                   title: res.data.msg,

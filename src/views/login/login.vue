@@ -32,8 +32,8 @@
     data() {
       return {
         formVal: {
-          username: 'liujiayi',
-          password: '12345678'
+          username: '',
+          password: ''
         },
         rulesForm: {
           username: [

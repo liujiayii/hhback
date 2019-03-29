@@ -1,5 +1,19 @@
 <template>
   <div>
+    <Divider orientation="left">商品专区</Divider>
+    <div class="top">
+      <Input search placeholder="Enter something..." style="width: 300px"/>
+      <Button type="primary" shape="circle" icon="md-add" @click="drawerShowSpec=true">添加</Button>
+    </div>
+    <Table border :columns="columnsSpec" :data="tableDataSpec.data">
+      <template slot-scope="{ row }" slot="action">
+        <Button type="primary" size="small" style="margin-right: 5px" @click="editSpec(row)">修改</Button>
+        <Button type="error" size="small" @click="removeSpec(row)">删除</Button>
+      </template>
+    </Table>
+    <div class="page-box">
+      <Page :total="tableDataSpec.count" @on-change="pageChangeSpec" size="small" show-elevator show-total/>
+    </div>
     <Divider orientation="left">一级分类</Divider>
     <div class="top">
       <Input search placeholder="Enter something..." style="width: 300px"/>
@@ -28,7 +42,26 @@
     <div class="page-box">
       <Page :total="tableDataSec.count" @on-change="pageChangeSec" size="small" show-elevator show-total/>
     </div>
-    <Drawer title="编辑" v-model="drawerShow" width="720" :mask-closable="false" :styles="styles">
+    <Drawer title="编辑" v-model="drawerShowSpec" @on-close="closeDrawer" width="720" :mask-closable="false"
+            :styles="styles">
+      <Form :model="formDataSpec">
+        <Row :gutter="32">
+          <Col span="12">
+            <FormItem label="专区名称">
+              <Input v-model="formDataSpec.name" size="large"/>
+            </FormItem>
+          </Col>
+        </Row>
+        <Upload action="/upload" :on-success="handleUploadSpec">
+          <Button icon="ios-cloud-upload-outline">上传图标</Button>
+        </Upload>
+      </Form>
+      <div class="demo-drawer-footer">
+        <Button style="margin-right: 8px" @click="drawerShow = false">取消</Button>
+        <Button type="primary" @click="submitSpec">保存</Button>
+      </div>
+    </Drawer>
+    <Drawer title="编辑" v-model="drawerShow" @on-close="closeDrawer" width="720" :mask-closable="false" :styles="styles">
       <Form :model="formData">
         <Row :gutter="32">
           <Col span="12">
@@ -37,7 +70,7 @@
             </FormItem>
           </Col>
         </Row>
-        <Upload action="http://192.168.1.110:8080/upload" :on-success="handleUpload">
+        <Upload action="upload" :on-success="handleUpload">
           <Button icon="ios-cloud-upload-outline">上传图标</Button>
         </Upload>
       </Form>
@@ -46,7 +79,8 @@
         <Button type="primary" @click="submit">保存</Button>
       </div>
     </Drawer>
-    <Drawer title="编辑" v-model="drawerShowSec" width="720" :mask-closable="false" :styles="styles">
+    <Drawer title="编辑" v-model="drawerShowSec" @on-close="closeDrawer" width="720" :mask-closable="false"
+            :styles="styles">
       <Form :model="formDataSec">
         <Row :gutter="32">
           <Col span="12">
@@ -62,7 +96,7 @@
             </FormItem>
           </Col>
         </Row>
-        <Upload action="http://192.168.1.110:8080/upload" :on-success="handleUploadSec">
+        <Upload action="/upload" :on-success="handleUploadSec">
           <Button icon="ios-cloud-upload-outline">上传图标</Button>
         </Upload>
       </Form>
@@ -75,12 +109,15 @@
 </template>
 
 <script>
+  import {formatDate} from "../../plugins/utils";
+
   export default {
     name: "sort",
     data() {
       return {
         drawerShow: false,
         drawerShowSec: false,
+        drawerShowSpec: false,
         styles: {
           height: 'calc(100% - 55px)',
           overflow: 'auto',
@@ -89,6 +126,7 @@
         },
         formData: {},
         formDataSec: {},
+        formDataSpec: {},
         columns: [
           {
             title: '编号',
@@ -100,11 +138,29 @@
           },
           {
             title: '商品分类图片',
-            key: 'image'
+            key: 'image',
+            render: (h, params) => {
+              return h('div', [
+                h('img', {
+                  attrs: {
+                    src: params.row.image
+                  },
+                  style: {
+                    width: '50px',
+                    height: '50px'
+                  }
+                }),
+              ]);
+            }
           },
           {
             title: '创建时间',
-            key: 'create_time'
+            key: 'create_time',
+            render: (h, params) => {
+              return h('div',
+                formatDate(new Date(params.row.create_time), 'yyyy-MM-dd')
+              )
+            }
           },
           {
             title: '操作',
@@ -128,11 +184,29 @@
           },
           {
             title: '商品分类图片',
-            key: 'ioc'
+            key: 'ioc',
+            render: (h, params) => {
+              return h('div', [
+                h('img', {
+                  attrs: {
+                    src: params.row.ioc
+                  },
+                  style: {
+                    width: '50px',
+                    height: '50px'
+                  }
+                }),
+              ]);
+            }
           },
           {
             title: '创建时间',
-            key: 'create_time'
+            key: 'create_time',
+            render: (h, params) => {
+              return h('div',
+                formatDate(new Date(params.row.create_time), 'yyyy-MM-dd')
+              )
+            }
           },
           {
             title: '操作',
@@ -141,6 +215,52 @@
             align: 'center'
           }
         ],
+        columnsSpec: [
+          {
+            title: '编号',
+            key: 'id'
+          },
+          {
+            title: '商品分类名称',
+            key: 'name'
+          },
+          {
+            title: '商品专区图片',
+            key: 'image',
+            render: (h, params) => {
+              return h('div', [
+                h('img', {
+                  attrs: {
+                    src: params.row.image
+                  },
+                  style: {
+                    width: '50px',
+                    height: '50px'
+                  }
+                }),
+              ]);
+            }
+          },
+          {
+            title: '创建时间',
+            key: 'create_time',
+            render: (h, params) => {
+              return h('div',
+                formatDate(new Date(params.row.create_time), 'yyyy-MM-dd')
+              )
+            }
+          },
+          {
+            title: '操作',
+            slot: 'action',
+            width: 150,
+            align: 'center'
+          }
+        ],
+        tableDataSpec: {
+          data: [],
+          count: 0
+        },
         tableData: {
           data: [],
           count: 0
@@ -152,6 +272,11 @@
       }
     },
     methods: {
+      closeDrawer() {
+        this.formData = {}
+        this.formDataSec = {}
+        this.formDataSpec = {}
+      },
       submit() {
         this.$ajax({
           method: 'post',
@@ -162,6 +287,7 @@
             this.$Notice.success({
               title: res.data.msg,
             })
+            this.pageChange(1)
             this.drawerShow = false
           } else {
             this.$Notice.error({
@@ -175,6 +301,8 @@
         })
       },
       submitSec() {
+        delete this.formDataSec._index
+        delete this.formDataSec._rowKey
         this.$ajax({
           method: 'post',
           url: this.formDataSec.id ? 'updateProductType' : 'saveProductType',
@@ -184,7 +312,34 @@
             this.$Notice.success({
               title: res.data.msg,
             })
-            this.drawerShowSuc = false
+            this.pageChangeSec(1)
+            this.drawerShowSec = false
+          } else {
+            this.$Notice.error({
+              title: res.data.msg,
+            })
+          }
+        }).catch((res) => {
+          this.$Notice.error({
+            title: res.data.msg,
+          })
+        })
+      },
+      submitSpec() {
+        delete this.formDataSpec._index
+        delete this.formDataSpec._rowKey
+        delete this.formDataSpec.create_time
+        this.$ajax({
+          method: 'post',
+          url: this.formDataSpec.id ? 'updateZone' : 'saveZone',
+          data: this.formDataSpec
+        }).then((res) => {
+          if (res.data.code === 1) {
+            this.$Notice.success({
+              title: res.data.msg,
+            })
+            this.pageChangeSpec(1)
+            this.drawerShowSpec = false
           } else {
             this.$Notice.error({
               title: res.data.msg,
@@ -202,9 +357,16 @@
       handleUploadSec(res, file, fileList) {
         this.formDataSec.ioc = res.data
       },
+      handleUploadSpec(res, file, fileList) {
+        this.formDataSpec.image = res.data
+      },
       edit(row) {
         Object.assign(this.formData, row)
         this.drawerShow = true
+      },
+      editSpec(row) {
+        Object.assign(this.formDataSpec, row)
+        this.drawerShowSpec = true
       },
       editSec(row) {
         Object.assign(this.formDataSec, row)
@@ -224,6 +386,38 @@
                 this.$Notice.success({
                   title: res.data.msg,
                 })
+                this.pageChange(1)
+              } else {
+                this.$Notice.error({
+                  title: res.data.msg,
+                })
+              }
+            }).catch((res) => {
+              this.$Notice.error({
+                title: res.data.msg,
+              })
+            })
+          },
+          onCancel: () => {
+            this.$Message.info('Clicked cancel');
+          }
+        });
+      },
+      removeSpec(row) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '<p>是否删除</p>',
+          onOk: () => {
+            this.$ajax({
+              method: 'post',
+              url: 'deleteZoneById',
+              data: row
+            }).then((res) => {
+              if (res.data.code === 1) {
+                this.$Notice.success({
+                  title: res.data.msg,
+                })
+                this.pageChangeSpec(1)
               } else {
                 this.$Notice.error({
                   title: res.data.msg,
@@ -254,6 +448,7 @@
                 this.$Notice.success({
                   title: res.data.msg,
                 })
+                this.pageChangeSec(1)
               } else {
                 this.$Notice.error({
                   title: res.data.msg,
@@ -289,6 +484,25 @@
           })
         })
       },
+      pageChangeSpec(page) {
+        this.$ajax({
+          method: 'post',
+          url: 'selectZoneList',
+          data: {page, limit: 10}
+        }).then((res) => {
+          if (res.data.code === 1) {
+            this.tableDataSpec = res.data
+          } else {
+            this.$Notice.error({
+              title: res.data.msg,
+            })
+          }
+        }).catch((res) => {
+          this.$Notice.error({
+            title: res.data.msg,
+          })
+        })
+      },
       pageChange(page) {
         this.$ajax({
           method: 'post',
@@ -312,6 +526,7 @@
     mounted() {
       this.pageChange(1)
       this.pageChangeSec(1)
+      this.pageChangeSpec(1)
     }
   }
 </script>
