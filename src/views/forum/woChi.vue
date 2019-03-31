@@ -1,6 +1,6 @@
 <template>
   <div>
-    <forumTable :forum-name="'喔驰汽贸'"></forumTable>
+    <forumTable :forum-name="'喔驰汽贸'" />
   </div>
 </template>
 
@@ -8,7 +8,7 @@
   import forumTable from '../../components/forumTable'
 
   export default {
-    name: "woChi",
+    name: "WoChi",
     components: {forumTable}
   }
 </script>

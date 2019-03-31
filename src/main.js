@@ -2,25 +2,10 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import ajax from 'axios'
 import './plugins/iview.js'
-import Echarts from 'echarts'
+import './plugins/echarts'
+import './plugins/axios'
 
-/*注册Axios*/
-const instance = ajax.create({
-  baseURL: '/',
-  transformRequest: [/*将JSON字符串转换成FormData*/
-    function (data) {
-      let ret = '';
-      for (let it in data) {
-        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
-      }
-      return ret;
-    }
-  ]
-})
-Vue.prototype.$ajax = instance
-Vue.prototype.$Echarts = Echarts
 Vue.config.productionTip = false
 
 /*路由守卫*/

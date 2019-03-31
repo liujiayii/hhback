@@ -5,14 +5,14 @@
       <Button type="primary" shape="circle" icon="md-add" @click="drawerShow=true">添加</Button>
     </div>
     <Table border :columns="columns" :data="tableData.data">
-      <template slot-scope="{ row, index }" slot="action">
+      <template slot-scope="{ row }" slot="action">
         <iSwitch
-                @on-change="stateUpdate(row)"
-                :value="row.state"
-                size="large"
-                style="margin-right: 5px"
-                :true-value="1"
-                :false-value="2"
+          @on-change="stateUpdate(row)"
+          :value="row.state"
+          size="large"
+          style="margin-right: 5px"
+          :true-value="1"
+          :false-value="2"
         >
           <span slot="open">上架</span>
           <span slot="close">下架</span>
@@ -23,13 +23,35 @@
     <div class="page-box">
       <Page :total="tableData.count" @on-change="pageChange" size="small" show-elevator show-total/>
     </div>
-    <Drawer title="编辑" v-model="drawerShow" @on-close="clearDrawer" width="720" :mask-closable="false" :styles="styles">
+    <Drawer
+      title="编辑"
+      v-model="drawerShow"
+      @on-close="clearDrawer"
+      width="720"
+      :mask-closable="false"
+      :styles="styles"
+    >
       <Form :model="formData">
         <Row :gutter="32">
           <Col span="12">
             <FormItem label="商品专区">
+              <Select v-model="formData.zone_id" size="large">
+                <Option
+                  v-for="(item,index) in zoneList"
+                  :value="item.id"
+                  :key="index"
+                >{{ item.name }}</Option>
+              </Select>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="商品二级分类">
               <Select v-model="formData.producttypeid" size="large">
-                <Option v-for="(item,index) in sortList" :value="item.id" :key="index">{{item.name}}</Option>
+                <Option
+                  v-for="(item,index) in sortList"
+                  :value="item.id"
+                  :key="index"
+                >{{ item.name }}</Option>
               </Select>
             </FormItem>
           </Col>
@@ -53,7 +75,12 @@
               <Input v-model="formData.specifications" size="large"/>
             </FormItem>
           </Col>
-          <Col span="12" v-if="formData.id">
+          <Col span="12">
+            <FormItem label="颜色">
+              <Input v-model="formData.color" size="large"/>
+            </FormItem>
+          </Col>
+          <Col span="12" v-if="!formData.producttypeid">
             <FormItem label="库存">
               <Input v-model="formData.number" size="large"/>
             </FormItem>
@@ -68,7 +95,9 @@
           <Button icon="ios-cloud-upload-outline">上传商品小图</Button>
         </Upload>
         <div class="img-cont">
-          <div class="img-box"><img :src="formData.image" alt=""></div>
+          <div class="img-box">
+            <img :src="formData.image" alt>
+          </div>
         </div>
         <Upload action="/addImg" multiple :on-success="handleUploadSec">
           <Button icon="ios-cloud-upload-outline">上传商品详情图</Button>
@@ -78,7 +107,7 @@
             <div class="ico">
               <Icon type="md-trash"/>
             </div>
-            <img :src="item" alt="">
+            <img :src="item" alt>
           </div>
         </div>
       </Form>
@@ -91,192 +120,190 @@
 </template>
 
 <script>
-
-  export default {
-    name: "ware",
-    data() {
-      return {
-        drawerShow: false,
-        styles: {
-          height: "calc(100% - 55px)",
-          overflow: "auto",
-          paddingBottom: "53px",
-          position: "static"
+export default {
+  name: "Ware",
+  data() {
+    return {
+      drawerShow: false,
+      styles: {
+        height: "calc(100% - 55px)",
+        overflow: "auto",
+        paddingBottom: "53px",
+        position: "static"
+      },
+      formData: {},
+      columns: [
+        {
+          title: "编号",
+          key: "id"
         },
-        formData: {},
-        columns: [
-          {
-            title: "编号",
-            key: "id"
-          },
-          {
-            title: "商品名称",
-            key: "productName"
-          },
-          {
-            title: "商品类型",
-            key: "producttypename"
-          },
-          {
-            title: "价格(元)",
-            key: "price"
-          },
-          {
-            title: "操作",
-            slot: "action",
-            width: 200,
-            align: "center"
-          }
-        ],
-        tableData: {
-          data: [],
-          count: 0
+        {
+          title: "商品名称",
+          key: "productName"
         },
-        fileList: [],
-        sortList: [],
-        discountList: []
-      };
-    },
-    methods: {
-      delImg(index) {
-        console.log(index)
-        this.$Modal.confirm({
-          title: '提示',
-          content: '<p>是否删除</p>',
-          onOk: () => {
-            if (this.formData.productImage[index].id) {
-              this.$ajax({
-                method: "post",
-                url: 'deleteImg',
-                data: {id: this.formData.productImage[index].id}
-              }).then(res => {
-                if (res.data.code === 1) {
-                } else {
+        {
+          title: "商品类型",
+          key: "producttypename"
+        },
+        {
+          title: "价格(元)",
+          key: "price"
+        },
+        {
+          title: "操作",
+          slot: "action",
+          width: 200,
+          align: "center"
+        }
+      ],
+      tableData: {
+        data: [],
+        count: 0
+      },
+      fileList: [],
+      sortList: [],
+      discountList: [],
+      zoneList: []
+    };
+  },
+  methods: {
+    delImg(index) {
+      this.$Modal.confirm({
+        title: "提示",
+        content: "<p>是否删除</p>",
+        onOk: () => {
+          if (this.formData.productImage[index].id) {
+            this.$ajax({
+              method: "post",
+              url: "deleteImg",
+              data: { id: this.formData.productImage[index].id }
+            })
+              .then(res => {
+                if (res.data.code !== 1) {
                   this.$Notice.error({
                     title: res.data.msg
                   });
                 }
-              }).catch(res => {
+              })
+              .catch(res => {
                 this.$Notice.error({
                   title: res.data.msg
                 });
-              })
-            }
-
-            this.fileList.splice(index, 1)
-            this.$Message.info('Clicked ok');
-          },
-          onCancel: () => {
-            this.$Message.info('Clicked cancel');
+              });
           }
-        });
-      },
-      clearDrawer() {
-        console.log('-====')
-        this.formData = {}
-        this.fileList = []
-      },
-      handleBeforeUpload(file, fileList) {
-        console.log(file)
-        this.fileList = fileList
-        return false
-      },
-      handleUpload(res, file, fileList) {
-        this.formData.image = res.data
-      },
-      handleUploadSec(res, file, fileList) {
-        console.log(res.data)
-        this.fileList.push(res.data[0])
-      },
-      show(row) {
-        console.log(row)
-        this.$ajax({
-          method: "post",
-          url: 'listProductByProductId',
-          data: {productId: row.id}
-        }).then(res => {
+
+          this.fileList.splice(index, 1);
+          this.$Message.info("Clicked ok");
+        },
+        onCancel: () => {
+          this.$Message.info("Clicked cancel");
+        }
+      });
+    },
+    clearDrawer() {
+      this.formData = {};
+      this.fileList = [];
+    },
+    handleBeforeUpload(file, fileList) {
+      this.fileList = fileList;
+      return false;
+    },
+    handleUpload(res) {
+      this.formData.image = res.data;
+    },
+    handleUploadSec(res) {
+      this.fileList.push(res.data[0]);
+    },
+    show(row) {
+      this.$ajax({
+        method: "post",
+        url: "listProductByProductId",
+        data: { productId: row.id }
+      })
+        .then(res => {
           if (res.data.code === 1) {
             this.$Notice.success({
               title: res.data.msg
             });
             this.formData = res.data.data[0];
             for (let i = 0; i < res.data.data[0].productImage.length; i++) {
-              this.fileList.push(res.data.data[0].productImage[i].img)
+              this.fileList.push(res.data.data[0].productImage[i].img);
             }
           } else {
             this.$Notice.error({
               title: res.data.msg
             });
           }
-        }).catch(res => {
+        })
+        .catch(res => {
           this.$Notice.error({
             title: res.data.msg
           });
-        })
-        this.formData = row
-        this.drawerShow = true;
-      },
-      remove(index) {
-        this.data6.splice(index, 1);
-      },
-      pageChange(page) {
-        this.$ajax({
-          method: "post",
-          url: "listAllProductById",
-          data: {page, limit: 10}
-        })
-          .then(res => {
-            if (res.data.code === 1) {
-              this.tableData = res.data;
-            } else {
-              this.$Notice.error({
-                title: res.data.msg
-              });
-            }
-          })
-          .catch(res => {
+        });
+      this.formData = row;
+      this.drawerShow = true;
+    },
+    remove(index) {
+      this.data6.splice(index, 1);
+    },
+    pageChange(page) {
+      this.$ajax({
+        method: "post",
+        url: "listAllProductById",
+        data: { page, limit: 10 }
+      })
+        .then(res => {
+          if (res.data.code === 1) {
+            this.tableData = res.data;
+          } else {
             this.$Notice.error({
               title: res.data.msg
             });
-          });
-      },
-      stateUpdate(row) {
-        this.$ajax({
-          method: "post",
-          url: "updateProductState",
-          data: {id: row.id, state: row.state == 1 ? 2 : 1}
+          }
         })
-          .then(res => {
-            if (res.data.code === 1) {
-              this.$Notice.success({
-                title: res.data.msg
-              });
-            } else {
-              this.$Notice.error({
-                title: res.data.msg
-              });
-            }
-          })
-          .catch(res => {
+        .catch(res => {
+          this.$Notice.error({
+            title: res.data.msg
+          });
+        });
+    },
+    stateUpdate(row) {
+      this.$ajax({
+        method: "post",
+        url: "updateProductState",
+        data: { id: row.id, state: row.state == 1 ? 2 : 1 }
+      })
+        .then(res => {
+          if (res.data.code === 1) {
+            this.$Notice.success({
+              title: res.data.msg
+            });
+          } else {
             this.$Notice.error({
               title: res.data.msg
             });
+          }
+        })
+        .catch(res => {
+          this.$Notice.error({
+            title: res.data.msg
           });
-      },
-      submit() {
-        delete this.formData._index
-        delete this.formData._rowKey
-        delete this.formData.page
-        delete this.formData.limit
-        delete this.formData.productImage
-        delete this.formData.create_times
-        this.formData['file'] = this.fileList
-        console.log(this.formData)
-        this.$ajax({
-          method: "post",
-          url: this.formData.productId ? 'updateProduct' : "saveProduct",
-          data: this.formData
-        }).then(res => {
+        });
+    },
+    submit() {
+      delete this.formData._index;
+      delete this.formData._rowKey;
+      delete this.formData.page;
+      delete this.formData.limit;
+      delete this.formData.productImage;
+      delete this.formData.create_times;
+      this.formData["file"] = this.fileList;
+      this.$ajax({
+        method: "post",
+        url: this.formData.productId ? "updateProduct" : "saveProduct",
+        data: this.formData
+      })
+        .then(res => {
           if (res.data.code === 1) {
             this.$Notice.success({
               title: res.data.msg
@@ -287,113 +314,140 @@
               title: res.data.msg
             });
           }
-        }).catch(res => {
+        })
+        .catch(res => {
           this.$Notice.error({
             title: res.data.msg
           });
-        })
-      },
-      getClass() {
-        this.$ajax({
-          method: 'post',
-          url: 'selectAllProductTypeList',
-          data: {page: 1, limit: 100}
-        }).then((res) => {
-          if (res.data.code === 1) {
-            this.sortList = res.data.data
-          } else {
-            this.$Notice.error({
-              title: res.data.msg,
-            })
-          }
-        }).catch((res) => {
-          this.$Notice.error({
-            title: res.data.msg,
-          })
-        })
-      },
-      getDiscount() {
-        this.$ajax({
-          method: 'post',
-          url: 'pageOfDiscount',
-          data: {page: 1, limit: 100}
-        }).then((res) => {
-          if (res.data.code === 1) {
-            this.discountList = res.data.data
-          } else {
-            this.$Notice.error({
-              title: res.data.msg,
-            })
-          }
-        }).catch((res) => {
-          this.$Notice.error({
-            title: res.data.msg,
-          })
-        })
-      }
+        });
     },
-    mounted() {
-      this.pageChange(1);
-      this.getClass()
-      this.getDiscount()
+    getClass() {
+      this.$ajax({
+        method: "post",
+        url: "selectAllProductTypeList",
+        data: { page: 1, limit: 100 }
+      })
+        .then(res => {
+          if (res.data.code === 1) {
+            this.sortList = res.data.data;
+          } else {
+            this.$Notice.error({
+              title: res.data.msg
+            });
+          }
+        })
+        .catch(res => {
+          this.$Notice.error({
+            title: res.data.msg
+          });
+        });
+    },
+    getDiscount() {
+      this.$ajax({
+        method: "post",
+        url: "pageOfDiscount",
+        data: { page: 1, limit: 100 }
+      })
+        .then(res => {
+          if (res.data.code === 1) {
+            this.discountList = res.data.data;
+          } else {
+            this.$Notice.error({
+              title: res.data.msg
+            });
+          }
+        })
+        .catch(res => {
+          this.$Notice.error({
+            title: res.data.msg
+          });
+        });
+    },
+    getZone() {
+      this.$ajax({
+        method: "post",
+        url: "selectZoneList",
+        data: { page: 1, limit: 100 }
+      })
+        .then(res => {
+          if (res.data.code === 1) {
+            this.zoneList = res.data.data;
+          } else {
+            this.$Notice.error({
+              title: res.data.msg
+            });
+          }
+        })
+        .catch(res => {
+          this.$Notice.error({
+            title: res.data.msg
+          });
+        });
     }
-  };
+  },
+  mounted() {
+    this.pageChange(1);
+    this.getClass();
+    this.getDiscount();
+    this.getZone();
+  }
+};
 </script>
 
 <style scoped>
-  .img-cont {
-    display: flex;
-    flex-wrap: wrap;
-  }
+.img-cont {
+  display: flex;
+  flex-wrap: wrap;
+}
 
-  .img-cont .img-box {
-    position: relative;
-    width: 100px;
-    height: 100px;
-  }
+.img-cont .img-box {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
 
-  .img-cont .img-box:hover .ico {
-    opacity: 1;
-    transition: all .5s;
-  }
+.img-cont .img-box:hover .ico {
+  opacity: 1;
+  transition: all 0.5s;
+}
 
-  .img-cont .img-box .ico {
-    position: absolute;
-    font-size: 40px;
-    width: 100%;
-    height: 100%;
-    line-height: 100px;
-    text-align: center;
-    background: rgba(0, 0, 0, .8);
-    opacity: 0;
-    cursor: pointer;
-  }
+.img-cont .img-box .ico {
+  position: absolute;
+  font-size: 40px;
+  width: 100%;
+  height: 100%;
+  line-height: 100px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  cursor: pointer;
+}
 
-  .img-cont .img-box img {
-    width: 100%;
-    height: 100%;
-  }
+.img-cont .img-box img {
+  width: 100%;
+  height: 100%;
+}
 
-  .top {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
+.top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
 
-  .demo-drawer-footer {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    border-top: 1px solid #e8e8e8;
-    padding: 10px 16px;
-    text-align: right;
-    background: #fff;
-  }
+.demo-drawer-footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-top: 1px solid #e8e8e8;
+  padding: 10px 16px;
+  text-align: right;
+  background: #fff;
+}
 
-  .page-box {
-    display: flex;
-    justify-content: center;
-    margin: 20px auto;
-  }
+.page-box {
+  display: flex;
+  justify-content: center;
+  margin: 20px auto;
+}
 </style>

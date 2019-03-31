@@ -1,45 +1,132 @@
 <template>
   <div>
     <div class="top">
-      <Input search placeholder="Enter something..." style="width: 300px"/>
-      <Button type="primary" shape="circle" icon="md-add" @click="drawerShow=true">添加</Button>
+      <Input
+        search
+        placeholder="Enter something..."
+        style="width: 300px"
+      />
+      <Button
+        type="primary"
+        shape="circle"
+        icon="md-add"
+        @click="drawerShow=true"
+      >
+        添加
+      </Button>
     </div>
-    <Table border :columns="columns12" :data="data6">
-      <template slot-scope="{ row }" slot="name">
+    <Table
+      border
+      :columns="columns12"
+      :data="data6"
+    >
+      <template
+        slot-scope="{ row }"
+        slot="name"
+      >
         <strong>{{ row.name }}</strong>
       </template>
-      <template slot-scope="{ row, index }" slot="action">
-        <Button type="primary" size="small" style="margin-right: 5px" @click="show(index)">查看</Button>
-        <Button type="error" size="small" @click="remove(index)">删除</Button>
+      <template
+        slot-scope="{ row, index }"
+        slot="action"
+      >
+        <Button
+          type="primary"
+          size="small"
+          style="margin-right: 5px"
+          @click="show(index)"
+        >
+          查看
+        </Button>
+        <Button
+          type="error"
+          size="small"
+          @click="remove(index)"
+        >
+          删除
+        </Button>
       </template>
     </Table>
     <div class="page-box">
-      <Page :total="40" size="small" show-elevator show-total/>
+      <Page
+        :total="40"
+        size="small"
+        show-elevator
+        show-total
+      />
     </div>
-    <Drawer title="账号管理" v-model="drawerShow" width="720" :mask-closable="false" :styles="styles">
+    <Drawer
+      title="账号管理"
+      v-model="drawerShow"
+      width="720"
+      :mask-closable="false"
+      :styles="styles"
+    >
       <Form :model="formData">
-        <FormItem label="姓名" label-position="top">
-          <Input v-model="formData.name" placeholder="please enter user name"/>
+        <FormItem
+          label="姓名"
+          label-position="top"
+        >
+          <Input
+            v-model="formData.name"
+            placeholder="please enter user name"
+          />
         </FormItem>
-        <FormItem label="身份" label-position="top">
-          <Select v-model="formData.owner" placeholder="please select an owner">
-            <Option value="jobs">管理员</Option>
-            <Option value="ive">普通员工</Option>
+        <FormItem
+          label="身份"
+          label-position="top"
+        >
+          <Select
+            v-model="formData.owner"
+            placeholder="please select an owner"
+          >
+            <Option value="jobs">
+              管理员
+            </Option>
+            <Option value="ive">
+              普通员工
+            </Option>
           </Select>
         </FormItem>
-        <FormItem label="编号" label-position="top">
-          <Input v-model="formData.name" placeholder="please enter user name"/>
+        <FormItem
+          label="编号"
+          label-position="top"
+        >
+          <Input
+            v-model="formData.name"
+            placeholder="please enter user name"
+          />
         </FormItem>
-        <FormItem label="所属部门" label-position="top">
-          <Select v-model="formData.type" placeholder="please choose the type">
-            <Option value="private">财务部</Option>
-            <Option value="public">行政部</Option>
+        <FormItem
+          label="所属部门"
+          label-position="top"
+        >
+          <Select
+            v-model="formData.type"
+            placeholder="please choose the type"
+          >
+            <Option value="private">
+              财务部
+            </Option>
+            <Option value="public">
+              行政部
+            </Option>
           </Select>
         </FormItem>
       </Form>
       <div class="demo-drawer-footer">
-        <Button style="margin-right: 8px" @click="drawerShow = false">取消</Button>
-        <Button type="primary" @click="drawerShow = false">提交</Button>
+        <Button
+          style="margin-right: 8px"
+          @click="drawerShow = false"
+        >
+          取消
+        </Button>
+        <Button
+          type="primary"
+          @click="drawerShow = false"
+        >
+          提交
+        </Button>
       </div>
     </Drawer>
   </div>
@@ -47,7 +134,7 @@
 
 <script>
   export default {
-    name: "account",
+    name: "Account",
     data() {
       return {
         columns12: [

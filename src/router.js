@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Layout from './views/layout/layout'
+import Temp from './views/temp/temp'
 import Login from './views/login/login'
 import Home from './views/home/home'
 
@@ -18,7 +18,7 @@ let defaultRouter = [{
   }, {
     path: '/',
     name: '',
-    component: Layout,
+    component: Temp,
     children: [
       {
         path: '/home',
@@ -30,7 +30,7 @@ let defaultRouter = [{
   }, {
     path: '/website',
     name: '云阙官网',
-    component: Layout,
+    component: Temp,
     Ico: 'md-paw',
     children: [{
       path: 'homePage',
@@ -51,7 +51,7 @@ let defaultRouter = [{
   }, {
     path: '/forum',
     name: '云阙论坛',
-    component: Layout,
+    component: Temp,
     Ico: 'md-chatboxes',
     children: [{
       path: 'ouYe',
@@ -87,7 +87,7 @@ let defaultRouter = [{
   }, {
     path: '/mall',
     name: '云阙商城',
-    component: Layout,
+    component: Temp,
     Ico: 'md-basket',
     children: [{
       path: 'ware',
@@ -133,7 +133,7 @@ let defaultRouter = [{
   }, {
     path: '/',
     name: '',
-    component: Layout,
+    component: Temp,
     children: [{
       path: '/account',
       name: '账号管理',

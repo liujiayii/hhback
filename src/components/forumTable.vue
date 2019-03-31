@@ -1,29 +1,67 @@
 <template>
   <div>
-    <Divider>{{forumName}}</Divider>
+    <Divider>{{ forumName }}</Divider>
     <div class="top">
-      <Input search placeholder="Enter something..." style="width: 300px"/>
-      <Button type="primary" shape="circle" icon="md-add">添加</Button>
+      <Input
+        search
+        placeholder="Enter something..."
+        style="width: 300px"
+      />
+      <Button
+        type="primary"
+        shape="circle"
+        icon="md-add"
+      >
+        添加
+      </Button>
     </div>
-    <Table border :columns="columns12" :data="data6">
-      <template slot-scope="{ row }" slot="name">
+    <Table
+      border
+      :columns="columns12"
+      :data="data6"
+    >
+      <template
+        slot-scope="{ row }"
+        slot="name"
+      >
         <strong>{{ row.name }}</strong>
       </template>
-      <template slot-scope="{ row, index }" slot="action">
-        <Button type="primary" size="small" style="margin-right: 5px" @click="show(index)">查看</Button>
-        <Button type="error" size="small" @click="remove(index)">删除</Button>
+      <template
+        slot-scope="{ row, index }"
+        slot="action"
+      >
+        <Button
+          type="primary"
+          size="small"
+          style="margin-right: 5px"
+          @click="show(index)"
+        >
+          查看
+        </Button>
+        <Button
+          type="error"
+          size="small"
+          @click="remove(index)"
+        >
+          删除
+        </Button>
       </template>
     </Table>
     <div class="page-box">
-      <Page :total="40" size="small" show-elevator show-total />
+      <Page
+        :total="40"
+        size="small"
+        show-elevator
+        show-total
+      />
     </div>
   </div>
 </template>
 
 <script>
   export default {
-    name: "forumTable",
-    props: ['forumName'],
+    name: "ForumTable",
+    props: {'forumName': String},
     data() {
       return {
         columns12: [
@@ -104,7 +142,8 @@
     justify-content: space-between;
     margin-bottom: 20px;
   }
-  .page-box{
+
+  .page-box {
     display: flex;
     justify-content: center;
     margin: 20px auto;

@@ -1,12 +1,29 @@
 <template>
   <div>
     <Divider>用户留言</Divider>
-    <Table border :columns="columns12" :data="data6">
-      <template slot-scope="{ row }" slot="name">
+    <Table
+      border
+      :columns="columns12"
+      :data="data6"
+    >
+      <template
+        slot-scope="{ row }"
+        slot="name"
+      >
         <strong>{{ row.name }}</strong>
       </template>
-      <template slot-scope="{ row, index }" slot="action">
-        <Button type="primary" size="small" style="margin-right: 5px" @click="show(index)">查看</Button>
+      <template
+        slot-scope="{ row, index }"
+        slot="action"
+      >
+        <Button
+          type="primary"
+          size="small"
+          style="margin-right: 5px"
+          @click="show(index)"
+        >
+          查看
+        </Button>
       </template>
     </Table>
   </div>
@@ -14,7 +31,7 @@
 
 <script>
   export default {
-    name: "homeTable",
+    name: "HomeTable",
     data() {
       return {
         columns12: [

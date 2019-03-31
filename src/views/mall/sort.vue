@@ -1,5 +1,30 @@
 <template>
   <div>
+    <Divider orientation="left">首页轮播图</Divider>
+    <div class="top">
+      <Input search placeholder="Enter something..." style="width: 300px"/>
+      <Upload
+        action="/t_carousel/insert"
+        :show-upload-list="false"
+        :on-success="bannerSuc"
+      >
+        <Button type="primary" shape="circle" icon="md-add" @click="drawerShowBanner=true">上传图片</Button>
+      </Upload>
+    </div>
+    <Table border :columns="columnsBanner" :data="tableDataBanner.data">
+      <template slot-scope="{ row }" slot="action">
+        <Button type="error" size="small" @click="removeBanner(row)">删除</Button>
+      </template>
+    </Table>
+    <div class="page-box">
+      <Page
+        :total="tableDataBanner.count"
+        @on-change="pageChangeBanner"
+        size="small"
+        show-elevator
+        show-total
+      />
+    </div>
     <Divider orientation="left">商品专区</Divider>
     <div class="top">
       <Input search placeholder="Enter something..." style="width: 300px"/>
@@ -12,7 +37,13 @@
       </template>
     </Table>
     <div class="page-box">
-      <Page :total="tableDataSpec.count" @on-change="pageChangeSpec" size="small" show-elevator show-total/>
+      <Page
+        :total="tableDataSpec.count"
+        @on-change="pageChangeSpec"
+        size="small"
+        show-elevator
+        show-total
+      />
     </div>
     <Divider orientation="left">一级分类</Divider>
     <div class="top">
@@ -40,10 +71,22 @@
       </template>
     </Table>
     <div class="page-box">
-      <Page :total="tableDataSec.count" @on-change="pageChangeSec" size="small" show-elevator show-total/>
+      <Page
+        :total="tableDataSec.count"
+        @on-change="pageChangeSec"
+        size="small"
+        show-elevator
+        show-total
+      />
     </div>
-    <Drawer title="编辑" v-model="drawerShowSpec" @on-close="closeDrawer" width="720" :mask-closable="false"
-            :styles="styles">
+    <Drawer
+      title="编辑"
+      v-model="drawerShowSpec"
+      @on-close="closeDrawer"
+      width="720"
+      :mask-closable="false"
+      :styles="styles"
+    >
       <Form :model="formDataSpec">
         <Row :gutter="32">
           <Col span="12">
@@ -61,7 +104,14 @@
         <Button type="primary" @click="submitSpec">保存</Button>
       </div>
     </Drawer>
-    <Drawer title="编辑" v-model="drawerShow" @on-close="closeDrawer" width="720" :mask-closable="false" :styles="styles">
+    <Drawer
+      title="编辑"
+      v-model="drawerShow"
+      @on-close="closeDrawer"
+      width="720"
+      :mask-closable="false"
+      :styles="styles"
+    >
       <Form :model="formData">
         <Row :gutter="32">
           <Col span="12">
@@ -79,14 +129,24 @@
         <Button type="primary" @click="submit">保存</Button>
       </div>
     </Drawer>
-    <Drawer title="编辑" v-model="drawerShowSec" @on-close="closeDrawer" width="720" :mask-closable="false"
-            :styles="styles">
+    <Drawer
+      title="编辑"
+      v-model="drawerShowSec"
+      @on-close="closeDrawer"
+      width="720"
+      :mask-closable="false"
+      :styles="styles"
+    >
       <Form :model="formDataSec">
         <Row :gutter="32">
           <Col span="12">
             <FormItem label="一级分类名称">
               <Select v-model="formDataSec.classificationId" size="large">
-                <Option v-for="(item) in tableData.data" :value="item.id" :key="item.id">{{item.name}}</Option>
+                <Option
+                  v-for="(item) in tableData.data"
+                  :value="item.id"
+                  :key="item.id"
+                >{{ item.name }}</Option>
               </Select>
             </FormItem>
           </Col>
@@ -109,449 +169,572 @@
 </template>
 
 <script>
-  import {formatDate} from "../../plugins/utils";
+import { formatDate } from "../../plugins/utils";
 
-  export default {
-    name: "sort",
-    data() {
-      return {
-        drawerShow: false,
-        drawerShowSec: false,
-        drawerShowSpec: false,
-        styles: {
-          height: 'calc(100% - 55px)',
-          overflow: 'auto',
-          paddingBottom: '53px',
-          position: 'static'
+export default {
+  name: "Sort",
+  data() {
+    return {
+      drawerShow: false,
+      drawerShowSec: false,
+      drawerShowSpec: false,
+      styles: {
+        height: "calc(100% - 55px)",
+        overflow: "auto",
+        paddingBottom: "53px",
+        position: "static"
+      },
+      formData: {},
+      formDataSec: {},
+      formDataSpec: {},
+      formDataBanner: {},
+      columns: [
+        {
+          title: "编号",
+          key: "id"
         },
-        formData: {},
-        formDataSec: {},
-        formDataSpec: {},
-        columns: [
-          {
-            title: '编号',
-            key: 'id'
-          },
-          {
-            title: '商品分类名称',
-            key: 'name'
-          },
-          {
-            title: '商品分类图片',
-            key: 'image',
-            render: (h, params) => {
-              return h('div', [
-                h('img', {
-                  attrs: {
-                    src: params.row.image
-                  },
-                  style: {
-                    width: '50px',
-                    height: '50px'
-                  }
-                }),
-              ]);
-            }
-          },
-          {
-            title: '创建时间',
-            key: 'create_time',
-            render: (h, params) => {
-              return h('div',
-                formatDate(new Date(params.row.create_time), 'yyyy-MM-dd')
-              )
-            }
-          },
-          {
-            title: '操作',
-            slot: 'action',
-            width: 150,
-            align: 'center'
-          }
-        ],
-        columnsSec: [
-          {
-            title: '编号',
-            key: 'id'
-          },
-          {
-            title: '商品一级分类名称',
-            key: 'classificationName'
-          },
-          {
-            title: '商品分类名称',
-            key: 'name'
-          },
-          {
-            title: '商品分类图片',
-            key: 'ioc',
-            render: (h, params) => {
-              return h('div', [
-                h('img', {
-                  attrs: {
-                    src: params.row.ioc
-                  },
-                  style: {
-                    width: '50px',
-                    height: '50px'
-                  }
-                }),
-              ]);
-            }
-          },
-          {
-            title: '创建时间',
-            key: 'create_time',
-            render: (h, params) => {
-              return h('div',
-                formatDate(new Date(params.row.create_time), 'yyyy-MM-dd')
-              )
-            }
-          },
-          {
-            title: '操作',
-            slot: 'action',
-            width: 150,
-            align: 'center'
-          }
-        ],
-        columnsSpec: [
-          {
-            title: '编号',
-            key: 'id'
-          },
-          {
-            title: '商品分类名称',
-            key: 'name'
-          },
-          {
-            title: '商品专区图片',
-            key: 'image',
-            render: (h, params) => {
-              return h('div', [
-                h('img', {
-                  attrs: {
-                    src: params.row.image
-                  },
-                  style: {
-                    width: '50px',
-                    height: '50px'
-                  }
-                }),
-              ]);
-            }
-          },
-          {
-            title: '创建时间',
-            key: 'create_time',
-            render: (h, params) => {
-              return h('div',
-                formatDate(new Date(params.row.create_time), 'yyyy-MM-dd')
-              )
-            }
-          },
-          {
-            title: '操作',
-            slot: 'action',
-            width: 150,
-            align: 'center'
-          }
-        ],
-        tableDataSpec: {
-          data: [],
-          count: 0
+        {
+          title: "商品分类名称",
+          key: "name"
         },
-        tableData: {
-          data: [],
-          count: 0
+        {
+          title: "商品分类图片",
+          key: "image",
+          render: (h, params) => {
+            return h("div", [
+              h("img", {
+                attrs: {
+                  src: params.row.image
+                },
+                style: {
+                  width: "50px",
+                  height: "50px"
+                }
+              })
+            ]);
+          }
         },
-        tableDataSec: {
-          data: [],
-          count: 0
+        {
+          title: "创建时间",
+          key: "create_time",
+          render: (h, params) => {
+            return h(
+              "div",
+              formatDate(new Date(params.row.create_time), "yyyy-MM-dd")
+            );
+          }
+        },
+        {
+          title: "操作",
+          slot: "action",
+          width: 150,
+          align: "center"
         }
+      ],
+      columnsSec: [
+        {
+          title: "编号",
+          key: "id"
+        },
+        {
+          title: "商品一级分类名称",
+          key: "classificationName"
+        },
+        {
+          title: "商品分类名称",
+          key: "name"
+        },
+        {
+          title: "商品分类图片",
+          key: "ioc",
+          render: (h, params) => {
+            return h("div", [
+              h("img", {
+                attrs: {
+                  src: params.row.ioc
+                },
+                style: {
+                  width: "50px",
+                  height: "50px"
+                }
+              })
+            ]);
+          }
+        },
+        {
+          title: "创建时间",
+          key: "create_time",
+          render: (h, params) => {
+            return h(
+              "div",
+              formatDate(new Date(params.row.create_time), "yyyy-MM-dd")
+            );
+          }
+        },
+        {
+          title: "操作",
+          slot: "action",
+          width: 150,
+          align: "center"
+        }
+      ],
+      columnsBanner: [
+        {
+          title: "编号",
+          key: "id"
+        },
+        {
+          title: "图片",
+          key: "ioc",
+          render: (h, params) => {
+            return h("div", [
+              h("img", {
+                attrs: {
+                  src: params.row.path
+                },
+                style: {
+                  width: "50px",
+                  height: "50px"
+                }
+              })
+            ]);
+          }
+        },
+        {
+          title: "创建时间",
+          key: "creat_time",
+          render: (h, params) => {
+            return h(
+              "div",
+              formatDate(new Date(params.row.creat_time), "yyyy-MM-dd")
+            );
+          }
+        },
+        {
+          title: "操作",
+          slot: "action",
+          width: 150,
+          align: "center"
+        }
+      ],
+      columnsSpec: [
+        {
+          title: "编号",
+          key: "id"
+        },
+        {
+          title: "商品分类名称",
+          key: "name"
+        },
+        {
+          title: "商品专区图片",
+          key: "image",
+          render: (h, params) => {
+            return h("div", [
+              h("img", {
+                attrs: {
+                  src: params.row.image
+                },
+                style: {
+                  width: "50px",
+                  height: "50px"
+                }
+              })
+            ]);
+          }
+        },
+        {
+          title: "创建时间",
+          key: "create_time",
+          render: (h, params) => {
+            return h(
+              "div",
+              formatDate(new Date(params.row.create_time), "yyyy-MM-dd")
+            );
+          }
+        },
+        {
+          title: "操作",
+          slot: "action",
+          width: 150,
+          align: "center"
+        }
+      ],
+      tableDataSpec: {
+        data: [],
+        count: 0
+      },
+      tableDataBanner: {
+        data: [],
+        count: 0
+      },
+      tableData: {
+        data: [],
+        count: 0
+      },
+      tableDataSec: {
+        data: [],
+        count: 0
       }
+    };
+  },
+  methods: {
+    closeDrawer() {
+      this.formData = {};
+      this.formDataSec = {};
+      this.formDataSpec = {};
     },
-    methods: {
-      closeDrawer() {
-        this.formData = {}
-        this.formDataSec = {}
-        this.formDataSpec = {}
-      },
-      submit() {
-        this.$ajax({
-          method: 'post',
-          url: this.formData.id ? 'updateClassification' : 'saveClassification',
-          data: this.formData
-        }).then((res) => {
+    submit() {
+      this.$ajax({
+        method: "post",
+        url: this.formData.id ? "updateClassification" : "saveClassification",
+        data: this.formData
+      })
+        .then(res => {
           if (res.data.code === 1) {
             this.$Notice.success({
-              title: res.data.msg,
-            })
-            this.pageChange(1)
-            this.drawerShow = false
+              title: res.data.msg
+            });
+            this.pageChange(1);
+            this.drawerShow = false;
           } else {
             this.$Notice.error({
-              title: res.data.msg,
-            })
+              title: res.data.msg
+            });
           }
-        }).catch((res) => {
-          this.$Notice.error({
-            title: res.data.msg,
-          })
         })
-      },
-      submitSec() {
-        delete this.formDataSec._index
-        delete this.formDataSec._rowKey
-        this.$ajax({
-          method: 'post',
-          url: this.formDataSec.id ? 'updateProductType' : 'saveProductType',
-          data: this.formDataSec
-        }).then((res) => {
-          if (res.data.code === 1) {
-            this.$Notice.success({
-              title: res.data.msg,
-            })
-            this.pageChangeSec(1)
-            this.drawerShowSec = false
-          } else {
-            this.$Notice.error({
-              title: res.data.msg,
-            })
-          }
-        }).catch((res) => {
+        .catch(res => {
           this.$Notice.error({
-            title: res.data.msg,
-          })
-        })
-      },
-      submitSpec() {
-        delete this.formDataSpec._index
-        delete this.formDataSpec._rowKey
-        delete this.formDataSpec.create_time
-        this.$ajax({
-          method: 'post',
-          url: this.formDataSpec.id ? 'updateZone' : 'saveZone',
-          data: this.formDataSpec
-        }).then((res) => {
-          if (res.data.code === 1) {
-            this.$Notice.success({
-              title: res.data.msg,
-            })
-            this.pageChangeSpec(1)
-            this.drawerShowSpec = false
-          } else {
-            this.$Notice.error({
-              title: res.data.msg,
-            })
-          }
-        }).catch((res) => {
-          this.$Notice.error({
-            title: res.data.msg,
-          })
-        })
-      },
-      handleUpload(res, file, fileList) {
-        this.formData.image = res.data
-      },
-      handleUploadSec(res, file, fileList) {
-        this.formDataSec.ioc = res.data
-      },
-      handleUploadSpec(res, file, fileList) {
-        this.formDataSpec.image = res.data
-      },
-      edit(row) {
-        Object.assign(this.formData, row)
-        this.drawerShow = true
-      },
-      editSpec(row) {
-        Object.assign(this.formDataSpec, row)
-        this.drawerShowSpec = true
-      },
-      editSec(row) {
-        Object.assign(this.formDataSec, row)
-        this.drawerShowSec = true
-      },
-      remove(row) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: '<p>是否删除</p>',
-          onOk: () => {
-            this.$ajax({
-              method: 'post',
-              url: 'deleteClassificationById',
-              data: row
-            }).then((res) => {
-              if (res.data.code === 1) {
-                this.$Notice.success({
-                  title: res.data.msg,
-                })
-                this.pageChange(1)
-              } else {
-                this.$Notice.error({
-                  title: res.data.msg,
-                })
-              }
-            }).catch((res) => {
-              this.$Notice.error({
-                title: res.data.msg,
-              })
-            })
-          },
-          onCancel: () => {
-            this.$Message.info('Clicked cancel');
-          }
+            title: res.data.msg
+          });
         });
-      },
-      removeSpec(row) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: '<p>是否删除</p>',
-          onOk: () => {
-            this.$ajax({
-              method: 'post',
-              url: 'deleteZoneById',
-              data: row
-            }).then((res) => {
-              if (res.data.code === 1) {
-                this.$Notice.success({
-                  title: res.data.msg,
-                })
-                this.pageChangeSpec(1)
-              } else {
-                this.$Notice.error({
-                  title: res.data.msg,
-                })
-              }
-            }).catch((res) => {
-              this.$Notice.error({
-                title: res.data.msg,
-              })
-            })
-          },
-          onCancel: () => {
-            this.$Message.info('Clicked cancel');
-          }
-        });
-      },
-      removeSec(row) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: '<p>是否删除</p>',
-          onOk: () => {
-            this.$ajax({
-              method: 'post',
-              url: 'deleteProductTypeById',
-              data: row
-            }).then((res) => {
-              if (res.data.code === 1) {
-                this.$Notice.success({
-                  title: res.data.msg,
-                })
-                this.pageChangeSec(1)
-              } else {
-                this.$Notice.error({
-                  title: res.data.msg,
-                })
-              }
-            }).catch((res) => {
-              this.$Notice.error({
-                title: res.data.msg,
-              })
-            })
-          },
-          onCancel: () => {
-            this.$Message.info('Clicked cancel');
-          }
-        })
-      },
-      pageChangeSec(page) {
-        this.$ajax({
-          method: 'post',
-          url: 'selectAllProductTypeList',
-          data: {page, limit: 10}
-        }).then((res) => {
-          if (res.data.code === 1) {
-            this.tableDataSec = res.data
-          } else {
-            this.$Notice.error({
-              title: res.data.msg,
-            })
-          }
-        }).catch((res) => {
-          this.$Notice.error({
-            title: res.data.msg,
-          })
-        })
-      },
-      pageChangeSpec(page) {
-        this.$ajax({
-          method: 'post',
-          url: 'selectZoneList',
-          data: {page, limit: 10}
-        }).then((res) => {
-          if (res.data.code === 1) {
-            this.tableDataSpec = res.data
-          } else {
-            this.$Notice.error({
-              title: res.data.msg,
-            })
-          }
-        }).catch((res) => {
-          this.$Notice.error({
-            title: res.data.msg,
-          })
-        })
-      },
-      pageChange(page) {
-        this.$ajax({
-          method: 'post',
-          url: 'listAllClassification',
-          data: {page, limit: 10}
-        }).then((res) => {
-          if (res.data.code === 1) {
-            this.tableData = res.data
-          } else {
-            this.$Notice.error({
-              title: res.data.msg,
-            })
-          }
-        }).catch((res) => {
-          this.$Notice.error({
-            title: res.data.msg,
-          })
-        })
-      }
     },
-    mounted() {
-      this.pageChange(1)
-      this.pageChangeSec(1)
-      this.pageChangeSpec(1)
+    submitSec() {
+      delete this.formDataSec._index;
+      delete this.formDataSec._rowKey;
+      this.$ajax({
+        method: "post",
+        url: this.formDataSec.id ? "updateProductType" : "saveProductType",
+        data: this.formDataSec
+      })
+        .then(res => {
+          if (res.data.code === 1) {
+            this.$Notice.success({
+              title: res.data.msg
+            });
+            this.pageChangeSec(1);
+            this.drawerShowSec = false;
+          } else {
+            this.$Notice.error({
+              title: res.data.msg
+            });
+          }
+        })
+        .catch(res => {
+          this.$Notice.error({
+            title: res.data.msg
+          });
+        });
+    },
+    submitSpec() {
+      delete this.formDataSpec._index;
+      delete this.formDataSpec._rowKey;
+      delete this.formDataSpec.create_time;
+      this.$ajax({
+        method: "post",
+        url: this.formDataSpec.id ? "updateZone" : "saveZone",
+        data: this.formDataSpec
+      })
+        .then(res => {
+          if (res.data.code === 1) {
+            this.$Notice.success({
+              title: res.data.msg
+            });
+            this.pageChangeSpec(1);
+            this.drawerShowSpec = false;
+          } else {
+            this.$Notice.error({
+              title: res.data.msg
+            });
+          }
+        })
+        .catch(res => {
+          this.$Notice.error({
+            title: res.data.msg
+          });
+        });
+    },
+    bannerSuc() {
+      this.pageChangeBanner(1);
+    },
+    handleUpload(res) {
+      this.formData.image = res.data;
+    },
+    handleUploadSec(res) {
+      this.formDataSec.ioc = res.data;
+    },
+    handleUploadSpec(res) {
+      this.formDataSpec.image = res.data;
+    },
+    edit(row) {
+      Object.assign(this.formData, row);
+      this.drawerShow = true;
+    },
+    editSpec(row) {
+      Object.assign(this.formDataSpec, row);
+      this.drawerShowSpec = true;
+    },
+    editSec(row) {
+      Object.assign(this.formDataSec, row);
+      this.drawerShowSec = true;
+    },
+    remove(row) {
+      this.$Modal.confirm({
+        title: "提示",
+        content: "<p>是否删除</p>",
+        onOk: () => {
+          this.$ajax({
+            method: "post",
+            url: "deleteClassificationById",
+            data: row
+          })
+            .then(res => {
+              if (res.data.code === 1) {
+                this.$Notice.success({
+                  title: res.data.msg
+                });
+                this.pageChange(1);
+              } else {
+                this.$Notice.error({
+                  title: res.data.msg
+                });
+              }
+            })
+            .catch(res => {
+              this.$Notice.error({
+                title: res.data.msg
+              });
+            });
+        },
+        onCancel: () => {
+          this.$Message.info("Clicked cancel");
+        }
+      });
+    },
+    removeSpec(row) {
+      this.$Modal.confirm({
+        title: "提示",
+        content: "<p>是否删除</p>",
+        onOk: () => {
+          this.$ajax({
+            method: "post",
+            url: "deleteZoneById",
+            data: row
+          })
+            .then(res => {
+              if (res.data.code === 1) {
+                this.$Notice.success({
+                  title: res.data.msg
+                });
+                this.pageChangeSpec(1);
+              } else {
+                this.$Notice.error({
+                  title: res.data.msg
+                });
+              }
+            })
+            .catch(res => {
+              this.$Notice.error({
+                title: res.data.msg
+              });
+            });
+        },
+        onCancel: () => {
+          this.$Message.info("Clicked cancel");
+        }
+      });
+    },
+    removeBanner(row) {
+      this.$Modal.confirm({
+        title: "提示",
+        content: "<p>是否删除</p>",
+        onOk: () => {
+          this.$ajax({
+            method: "post",
+            url: "t_carousel/deleatById",
+            data: row
+          })
+            .then(res => {
+              if (res.data.code === 1) {
+                this.$Notice.success({
+                  title: res.data.msg
+                });
+                this.pageChangeBanner(1);
+              } else {
+                this.$Notice.error({
+                  title: res.data.msg
+                });
+              }
+            })
+            .catch(res => {
+              this.$Notice.error({
+                title: res.data.msg
+              });
+            });
+        },
+        onCancel: () => {
+          this.$Message.info("Clicked cancel");
+        }
+      });
+    },
+    removeSec(row) {
+      this.$Modal.confirm({
+        title: "提示",
+        content: "<p>是否删除</p>",
+        onOk: () => {
+          this.$ajax({
+            method: "post",
+            url: "deleteProductTypeById",
+            data: row
+          })
+            .then(res => {
+              if (res.data.code === 1) {
+                this.$Notice.success({
+                  title: res.data.msg
+                });
+                this.pageChangeSec(1);
+              } else {
+                this.$Notice.error({
+                  title: res.data.msg
+                });
+              }
+            })
+            .catch(res => {
+              this.$Notice.error({
+                title: res.data.msg
+              });
+            });
+        },
+        onCancel: () => {
+          this.$Message.info("Clicked cancel");
+        }
+      });
+    },
+    pageChangeSec(page) {
+      this.$ajax({
+        method: "post",
+        url: "selectAllProductTypeList",
+        data: { page, limit: 10 }
+      })
+        .then(res => {
+          if (res.data.code === 1) {
+            this.tableDataSec = res.data;
+          } else {
+            this.$Notice.error({
+              title: res.data.msg
+            });
+          }
+        })
+        .catch(res => {
+          this.$Notice.error({
+            title: res.data.msg
+          });
+        });
+    },
+    pageChangeBanner(page) {
+      this.$ajax({
+        method: "post",
+        url: "t_carousel/selectAll",
+        data: { page, limit: 10 }
+      })
+        .then(res => {
+          if (res.data.code === 1) {
+            this.tableDataBanner = res.data;
+          } else {
+            this.$Notice.error({
+              title: res.data.msg
+            });
+          }
+        })
+        .catch(res => {
+          this.$Notice.error({
+            title: res.data.msg
+          });
+        });
+    },
+    pageChangeSpec(page) {
+      this.$ajax({
+        method: "post",
+        url: "selectZoneList",
+        data: { page, limit: 10 }
+      })
+        .then(res => {
+          if (res.data.code === 1) {
+            this.tableDataSpec = res.data;
+          } else {
+            this.$Notice.error({
+              title: res.data.msg
+            });
+          }
+        })
+        .catch(res => {
+          this.$Notice.error({
+            title: res.data.msg
+          });
+        });
+    },
+    pageChange(page) {
+      this.$ajax({
+        method: "post",
+        url: "listAllClassification",
+        data: { page, limit: 10 }
+      })
+        .then(res => {
+          if (res.data.code === 1) {
+            this.tableData = res.data;
+          } else {
+            this.$Notice.error({
+              title: res.data.msg
+            });
+          }
+        })
+        .catch(res => {
+          this.$Notice.error({
+            title: res.data.msg
+          });
+        });
     }
+  },
+  mounted() {
+    this.pageChange(1);
+    this.pageChangeSec(1);
+    this.pageChangeSpec(1);
+    this.pageChangeBanner(1);
   }
+};
 </script>
 
 <style scoped>
-  .top {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
+.top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
 
-  .demo-drawer-footer {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    border-top: 1px solid #e8e8e8;
-    padding: 10px 16px;
-    text-align: right;
-    background: #fff;
-  }
+.demo-drawer-footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-top: 1px solid #e8e8e8;
+  padding: 10px 16px;
+  text-align: right;
+  background: #fff;
+}
 
-  .page-box {
-    display: flex;
-    justify-content: center;
-    margin: 20px auto;
-  }
+.page-box {
+  display: flex;
+  justify-content: center;
+  margin: 20px auto;
+}
 </style>

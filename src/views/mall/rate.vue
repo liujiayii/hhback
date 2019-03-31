@@ -20,86 +20,88 @@
 </template>
 
 <script>
-  export default {
-    name: "rate",
-    data() {
-      return {
-        columns12: [
-          {
-            title: '编号',
-            slot: 'name'
-          },
-          {
-            title: '订单状态',
-            key: 'age'
-          },
-          {
-            title: '商品类型',
-            key: 'address'
-          },
-          {
-            title: '金额',
-            key: 'age'
-          },
-          {
-            title: '收货地址',
-            key: 'age'
-          },
-          {
-            title: '操作',
-            slot: 'action',
-            width: 150,
-            align: 'center'
-          }
-        ],
-        data6: [
-          {
-            name: 'John Brown',
-            age: 18,
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            name: 'Jim Green',
-            age: 24,
-            address: 'London No. 1 Lake Park'
-          },
-          {
-            name: 'Joe Black',
-            age: 30,
-            address: 'Sydney No. 1 Lake Park'
-          },
-          {
-            name: 'Jon Snow',
-            age: 26,
-            address: 'Ottawa No. 2 Lake Park'
-          }
-        ]
-      }
+export default {
+  name: "Rate",
+  data() {
+    return {
+      columns12: [
+        {
+          title: "编号",
+          slot: "name"
+        },
+        {
+          title: "订单状态",
+          key: "age"
+        },
+        {
+          title: "商品类型",
+          key: "address"
+        },
+        {
+          title: "金额",
+          key: "age"
+        },
+        {
+          title: "收货地址",
+          key: "age"
+        },
+        {
+          title: "操作",
+          slot: "action",
+          width: 150,
+          align: "center"
+        }
+      ],
+      data6: [
+        {
+          name: "John Brown",
+          age: 18,
+          address: "New York No. 1 Lake Park"
+        },
+        {
+          name: "Jim Green",
+          age: 24,
+          address: "London No. 1 Lake Park"
+        },
+        {
+          name: "Joe Black",
+          age: 30,
+          address: "Sydney No. 1 Lake Park"
+        },
+        {
+          name: "Jon Snow",
+          age: 26,
+          address: "Ottawa No. 2 Lake Park"
+        }
+      ]
+    };
+  },
+  methods: {
+    show(index) {
+      this.$Modal.info({
+        title: "User Info",
+        content: `Name：${this.data6[index].name}<br>Age：${
+          this.data6[index].age
+        }<br>Address：${this.data6[index].address}`
+      });
     },
-    methods: {
-      show(index) {
-        this.$Modal.info({
-          title: 'User Info',
-          content: `Name：${this.data6[index].name}<br>Age：${this.data6[index].age}<br>Address：${this.data6[index].address}`
-        })
-      },
-      remove(index) {
-        this.data6.splice(index, 1);
-      }
+    remove(index) {
+      this.data6.splice(index, 1);
     }
   }
+};
 </script>
 
 <style scoped>
-  .top {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
+.top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
 
-  .page-box {
-    display: flex;
-    justify-content: center;
-    margin: 20px auto;
-  }
+.page-box {
+  display: flex;
+  justify-content: center;
+  margin: 20px auto;
+}
 </style>
