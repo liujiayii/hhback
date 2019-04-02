@@ -51,4 +51,26 @@
   .fade-leave-active {
     opacity: 0;
   }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .demo-drawer-footer {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-top: 1px solid #e8e8e8;
+    padding: 10px 16px;
+    text-align: right;
+    background: #fff;
+  }
+
+  .page-box {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+  }
 </style>

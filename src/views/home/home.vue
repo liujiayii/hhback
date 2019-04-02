@@ -157,7 +157,7 @@
 <style scoped>
   .main {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     margin-bottom: 20px;
   }
 

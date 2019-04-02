@@ -8,10 +8,10 @@
         </div>
         <Form ref="formVal" :model="formVal" :rules="rulesForm">
           <FormItem prop="username">
-            <Input v-model="formVal.username" size="large" prefix="md-contact" placeholder="Enter your name"/>
+            <Input v-model="formVal.username" size="large" prefix="md-contact" placeholder="请输入账号…"/>
           </FormItem>
           <FormItem prop="password">
-            <Input v-model="formVal.password" typr="password" size="large" prefix="md-key" placeholder="Enter your password"/>
+            <Input v-model="formVal.password" type="password" size="large" prefix="md-key" placeholder="请输入密码……"/>
           </FormItem>
           <FormItem>
             <Button type="primary" size="large" shape="circle" long @click="submit('formVal')">登录</Button>
@@ -35,10 +35,10 @@
         },
         rulesForm: {
           username: [
-            {required: true, trigger: 'blur'}
+            {required: true, message: '账号不能为空', trigger: 'blur'}
           ],
           password: [
-            {required: true, trigger: 'blur'}
+            {required: true, message: '密码不能为空', trigger: 'blur'}
           ]
         }
       }
