@@ -33,9 +33,9 @@ let defaultRouter = [{
     component: Temp,
     Ico: 'md-paw',
     children: [{
-      path: 'homePage',
+      path: 'home',
       name: '主页',
-      component: () => import('@/views/website/homePage'),
+      component: () => import('@/views/website/home'),
       meta: {title: '云阙官网'}
     }, {
       path: 'about',
@@ -46,6 +46,11 @@ let defaultRouter = [{
       path: 'contact',
       name: '联系我们',
       component: () => import('@/views/website/contact'),
+      meta: {title: '云阙官网'}
+    }, {
+      path: 'friends',
+      name: '友情链接',
+      component: () => import('@/views/website/friends'),
       meta: {title: '云阙官网'}
     }]
   }, {

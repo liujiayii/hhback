@@ -2,11 +2,10 @@
   <div>
     <div class="top">
       <Input search placeholder="Enter something..." style="width: 300px"/>
-      <Button type="primary" shape="circle" icon="md-add" @click="drawerShow=true">添加</Button>
+      <Button type="primary" shape="circle" icon="md-add" @click="drawerShow = true">添加</Button>
     </div>
     <Table border :columns="columns" :data="tableData.data">
       <template slot-scope="{row}" slot="action">
-        <Button type="primary" size="small" style="margin-right: 5px" @click="show(row)">修改</Button>
         <Button type="error" size="small" @click="remove(row)">删除</Button>
       </template>
     </Table>
@@ -22,11 +21,19 @@
             :styles="styles"
     >
       <Form :model="formData" ref="formData" :rules="ruleValidate">
-        <FormItem label="标题" prop="title">
-          <Input v-model="formData.title" size="large"/>
+        <FormItem label="标题" prop="address">
+          <Input v-model="formData.dynamic_title" size="large"/>
         </FormItem>
-        <FormItem label="内容" prop="content">
-          <Input v-model="formData.content" type="textarea" size="large"/>
+        <FormItem label="图片">
+          <Upload action="" :before-upload="handleUpload" :format="['jpg','jpeg','png']"
+                  :on-format-error="handleFormatError"
+          >
+            <Button icon="ios-cloud-upload-outline">上传图片</Button>
+          </Upload>
+          <p v-if="file!=null">{{file.name}}</p>
+        </FormItem>
+        <FormItem label="内容" prop="enterprise_email">
+          <Input v-model="formData.dynamic_content" size="large" type="textarea"/>
         </FormItem>
       </Form>
       <div class="demo-drawer-footer">
@@ -40,7 +47,7 @@
   import {ruleValidate} from "../../plugins/utils";
 
   export default {
-    name: "Stock",
+    name: "home",
     data() {
       return {
         drawerShow: false,
@@ -54,16 +61,28 @@
         ruleValidate,
         columns: [
           {
-            title: "编号",
-            key: "id"
-          },
-          {
             title: "标题",
-            key: "title"
+            key: "dynamic_title"
+          }, {
+            title: "图片",
+            key: "dynamic_image",
+            render: (h, params) => {
+              return h("div", [
+                h("img", {
+                  attrs: {
+                    src: params.row.dynamic_image
+                  },
+                  style: {
+                    width: "50px",
+                    height: "50px"
+                  }
+                })
+              ])
+            }
           },
           {
             title: "内容",
-            key: "content"
+            key: "dynamic_content"
           },
           {
             title: "操作",
@@ -76,22 +95,35 @@
           data: [],
           count: 0
         },
-        currPage: 1
+        currPage: 1,
+        file: null
       };
     },
     methods: {
+      handleUpload(file) {
+        this.file = file
+        return false;
+      },
+      handleFormatError() {
+        this.$Notice.error({
+          title: '文件格式错误'
+        });
+      },
       closeDrawer() {
         this.formData = {};
+        this.file = null
       },
       submit(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            delete this.formData._index;
-            delete this.formData._rowKey;
-            this.$ajax({
+            let newForm = new FormData()
+            newForm.append('pic', this.file)
+            newForm.append('dynamic_title', this.formData.dynamic_title)
+            newForm.append('dynamic_content', this.formData.dynamic_content)
+            this.$ajaxImg({
               method: "post",
-              url: this.formData.id ? 'updateOurAdvantages' : "saveOurAdvantages",
-              data: this.formData
+              url: 't_dynamic/insertDynamic',
+              data: newForm
             })
               .then(res => {
                 if (res.data.code === 1) {
@@ -116,10 +148,6 @@
           }
         })
       },
-      show(row) {
-        this.formData = row;
-        this.drawerShow = true;
-      },
       remove(row) {
         this.$Modal.confirm({
           title: "提示",
@@ -127,7 +155,7 @@
           onOk: () => {
             this.$ajax({
               method: "post",
-              url: "deleteOurAdvantagesById",
+              url: "t_dynamic/deleteFirst",
               data: {id: row.id}
             })
               .then(res => {
@@ -152,13 +180,12 @@
             this.$Message.info("Clicked cancel");
           }
         });
-        this.data6.splice(row, 1);
       },
       pageChange(page) {
         this.currPage = page
         this.$ajax({
           method: "post",
-          url: "selectAllOurAdvantagesPage",
+          url: "t_dynamic/SelectAllDy",
           data: {page, limit: 10}
         })
           .then(res => {

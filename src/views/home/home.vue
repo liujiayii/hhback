@@ -12,7 +12,10 @@
             </div>
           </div>
           <div class="shape">
-            <img src="../../assets/images/glass.png" alt="">
+            <img
+              src="../../assets/images/glass.png"
+              alt=""
+            >
           </div>
         </div>
       </Card>
@@ -27,7 +30,10 @@
             </div>
           </div>
           <div class="shape">
-            <img src="../../assets/images/glass.png" alt="">
+            <img
+              src="../../assets/images/glass.png"
+              alt=""
+            >
           </div>
         </div>
       </Card>
@@ -42,17 +48,26 @@
             </div>
           </div>
           <div class="shape">
-            <img src="../../assets/images/glass.png" alt="">
+            <img
+              src="../../assets/images/glass.png"
+              alt=""
+            >
           </div>
         </div>
       </Card>
     </div>
     <div class="main">
       <Card style="width: 540px;height: 350px;margin-right: 20px">
-        <chart :options="option" style="width: 540px;height: 350px"/>
+        <chart
+          :options="option"
+          style="width: 540px;height: 350px"
+        />
       </Card>
       <Card style="width: 100%;height: 350px">
-        <chart :options="option2" style="width: 100%;height: 350px"/>
+        <chart
+          :options="option2"
+          style="width: 100%;height: 350px"
+        />
       </Card>
     </div>
     <homeTable />
@@ -60,7 +75,7 @@
 </template>
 
 <script>
-  import homeTable from '../../components/homeTable'
+  import homeTable from './components/homeTable'
 
   export default {
     name: "Home",

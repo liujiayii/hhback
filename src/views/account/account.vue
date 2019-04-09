@@ -2,157 +2,121 @@
   <div>
     <div class="top">
       <Input
-        search
-        placeholder="Enter something..."
-        style="width: 300px"
+              search
+              placeholder="Enter something..."
+              style="width: 300px"
       />
       <Button
-        type="primary"
-        shape="circle"
-        icon="md-add"
-        @click="drawerShow=true"
+              type="primary"
+              shape="circle"
+              icon="md-add"
+              @click="drawerShow=true"
       >
         添加
       </Button>
     </div>
     <Table
-      border
-      :columns="columns12"
-      :data="data6"
+            border
+            :columns="columns"
+            :data="tableData.data"
     >
       <template
-        slot-scope="{ row }"
-        slot="name"
-      >
-        <strong>{{ row.name }}</strong>
-      </template>
-      <template
-        slot-scope="{ row, index }"
-        slot="action"
+              slot-scope="{ row, index }"
+              slot="action"
       >
         <Button
-          type="primary"
-          size="small"
-          style="margin-right: 5px"
-          @click="show(index)"
+                type="primary"
+                size="small"
+                style="margin-right: 5px"
+                @click="show(row)"
         >
           查看
         </Button>
-        <Button
-          type="error"
-          size="small"
-          @click="remove(index)"
-        >
+        <Button type="error" size="small" @click="remove(index)">
           删除
         </Button>
       </template>
     </Table>
     <div class="page-box">
       <Page
-        :total="40"
-        size="small"
-        show-elevator
-        show-total
+              :total="tableData.count"
+              @on-change="pageChange"
+              size="small"
+              show-elevator
+              show-total
       />
     </div>
     <Drawer
-      title="账号管理"
-      v-model="drawerShow"
-      width="720"
-      :mask-closable="false"
-      :styles="styles"
+            title="账号管理"
+            v-model="drawerShow"
+            width="720"
+            :mask-closable="false"
+            :styles="styles"
+            @on-close="clearDrawer"
     >
-      <Form :model="formData">
-        <FormItem
-          label="姓名"
-          label-position="top"
-        >
-          <Input
-            v-model="formData.name"
-            placeholder="please enter user name"
-          />
-        </FormItem>
-        <FormItem
-          label="身份"
-          label-position="top"
-        >
-          <Select
-            v-model="formData.owner"
-            placeholder="please select an owner"
-          >
-            <Option value="jobs">
-              管理员
-            </Option>
-            <Option value="ive">
-              普通员工
-            </Option>
-          </Select>
-        </FormItem>
-        <FormItem
-          label="编号"
-          label-position="top"
-        >
-          <Input
-            v-model="formData.name"
-            placeholder="please enter user name"
-          />
-        </FormItem>
-        <FormItem
-          label="所属部门"
-          label-position="top"
-        >
-          <Select
-            v-model="formData.type"
-            placeholder="please choose the type"
-          >
-            <Option value="private">
-              财务部
-            </Option>
-            <Option value="public">
-              行政部
-            </Option>
-          </Select>
-        </FormItem>
+      <Form :model="formData" ref="formData" :rules="ruleValidate">
+        <Row :gutter="32">
+          <Col span="12">
+            <FormItem label="姓名" label-position="top" prop="name">
+              <Input v-model="formData.name"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="身份" label-position="top" prop="post">
+              <Input v-model="formData.post"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="手机号" label-position="top" prop="phone">
+              <Input v-model="formData.phone" type="number"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="用户名" label-position="top" prop="username">
+              <Input v-model="formData.username"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="密码" label-position="top" prop="password">
+              <Input v-model="formData.password" type="password"/>
+            </FormItem>
+          </Col>
+        </Row>
       </Form>
       <div class="demo-drawer-footer">
-        <Button
-          style="margin-right: 8px"
-          @click="drawerShow = false"
-        >
-          取消
-        </Button>
-        <Button
-          type="primary"
-          @click="drawerShow = false"
-        >
-          提交
-        </Button>
+        <Button type="primary" @click="submit('formData')">提交</Button>
       </div>
     </Drawer>
   </div>
 </template>
 
 <script>
+  import {ruleValidate} from '../../plugins/utils'
+
   export default {
     name: "Account",
     data() {
       return {
-        columns12: [
+        columns: [
+          {
+            title: '编号',
+            key: 'id'
+          },
           {
             title: '姓名',
-            slot: 'name'
+            key: 'name'
+          },
+          {
+            title: '用户名',
+            key: 'username'
+          },
+          {
+            title: '手机号',
+            key: 'phone'
           },
           {
             title: '身份',
-            key: 'age'
-          },
-          {
-            title: '编号',
-            key: 'address'
-          },
-          {
-            title: '所属部门',
-            key: 'age'
+            key: 'post'
           },
           {
             title: '操作',
@@ -161,28 +125,10 @@
             align: 'center'
           }
         ],
-        data6: [
-          {
-            name: 'John Brown',
-            age: 18,
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            name: 'Jim Green',
-            age: 24,
-            address: 'London No. 1 Lake Park'
-          },
-          {
-            name: 'Joe Black',
-            age: 30,
-            address: 'Sydney No. 1 Lake Park'
-          },
-          {
-            name: 'Jon Snow',
-            age: 26,
-            address: 'Ottawa No. 2 Lake Park'
-          }
-        ],
+        tableData: {
+          data: [],
+          count: 0
+        },
         drawerShow: false,
         styles: {
           height: 'calc(100% - 55px)',
@@ -190,47 +136,87 @@
           paddingBottom: '53px',
           position: 'static'
         },
-        formData: {
-          name: '',
-          type: '',
-        },
+        formData: {},
+        ruleValidate,
+        currPage: 1
       }
     },
     methods: {
-      show(index) {
-        this.$Modal.info({
-          title: 'User Info',
-          content: `Name：${this.data6[index].name}<br>Age：${this.data6[index].age}<br>Address：${this.data6[index].address}`
+      clearDrawer() {
+        this.formData = {}
+      },
+      show(row) {
+        this.formData = row
+        this.drawerShow = true
+      },
+      submit(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            delete this.formData._index
+            delete this.formData._rowKey
+            //delete this.formData.password
+            delete this.formData.create_time
+            this.$ajax({
+              method: "post",
+              url: this.formData.id ? "updateAdmin" : "addAdmin",
+              data: this.formData
+            })
+              .then(res => {
+                if (res.data.code === 1) {
+                  this.$Notice.success({
+                    title: res.data.msg
+                  });
+                  this.pageChange(this.currPage);
+                  this.drawerShow = false;
+                } else {
+                  this.$Notice.error({
+                    title: res.data.msg
+                  });
+                }
+              })
+              .catch(res => {
+                this.$Notice.error({
+                  title: res.data.msg
+                });
+              });
+          } else {
+            this.$Message.error('Fail!');
+          }
         })
+
+      },
+      pageChange(page) {
+        this.currPage = page
+        this.$ajax({
+          method: "post",
+          url: "/findAdminList",
+          data: {page, limit: 10}
+        })
+          .then(res => {
+            if (res.data.code === 1) {
+              this.tableData = res.data;
+            } else {
+              this.$Notice.error({
+                title: res.data.msg
+              });
+            }
+          })
+          .catch(res => {
+            this.$Notice.error({
+              title: res.data.msg
+            });
+          });
       },
       remove(index) {
         this.data6.splice(index, 1);
       }
+    },
+    mounted() {
+      this.pageChange(1)
     }
   }
 </script>
 
 <style scoped>
-  .demo-drawer-footer {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    border-top: 1px solid #e8e8e8;
-    padding: 10px 16px;
-    text-align: right;
-    background: #fff;
-  }
 
-  .top {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-
-  .page-box {
-    display: flex;
-    justify-content: center;
-    margin: 20px auto;
-  }
 </style>

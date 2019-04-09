@@ -2,7 +2,7 @@
   <div class="layout">
     <Layout>
       <Header>
-        <Menu mode="horizontal" theme="dark" active-name="1" class="top-nav" @on-select="menuSelect">
+        <Menu mode="horizontal" active-name="1" class="top-nav" @on-select="menuSelect">
           <div class="layout-logo">
             <img src="../../assets/images/logo.png" height="47" width="150">
           </div>
@@ -17,24 +17,35 @@
         </Menu>
       </Header>
       <Layout>
-        <Sider hide-trigger :style="{background: '#fff'}">
+        <Sider hide-trigger>
           <Menu :active-name="$route.name" theme="light" width="auto" :open-names="[$route.meta.title]" accordion>
             <template v-for="(item,index) in menu">
               <template v-if="item.name!==''">
-                <Submenu :name="item.name" :key="index+99">
+                <Submenu
+                        :name="item.name"
+                        :key="index+99"
+                >
                   <template slot="title">
                     <Icon :type="item.Ico"/>
                     {{ item.name }}
                   </template>
-                  <MenuItem v-for="(item_c,index_c) in item.children" :name="item_c.name"
-                            :to="item.path+'/'+item_c.path" :key="index_c">
+                  <MenuItem
+                          v-for="(item_c,index_c) in item.children"
+                          :name="item_c.name"
+                          :to="item.path+'/'+item_c.path"
+                          :key="index_c"
+                  >
                     {{ item_c.name }}
                   </MenuItem>
                 </Submenu>
               </template>
               <template v-else>
-                <MenuItem v-for="(item_c,index_c) in item.children" :name="item_c.name" :to="item_c.path"
-                          :key="index_c+index">
+                <MenuItem
+                        v-for="(item_c,index_c) in item.children"
+                        :name="item_c.name"
+                        :to="item_c.path"
+                        :key="index_c+index"
+                >
                   <Icon :type="item_c.Ico"/>
                   {{ item_c.name }}
                 </MenuItem>
@@ -44,14 +55,19 @@
         </Sider>
         <Layout :style="{padding: '0 24px 24px'}">
           <Breadcrumb :style="{margin: '24px 0'}">
-            <BreadcrumbItem to="/home">首页</BreadcrumbItem>
+            <BreadcrumbItem to="/home">
+              首页
+            </BreadcrumbItem>
             <template v-if="!$route.meta.bread">
               <BreadcrumbItem>{{ $route.meta.title }}</BreadcrumbItem>
               <BreadcrumbItem>{{ $route.name }}</BreadcrumbItem>
             </template>
           </Breadcrumb>
           <Content :style="{padding: '24px', minHeight: '280px', background: '#f5f7f9'}">
-            <transition name="main" mode="out-in">
+            <transition
+                    name="main"
+                    mode="out-in"
+            >
               <router-view/>
             </transition>
           </Content>
@@ -64,7 +80,7 @@
 <script>
 
   export default {
-    name: 'temp',
+    name: 'Temp',
     data() {
       return {
         menu: []
@@ -89,13 +105,27 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  .ivu-layout-header, .ivu-menu-light {
+    background: #007bbb;
+  }
+
+  .ivu-layout-sider {
+    background: #007bbb url("../../assets/images/menuBg.png") no-repeat bottom;
+  }
+
+  .ivu-menu-horizontal.ivu-menu-light:after {
+    background: none;
+  }
+
+  .ivu-layout-sider a {
+    color: #fff;
+  }
+
   .layout {
-    border: 1px solid #d7dde4;
     background: #f5f7f9;
     position: relative;
     border-radius: 4px;
     overflow: hidden;
-    padding-bottom: 20px;
   }
 
   .top-nav {

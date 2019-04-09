@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import ajax from 'axios'
 /*注册Axios*/
+
 const instance = ajax.create({
   baseURL: '/',
   transformRequest: [/*将JSON字符串转换成FormData*/
@@ -13,4 +14,9 @@ const instance = ajax.create({
     }
   ]
 })
+/*上传图片不能向上面那样写，目前还没找到比较好的解决方式*/
+const instances = ajax.create({
+  baseURL: 'http://192.168.1.184:8080/'
+})
+Vue.prototype.$ajaxImg = instances
 Vue.prototype.$ajax = instance

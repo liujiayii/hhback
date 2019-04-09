@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <transition name="fade" mode="out-in">
+    <transition
+            name="fade"
+            mode="out-in"
+    >
       <router-view/>
     </transition>
   </div>
@@ -28,6 +31,12 @@
     height: 100%;
   }
 
+
+
+  .ivu-menu-submenu-title {
+    color: #fff !important;
+  }
+
   .main-enter, .main-leave-to {
     opacity: 0;
     transform: translateY(30px);
@@ -51,12 +60,14 @@
   .fade-leave-active {
     opacity: 0;
   }
+
   .top {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
   }
 
+  /*抽屉底部*/
   .demo-drawer-footer {
     width: 100%;
     position: absolute;
@@ -68,9 +79,20 @@
     background: #fff;
   }
 
+  /*分页盒子*/
   .page-box {
     display: flex;
     justify-content: center;
     margin: 20px auto;
+  }
+
+  /*数字输入框按钮*/
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield
   }
 </style>

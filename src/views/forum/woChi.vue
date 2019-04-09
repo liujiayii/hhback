@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import forumTable from '../../components/forumTable'
+  import forumTable from './components/forumTable'
 
   export default {
     name: "WoChi",

@@ -23,10 +23,10 @@
     >
       <Form :model="formData" ref="formData" :rules="ruleValidate">
         <FormItem label="标题" prop="title">
-          <Input v-model="formData.title" size="large"/>
+          <Input v-model="formData.name" size="large"/>
         </FormItem>
-        <FormItem label="内容" prop="content">
-          <Input v-model="formData.content" type="textarea" size="large"/>
+        <FormItem label="地址" prop="content">
+          <Input v-model="formData.address" size="large"/>
         </FormItem>
       </Form>
       <div class="demo-drawer-footer">
@@ -40,7 +40,7 @@
   import {ruleValidate} from "../../plugins/utils";
 
   export default {
-    name: "Stock",
+    name: "friends",
     data() {
       return {
         drawerShow: false,
@@ -58,12 +58,12 @@
             key: "id"
           },
           {
-            title: "标题",
-            key: "title"
+            title: "名称",
+            key: "name"
           },
           {
-            title: "内容",
-            key: "content"
+            title: "地址",
+            key: "address"
           },
           {
             title: "操作",
@@ -88,9 +88,10 @@
           if (valid) {
             delete this.formData._index;
             delete this.formData._rowKey;
+            delete this.formData.create_time
             this.$ajax({
               method: "post",
-              url: this.formData.id ? 'updateOurAdvantages' : "saveOurAdvantages",
+              url: this.formData.id ? 'updateCoopera' : "insertSome",
               data: this.formData
             })
               .then(res => {
@@ -127,7 +128,7 @@
           onOk: () => {
             this.$ajax({
               method: "post",
-              url: "deleteOurAdvantagesById",
+              url: "delOne",
               data: {id: row.id}
             })
               .then(res => {
@@ -152,13 +153,12 @@
             this.$Message.info("Clicked cancel");
           }
         });
-        this.data6.splice(row, 1);
       },
       pageChange(page) {
         this.currPage = page
         this.$ajax({
           method: "post",
-          url: "selectAllOurAdvantagesPage",
+          url: "selectAllcooperation",
           data: {page, limit: 10}
         })
           .then(res => {

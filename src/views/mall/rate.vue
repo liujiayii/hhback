@@ -1,45 +1,99 @@
 <template>
   <div>
     <div class="top">
-      <Input search placeholder="Enter something..." style="width: 300px"/>
-      <Button type="primary" shape="circle" icon="md-add" disabled>添加</Button>
+      <Input
+        search
+        placeholder="Enter something..."
+        style="width: 300px"
+      />
+      <Button
+        type="primary"
+        shape="circle"
+        icon="md-add"
+        disabled
+      >
+        添加
+      </Button>
     </div>
-    <Table border :columns="columns" :data="tableData.data">
-      <template slot-scope="{row}" slot="action">
-        <Button type="primary" size="small" style="margin-right: 5px" @click="show(row)">回复</Button>
-        <Button type="error" size="small" @click="remove(row)" disabled>删除</Button>
+    <Table
+      border
+      :columns="columns"
+      :data="tableData.data"
+    >
+      <template
+        slot-scope="{row}"
+        slot="action"
+      >
+        <Button
+          type="primary"
+          size="small"
+          style="margin-right: 5px"
+          @click="show(row)"
+        >
+          回复
+        </Button>
+        <Button
+          type="error"
+          size="small"
+          @click="remove(row)"
+          disabled
+        >
+          删除
+        </Button>
       </template>
     </Table>
     <div class="page-box">
-      <Page :total="tableData.count" :current="1" @on-change="pageChange" size="small" show-elevator show-total/>
+      <Page
+        :total="tableData.count"
+        :current="1"
+        @on-change="pageChange"
+        size="small"
+        show-elevator
+        show-total
+      />
     </div>
     <Drawer
-            title="编辑"
-            v-model="drawerShow"
-            @on-close="closeDrawer"
-            width="720"
-            :mask-closable="false"
-            :styles="styles"
+      title="编辑"
+      v-model="drawerShow"
+      @on-close="closeDrawer"
+      width="720"
+      :mask-closable="false"
+      :styles="styles"
     >
-      <Form :model="formData">
+      <Form
+        :model="formData"
+        ref="formData"
+        :rules="ruleValidate"
+      >
         <Row :gutter="32">
-          <Col span="12">
-            <FormItem label="商家回复">
-              <Input type="textarea" v-model="formData.reply" size="large"/>
-            </FormItem>
+          <Col span="12" >
+          <FormItem
+            label="商家回复"
+            prop="reply"
+          >
+            <Input
+              type="textarea"
+              v-model="formData.reply"
+              size="large"
+            />
+          </FormItem>
           </Col>
         </Row>
       </Form>
       <div class="demo-drawer-footer">
-        <Button style="margin-right: 8px" @click="drawerShow = false">取消</Button>
-        <Button type="primary" @click="submit">保存</Button>
+        <Button
+          type="primary"
+          @click="submit('formData')"
+        >
+          保存
+        </Button>
       </div>
     </Drawer>
   </div>
 </template>
 
 <script>
-  import {formatDate} from "../../plugins/utils";
+  import {formatDate, ruleValidate} from "../../plugins/utils";
 
   export default {
     name: "Stock",
@@ -53,6 +107,7 @@
           position: "static"
         },
         formData: {},
+        ruleValidate,
         columns: [
           {
             title: "评论ID",
@@ -98,29 +153,36 @@
       closeDrawer() {
         this.formData = {};
       },
-      submit() {
-        this.$ajax({
-          method: "post",
-          url: "t_review/updateOnethin",
-          data: this.formData
-        }).then(res => {
-          if (res.data.code === 1) {
-            this.$Notice.success({
-              title: res.data.msg
-            });
-            this.drawerShow = false;
-            this.pageChange(1);
+      submit(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.$ajax({
+              method: "post",
+              url: "t_review/updateOnethin",
+              data: this.formData
+            }).then(res => {
+              if (res.data.code === 1) {
+                this.$Notice.success({
+                  title: res.data.msg
+                });
+                this.drawerShow = false;
+                this.pageChange(1);
+              } else {
+                this.$Notice.error({
+                  title: res.data.msg
+                });
+              }
+            })
+              .catch(res => {
+                this.$Notice.error({
+                  title: res.data.msg
+                });
+              });
           } else {
-            this.$Notice.error({
-              title: res.data.msg
-            });
+            this.$Message.error('Fail!');
           }
         })
-          .catch(res => {
-            this.$Notice.error({
-              title: res.data.msg
-            });
-          });
+
       },
       show(row) {
         this.formData.id = row.id

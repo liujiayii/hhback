@@ -1,20 +1,51 @@
 <template>
   <div class="bg">
     <div class="cont">
-      <div class="aside"><img src="../../assets/images/loginAside.png" alt=""></div>
+      <div class="aside">
+        <img
+          src="../../assets/images/loginAside.png"
+          alt=""
+        >
+      </div>
       <div class="main">
         <div class="logo">
-          <img src="../../assets/images/loginLogo.png" alt="">
+          <img
+            src="../../assets/images/loginLogo.png"
+            alt=""
+          >
         </div>
-        <Form ref="formVal" :model="formVal" :rules="rulesForm">
+        <Form
+          ref="formVal"
+          :model="formVal"
+          :rules="rulesForm"
+        >
           <FormItem prop="username">
-            <Input v-model="formVal.username" size="large" prefix="md-contact" placeholder="请输入账号…"/>
+            <Input
+              v-model="formVal.username"
+              size="large"
+              prefix="md-contact"
+              placeholder="请输入账号…"
+            />
           </FormItem>
           <FormItem prop="password">
-            <Input v-model="formVal.password" type="password" size="large" prefix="md-key" placeholder="请输入密码……"/>
+            <Input
+              v-model="formVal.password"
+              type="password"
+              size="large"
+              prefix="md-key"
+              placeholder="请输入密码……"
+            />
           </FormItem>
           <FormItem>
-            <Button type="primary" size="large" shape="circle" long @click="submit('formVal')">登录</Button>
+            <Button
+              type="primary"
+              size="large"
+              shape="circle"
+              long
+              @click="submit('formVal')"
+            >
+              登录
+            </Button>
           </FormItem>
         </Form>
       </div>
