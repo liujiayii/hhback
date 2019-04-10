@@ -1,204 +1,110 @@
 <template>
   <div>
     <div class="top">
-      <Input
-        search
-        placeholder="Enter something..."
-        style="width: 300px"
-      />
-      <Button
-        type="primary"
-        shape="circle"
-        icon="md-add"
-        @click="drawerShow=true"
-      >
+      <Input search placeholder="Enter something..." style="width: 300px"/>
+      <Button type="primary" shape="circle" icon="md-add" @click="drawerShow=true">
         添加
       </Button>
     </div>
-    <Table
-      border
-      :columns="columns"
-      :data="tableData.data"
-    >
-      <template
-        slot-scope="{ row }"
-        slot="action"
-      >
+    <Table border :columns="columns" :data="tableData.data">
+      <template slot-scope="{ row }" slot="action">
         <iSwitch
-          @on-change="stateUpdate(row)"
-          :value="row.state"
-          size="large"
-          style="margin-right: 5px"
-          :true-value="1"
-          :false-value="2"
+                @on-change="stateUpdate(row)"
+                :value="row.state"
+                size="large"
+                style="margin-right: 5px"
+                :true-value="1"
+                :false-value="2"
         >
           <span slot="open">上架</span>
           <span slot="close">下架</span>
         </iSwitch>
-        <Button
-          type="primary"
-          size="small"
-          style="margin-right: 5px"
-          @click="show(row)"
-        >
+        <Button type="primary" size="small" style="margin-right: 5px" @click="show(row)">
           查看
         </Button>
       </template>
     </Table>
     <div class="page-box">
-      <Page
-        :total="tableData.count"
-        @on-change="pageChange"
-        size="small"
-        show-elevator
-        show-total
-      />
+      <Page :total="tableData.count" @on-change="pageChange" size="small" show-elevator show-total/>
     </div>
     <Drawer
-      title="编辑"
-      v-model="drawerShow"
-      @on-close="clearDrawer"
-      width="720"
-      :mask-closable="false"
-      :styles="styles"
+            title="编辑"
+            v-model="drawerShow"
+            @on-close="clearDrawer"
+            width="720"
+            :mask-closable="false"
+            :styles="styles"
     >
-      <Form
-        :model="formData"
-        ref="formData"
-        :rules="ruleValidate"
-      >
+      <Form :model="formData" ref="formData" :rules="ruleValidate">
         <Row :gutter="32">
-          <Col span="12" >
-          <FormItem label="商品专区">
-            <Select
-              v-model="formData.zoneid"
-              size="large"
-            >
-              <Option
-                v-for="(item,index) in zoneList"
-                :value="item.id"
-                :key="index"
-              >
-                {{ item.name }}
-              </Option>
-            </Select>
-          </FormItem>
+          <Col span="12">
+            <FormItem label="商品专区">
+              <Select v-model="formData.zoneid" size="large">
+                <Option v-for="(item,index) in zoneList" :value="item.id" :key="index">
+                  {{ item.name }}
+                </Option>
+              </Select>
+            </FormItem>
           </Col>
-          <Col span="12" >
-          <FormItem label="满减优惠">
-            <Select
-              v-model="formData.id"
-              size="large"
-            >
-              <Option
-                v-for="(item,index) in discountList"
-                :value="item.id"
-                :key="index"
-              >
-                满{{ item.price }}减{{ item.money }}
-              </Option>
-            </Select>
-          </FormItem>
+          <Col span="12">
+            <FormItem label="满减优惠">
+              <Select v-model="formData.id" size="large">
+                <Option v-for="(item,index) in discountList" :value="item.id" :key="index">
+                  满{{ item.price }}减{{ item.money }}
+                </Option>
+              </Select>
+            </FormItem>
           </Col>
-          <Col span="12" >
-          <FormItem label="商品二级分类">
-            <Select
-              v-model="formData.producttypeid"
-              size="large"
-            >
-              <Option
-                v-for="(item,index) in sortList"
-                :value="item.id"
-                :key="index"
-              >
-                {{ item.name }}
-              </Option>
-            </Select>
-          </FormItem>
+          <Col span="12">
+            <FormItem label="商品二级分类">
+              <Select v-model="formData.producttypeid" size="large">
+                <Option v-for="(item,index) in sortList" :value="item.id" :key="index">
+                  {{ item.name }}
+                </Option>
+              </Select>
+            </FormItem>
           </Col>
-          <Col span="12" >
-          <FormItem
-            label="品牌"
-            prop="brand"
-          >
-            <Input
-              v-model="formData.brand"
-              size="large"
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem label="品牌" prop="brand">
+              <Input v-model="formData.brand" size="large"/>
+            </FormItem>
           </Col>
-          <Col span="12" >
-          <FormItem
-            label="商品名称"
-            prop="productName"
-          >
-            <Input
-              v-model="formData.productName"
-              size="large"
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem label="商品名称" prop="productName">
+              <Input v-model="formData.productName" size="large"/>
+            </FormItem>
           </Col>
-          <Col span="12" >
-          <FormItem
-            label="商品价格"
-            prop="price"
-          >
-            <Input
-              v-model="formData.price"
-              size="large"
-              type="number"
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem label="商品价格" prop="price">
+              <Input v-model="formData.price" size="large" type="number"/>
+            </FormItem>
           </Col>
-          <Col span="12" >
-          <FormItem label="规格">
-            <Input
-              v-model="formData.specifications"
-              size="large"
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem label="规格">
+              <Input v-model="formData.specifications" size="large"/>
+            </FormItem>
           </Col>
-          <Col span="12" >
-          <FormItem label="颜色">
-            <Input
-              v-model="formData.color"
-              size="large"
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem label="颜色">
+              <Input v-model="formData.color" size="large"/>
+            </FormItem>
           </Col>
-          <Col
-            span="12"
-            v-if="!formData.productId"
-          >
-          <FormItem
-            label="库存"
-            prop="number"
-          >
-            <Input
-              v-model="formData.number"
-              size="large"
-              type="number"
-            />
-          </FormItem>
+          <Col span="12" v-if="!formData.productId">
+            <FormItem label="库存" prop="number">
+              <Input v-model="formData.number" size="large" type="number"/>
+            </FormItem>
           </Col>
-          <Col span="12" >
-          <FormItem
-            label="商品描述"
-            prop="describion"
-          >
-            <Input
-              type="textarea"
-              v-model="formData.describion"
-              size="large"
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem label="商品描述" prop="describion">
+              <Input type="textarea" v-model="formData.describion" size="large"/>
+            </FormItem>
           </Col>
         </Row>
         <Upload
-          action="/upload"
-          :on-success="handleUpload"
-          :format="['jpg','jpeg','png']"
-          :on-format-error="formatError"
+                action="/upload"
+                :on-success="handleUpload"
+                :format="['jpg','jpeg','png']"
+                :on-format-error="formatError"
         >
           <Button icon="ios-cloud-upload-outline">
             上传商品小图
@@ -206,18 +112,15 @@
         </Upload>
         <div class="img-cont">
           <div class="img-box">
-            <img
-              :src="formData.image"
-              alt
-            >
+            <img :src="formData.image" alt>
           </div>
         </div>
         <Upload
-          action="/addImg"
-          multiple
-          :on-success="handleUploadSec"
-          :format="['jpg','jpeg','png']"
-          :on-format-error="formatError"
+                action="/addImg"
+                multiple
+                :on-success="handleUploadSec"
+                :format="['jpg','jpeg','png']"
+                :on-format-error="formatError"
         >
           <Button icon="ios-cloud-upload-outline">
             上传商品详情图
@@ -225,28 +128,20 @@
         </Upload>
         <div class="img-cont">
           <div
-            v-for="(item,index) in fileList"
-            :key="index"
-            class="img-box"
-            @click="delImg(index)"
+                  v-for="(item,index) in fileList"
+                  :key="index"
+                  class="img-box"
+                  @click="delImg(index)"
           >
             <div class="ico">
-              <Icon type="md-trash" />
+              <Icon type="md-trash"/>
             </div>
-            <img
-              :src="item"
-              alt
-            >
+            <img :src="item" alt>
           </div>
         </div>
       </Form>
       <div class="demo-drawer-footer">
-        <Button
-          type="primary"
-          @click="submit('formData')"
-        >
-          保存
-        </Button>
+        <Button type="primary" @click="submit('formData')">保存</Button>
       </div>
     </Drawer>
   </div>
@@ -254,6 +149,7 @@
 
 <script>
   import {ruleValidate} from '../../plugins/utils'
+
   export default {
     name: "Ware",
     data() {
@@ -344,10 +240,6 @@
       clearDrawer() {
         this.formData = {zoneid: -1}
         this.fileList = [];
-      },
-      handleBeforeUpload(file, fileList) {
-        this.fileList = fileList;
-        return false;
       },
       handleUpload(res) {
         this.formData.image = res.data;
@@ -480,6 +372,7 @@
                   this.drawerShow = false;
                   this.pageChange(this.currPage)
                   this.fileList = [];
+                  this.clearDrawer()
                 } else {
                   this.$Notice.error({
                     title: res.data.msg

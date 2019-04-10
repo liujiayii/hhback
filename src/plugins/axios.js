@@ -14,9 +14,11 @@ const instance = ajax.create({
     }
   ]
 })
+
 /*上传图片不能向上面那样写，目前还没找到比较好的解决方式*/
 const instances = ajax.create({
-  baseURL: 'http://192.168.1.184:8080/'
+  baseURL: '/'
 })
+
 Vue.prototype.$ajaxImg = instances
 Vue.prototype.$ajax = instance

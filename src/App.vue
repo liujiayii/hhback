@@ -31,24 +31,22 @@
     height: 100%;
   }
 
-
-
   .ivu-menu-submenu-title {
     color: #fff !important;
   }
 
   .main-enter, .main-leave-to {
+    transform: translateX(-30px);
     opacity: 0;
-    transform: translateY(30px);
   }
 
   .main-enter-active {
-    transition: all 0.2s;
+    transition: all 0.3s;
   }
 
   .main-leave-active {
     position: absolute;
-    transition: all 0.3s;
+    transition: all 0.1s;
   }
 
   .fade-enter-active,
