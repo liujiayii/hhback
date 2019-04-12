@@ -239,6 +239,7 @@
                 :on-success="handleUploadSpec"
                 :format="['jpg','jpeg','png']"
                 :on-format-error="formatError"
+                :show-upload-list="false"
         >
           <Button icon="ios-cloud-upload-outline">
             上传图标
@@ -285,6 +286,7 @@
                 :on-success="handleUpload"
                 :format="['jpg','jpeg','png']"
                 :on-format-error="formatError"
+                :show-upload-list="false"
         >
           <Button icon="ios-cloud-upload-outline">
             上传图标
@@ -350,6 +352,7 @@
                 :on-success="handleUploadSec"
                 :format="['jpg','jpeg','png']"
                 :on-format-error="formatError"
+                :show-upload-list="false"
         >
           <Button icon="ios-cloud-upload-outline">
             上传图标

@@ -105,6 +105,7 @@
                 :on-success="handleUpload"
                 :format="['jpg','jpeg','png']"
                 :on-format-error="formatError"
+                :show-upload-list="false"
         >
           <Button icon="ios-cloud-upload-outline">
             上传商品小图
@@ -121,6 +122,7 @@
                 :on-success="handleUploadSec"
                 :format="['jpg','jpeg','png']"
                 :on-format-error="formatError"
+                :show-upload-list="false"
         >
           <Button icon="ios-cloud-upload-outline">
             上传商品详情图

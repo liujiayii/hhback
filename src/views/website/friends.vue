@@ -100,6 +100,7 @@
                     title: res.data.msg
                   });
                   this.drawerShow = false;
+                  this.formData = {}
                   this.pageChange(this.currPage);
                 } else {
                   this.$Notice.error({
