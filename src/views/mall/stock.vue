@@ -2,40 +2,41 @@
   <div>
     <div class="top">
       <Input
-        search
-        placeholder="Enter something..."
-        style="width: 300px"
+              search
+              placeholder="输入关键词搜索……"
+              style="width: 300px"
+              @input="searchVal"
       />
       <Button
-        type="primary"
-        shape="circle"
-        icon="md-add"
-        disabled
+              type="primary"
+              shape="circle"
+              icon="md-add"
+              disabled
       >
         添加
       </Button>
     </div>
     <Table
-      border
-      :columns="columns"
-      :data="tableData.data"
+            border
+            :columns="columns"
+            :data="tableData.data"
     >
       <template
-        slot-scope="{row}"
-        slot="action"
+              slot-scope="{row}"
+              slot="action"
       >
         <Button
-          type="primary"
-          size="small"
-          style="margin-right: 5px"
-          @click="show(row)"
+                type="primary"
+                size="small"
+                style="margin-right: 5px"
+                @click="show(row)"
         >
           修改
         </Button>
         <Button
-          type="error"
-          size="small"
-          @click="remove(row)"
+                type="error"
+                size="small"
+                @click="remove(row)"
         >
           删除
         </Button>
@@ -43,56 +44,56 @@
     </Table>
     <div class="page-box">
       <Page
-        :total="tableData.count"
-        @on-change="pageChange"
-        size="small"
-        show-elevator
-        show-total
+              :total="tableData.count"
+              @on-change="pageChange"
+              size="small"
+              show-elevator
+              show-total
       />
     </div>
     <Drawer
-      title="编辑"
-      v-model="drawerShow"
-      @on-close="closeDrawer"
-      width="720"
-      :mask-closable="false"
-      :styles="styles"
+            title="编辑"
+            v-model="drawerShow"
+            @on-close="closeDrawer"
+            width="720"
+            :mask-closable="false"
+            :styles="styles"
     >
       <Form
-        :model="formData"
-        ref="formData"
-        :rules="ruleValidate"
+              :model="formData"
+              ref="formData"
+              :rules="ruleValidate"
       >
         <Row :gutter="32">
-          <Col span="12" >
-          <FormItem
-            label="商品名称"
-            prop="productName"
-          >
-            <Input
-              v-model="formData.productName"
-              size="large"
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem
+                    label="商品名称"
+                    prop="productName"
+            >
+              <Input
+                      v-model="formData.productName"
+                      size="large"
+              />
+            </FormItem>
           </Col>
-          <Col span="12" >
-          <FormItem
-            label="库存"
-            prop="number"
-          >
-            <Input
-              v-model="formData.number"
-              size="large"
-              type="number"
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem
+                    label="库存"
+                    prop="number"
+            >
+              <Input
+                      v-model="formData.number"
+                      size="large"
+                      type="number"
+              />
+            </FormItem>
           </Col>
         </Row>
       </Form>
       <div class="demo-drawer-footer">
         <Button
-          type="primary"
-          @click="submit('formData')"
+                type="primary"
+                @click="submit('formData')"
         >
           保存
         </Button>
@@ -102,7 +103,7 @@
 </template>
 
 <script>
-  import {formatDate, ruleValidate} from "../../plugins/utils";
+  import {formatDate, ruleValidate} from "../../config/utils";
 
   export default {
     name: "Stock",
@@ -155,6 +156,10 @@
       };
     },
     methods: {
+      searchVal(productName) {
+        console.log(productName)
+        this.pageChange(1, productName)
+      },
       closeDrawer() {
         this.formData = {};
       },
@@ -174,7 +179,7 @@
                     title: res.data.msg
                   });
                   this.drawerShow = false;
-                  this.pageChange(this.currPage);
+                  this.pageChange(this.currPage,'');
                 } else {
                   this.$Notice.error({
                     title: res.data.msg
@@ -210,7 +215,7 @@
                   this.$Notice.success({
                     title: res.data.msg
                   });
-                  this.pageChange(1);
+                  this.pageChange(1,'');
                 } else {
                   this.$Notice.error({
                     title: res.data.msg
@@ -229,12 +234,12 @@
         });
         this.data6.splice(row, 1);
       },
-      pageChange(page) {
+      pageChange(page, productName) {
         this.currPage = page
         this.$ajax({
           method: "post",
           url: "listAllInventoryById",
-          data: {page, limit: 10}
+          data: {page, limit: 10, productName}
         })
           .then(res => {
             if (res.data.code === 1) {
@@ -253,7 +258,7 @@
       }
     },
     mounted() {
-      this.pageChange(1);
+      this.pageChange(1, '');
     }
   };
 </script>

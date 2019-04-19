@@ -95,7 +95,7 @@
 </template>
 
 <script>
-  import {ruleValidate} from '../../plugins/utils'
+  import {ruleValidate} from '../../config/utils'
 
   export default {
     name: "Discount",

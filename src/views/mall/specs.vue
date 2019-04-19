@@ -1,19 +1,8 @@
 <template>
   <div>
     <div class="top">
-      <Input
-              search
-              placeholder="Enter something..."
-              style="width: 300px"
-      />
-      <Button
-              type="primary"
-              shape="circle"
-              icon="md-add"
-              @click="drawerShow= true"
-      >
-        添加
-      </Button>
+      <Input search placeholder="Enter something..." style="width: 300px"/>
+      <Button type="primary" shape="circle" icon="md-add" @click="drawerShow= true">添加</Button>
     </div>
     <Table
             border
@@ -50,6 +39,34 @@
             :mask-closable="false"
             :styles="styles"
     >
+      <Table
+              border
+              :columns="columnsSec"
+              :data="tableDataSec.data"
+      >
+        <template
+                slot-scope="{ row }"
+                slot="action"
+        >
+          <Button
+                  type="primary"
+                  size="small"
+                  style="margin-right: 5px"
+                  @click="editSec(row)"
+          >
+            选择
+          </Button>
+        </template>
+      </Table>
+      <div class="page-box">
+        <Page
+                :total="tableDataSec.count"
+                @on-change="pageChangeSec"
+                size="small"
+                show-elevator
+                show-total
+        />
+      </div>
       <Form
               :model="formData"
               ref="formData"
@@ -57,38 +74,22 @@
       >
         <Row :gutter="32">
           <Col span="12">
-            <FormItem
-                    label="最高金额"
-                    prop="price"
-            >
+            <FormItem label="分类名称" prop="money">
               <Input
-                      v-model="formData.price"
+                      v-model="formData.classificationName"
                       size="large"
-                      type="number"
+                      readonly
               />
             </FormItem>
           </Col>
           <Col span="12">
             <FormItem
-                    label="最低金额"
-                    prop="prices"
+                    label="规格名称"
+                    prop="money"
             >
               <Input
-                      v-model="formData.prices"
+                      v-model="formData.specificationsName"
                       size="large"
-                      type="number"
-              />
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem
-                    label="运费"
-                    prop="freight"
-            >
-              <Input
-                      v-model="formData.freight"
-                      size="large"
-                      type="number"
               />
             </FormItem>
           </Col>
@@ -110,7 +111,7 @@
   import {ruleValidate} from '../../config/utils'
 
   export default {
-    name: "Express",
+    name: "specs",
     data() {
       return {
         drawerShow: false,
@@ -124,20 +125,12 @@
         ruleValidate,
         columns: [
           {
-            title: "编号",
-            key: "id"
+            title: "规格名称",
+            key: "specificationsName"
           },
           {
-            title: "运费",
-            key: "freight"
-          },
-          {
-            title: "最低金额",
-            key: "prices"
-          },
-          {
-            title: "最高金额",
-            key: "price"
+            title: "商品类型名称",
+            key: "producttypename"
           },
           {
             title: "操作",
@@ -146,6 +139,29 @@
             align: "center"
           }
         ],
+        columnsSec: [
+          {
+            title: "编号",
+            key: "id"
+          },
+          {
+            title: "商品一级分类名称",
+            key: "classificationName"
+          },
+          {
+            title: "商品分类名称",
+            key: "name"
+          },
+          {
+            title: "操作",
+            slot: "action",
+            width: 150,
+            align: "center"
+          }
+        ], tableDataSec: {
+          data: [],
+          count: 0
+        },
         tableData: {
           data: [],
           count: 0
@@ -156,29 +172,37 @@
       clearDrawer() {
         this.formData = {};
       },
+      editSec(item) {
+        console.log(item)
+        this.formData = {classificationName: item.name, producttypeid: item.id}
+      },
       submit(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.$ajax({
               method: "post",
-              url: "t_freight/addt_freight",
+              url: 'saveSpecificationsVo',
               data: this.formData
-            }).then(res => {
-              if (res.data.code === 1) {
-                this.$Notice.success({
-                  title: res.data.msg
-                });
-                this.drawerShow = false;
-              } else {
+            })
+              .then(res => {
+                if (res.data.code === 1) {
+                  this.$Notice.success({
+                    title: res.data.msg
+                  });
+                  this.pageChange(1);
+                  this.drawerShow = false;
+                  this.clearDrawer()
+                } else {
+                  this.$Notice.error({
+                    title: res.data.msg
+                  });
+                }
+              })
+              .catch(res => {
                 this.$Notice.error({
                   title: res.data.msg
                 });
-              }
-            }).catch(res => {
-              this.$Notice.error({
-                title: res.data.msg
-              });
-            });
+              })
           } else {
             this.$Message.error('Fail!');
           }
@@ -194,7 +218,7 @@
           onOk: () => {
             this.$ajax({
               method: "post",
-              url: "t_freight/delt_freight",
+              url: "deleteSpecificationsVoById",
               data: row
             })
               .then(res => {
@@ -202,6 +226,7 @@
                   this.$Notice.success({
                     title: res.data.msg
                   });
+                  this.pageChange(1);
                 } else {
                   this.$Notice.error({
                     title: res.data.msg
@@ -222,7 +247,7 @@
       pageChange(page) {
         this.$ajax({
           method: "post",
-          url: "t_freight/selt_freight",
+          url: "listAllSpecifications",
           data: {page, limit: 10}
         })
           .then(res => {
@@ -239,12 +264,34 @@
               title: res.data.msg
             });
           });
-      }
+      },
+      pageChangeSec(page) {
+        this.$ajax({
+          method: "post",
+          url: "selectAllProductTypeList",
+          data: {page, limit: 10}
+        })
+          .then(res => {
+            if (res.data.code === 1) {
+              this.tableDataSec = res.data;
+            } else {
+              this.$Notice.error({
+                title: res.data.msg
+              });
+            }
+          })
+          .catch(res => {
+            this.$Notice.error({
+              title: res.data.msg
+            });
+          });
+      },
     },
     mounted() {
-      this.pageChange(1);
+      this.pageChange(1)
+      this.pageChangeSec(1);
     }
-  };
+  }
 </script>
 
 <style scoped>

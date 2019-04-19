@@ -1,17 +1,10 @@
 <template>
   <div>
     <div class="top">
-      <Input search placeholder="Enter something..." style="width: 300px"/>
-      <Button type="primary" shape="circle" icon="md-add" disabled>添加</Button>
+      <div></div>
+      <Button type="primary" shape="circle" icon="md-add" @click="drawerShow=true">更新</Button>
     </div>
-    <Table border :columns="columns" :data="tableData.data">
-      <template slot-scope="{row}" slot="action">
-        <Button type="primary" size="small" @click="show(row)">修改</Button>
-      </template>
-    </Table>
-    <div class="page-box">
-      <Page :total="tableData.count" @on-change="pageChange" size="small" show-elevator show-total/>
-    </div>
+    <Table border :columns="columns" :data="tableData.data"></Table>
     <Drawer
             title="编辑"
             v-model="drawerShow"
@@ -21,17 +14,24 @@
             :styles="styles"
     >
       <Form :model="formData" ref="formData" :rules="ruleValidate">
-        <FormItem label="地址" prop="address">
-          <Input v-model="formData.address" size="large"/>
+        <FormItem label="版本" prop="app_type">
+          <Select v-model="formData.app_type" size="large">
+            <Option :value="0">安卓</Option>
+            <Option :value="1">IOS</Option>
+          </Select>
         </FormItem>
-        <FormItem label="邮箱" prop="enterprise_email">
-          <Input v-model="formData.enterprise_email" size="large"/>
+        <FormItem label="版本号" prop="app_version">
+          <Input v-model="formData.app_version" size="large"/>
         </FormItem>
-        <FormItem label="联系方式" prop="phone">
-          <Input v-model="formData.phone" size="large"/>
+        <FormItem label="名称" prop="app_name">
+          <Input v-model="formData.app_name" size="large"/>
         </FormItem>
-        <FormItem label="备案" prop="record">
-          <Input v-model="formData.record" size="large"/>
+        <FormItem label="上传文件" v-show="formData.app_type!=1">
+          <Upload action="" :before-upload="handleUpload" :show-upload-list="false">
+            <Button icon="ios-cloud-upload-outline">
+              上传文件
+            </Button>
+          </Upload>
         </FormItem>
       </Form>
       <div class="demo-drawer-footer">
@@ -45,7 +45,7 @@
   import {ruleValidate} from "../../config/utils";
 
   export default {
-    name: "Stock",
+    name: "version",
     data() {
       return {
         drawerShow: false,
@@ -59,48 +59,56 @@
         ruleValidate,
         columns: [
           {
-            title: "地址",
-            key: "address"
+            title: "安装包类型",
+            key: "app_type"
           },
           {
-            title: "邮箱",
-            key: "enterprise_email"
+            title: "名称",
+            key: "app_name"
           },
           {
-            title: "联系方式",
-            key: "phone"
+            title: "内部版本号",
+            key: "app_cood"
           },
           {
-            title: "备案",
-            key: "record"
+            title: "路径",
+            key: "app_url"
           },
           {
-            title: "操作",
-            slot: "action",
-            width: 150,
-            align: "center"
+            title: "版本",
+            key: "app_version"
           }
         ],
         tableData: {
           data: [],
           count: 0
         },
-        currPage: 1
+        file: []
       };
     },
     methods: {
+      handleUpload(file) {
+        this.file = file;
+        return false;
+      },
       closeDrawer() {
         this.formData = {};
       },
       submit(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            delete this.formData._index;
-            delete this.formData._rowKey;
-            this.$ajax({
+            let newForm = new FormData()
+            if(this.formData.app_version == 0){
+              newForm.append('pic', this.file)
+            }
+            newForm.append('app_version',this.formData.app_version)
+            newForm.append('app_name',this.formData.app_name)
+            newForm.append('app_type',this.formData.app_type)
+            newForm.append('app_cood',1)
+            this.$ajaxImg({
               method: "post",
-              url: 'updateContactUs',
-              data: this.formData
+              url: "t_app/inserttapp",
+              data: newForm
             })
               .then(res => {
                 if (res.data.code === 1) {
@@ -108,7 +116,7 @@
                     title: res.data.msg
                   });
                   this.drawerShow = false;
-                  this.pageChange(this.currPage);
+                  this.formData = {}
                 } else {
                   this.$Notice.error({
                     title: res.data.msg
@@ -125,16 +133,10 @@
           }
         })
       },
-      show(row) {
-        this.formData = row;
-        this.drawerShow = true;
-      },
-      pageChange(page) {
-        this.currPage = page
+      getTable() {
         this.$ajax({
           method: "post",
-          url: "selectAllContactUsListPage",
-          data: {page, limit: 10}
+          url: "t_app/insertlist",
         })
           .then(res => {
             if (res.data.code === 1) {
@@ -153,9 +155,9 @@
       }
     },
     mounted() {
-      this.pageChange(1);
+      this.getTable();
     }
-  };
+  }
 </script>
 
 <style scoped>

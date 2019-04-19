@@ -372,7 +372,7 @@
 </template>
 
 <script>
-  import {formatDate, ruleValidate} from "../../plugins/utils";
+  import {formatDate, ruleValidate} from "../../config/utils";
 
   export default {
     name: "Sort",

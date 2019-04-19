@@ -3,8 +3,7 @@
     <div class="top">
       <Input
         search
-        placeholder="Enter something..."
-        style="width: 300px"
+        placeholder="输入关键词搜索……" style="width: 300px" @input="searchVal"
       />
       <Button
         type="primary"
@@ -93,7 +92,7 @@
 </template>
 
 <script>
-  import {formatDate, ruleValidate} from "../../plugins/utils";
+  import {formatDate, ruleValidate} from "../../config/utils";
 
   export default {
     name: "Stock",
@@ -150,6 +149,10 @@
       };
     },
     methods: {
+      searchVal(name) {
+        console.log(name)
+        this.pageChange(1, name)
+      },
       closeDrawer() {
         this.formData = {};
       },
@@ -166,7 +169,7 @@
                   title: res.data.msg
                 });
                 this.drawerShow = false;
-                this.pageChange(1);
+                this.pageChange(1,'');
               } else {
                 this.$Notice.error({
                   title: res.data.msg
@@ -203,7 +206,7 @@
                   this.$Notice.success({
                     title: res.data.msg
                   });
-                  this.pageChange(1);
+                  this.pageChange(1,'');
                 } else {
                   this.$Notice.error({
                     title: res.data.msg
@@ -222,11 +225,11 @@
         });
         this.data6.splice(row, 1);
       },
-      pageChange(page) {
+      pageChange(page,name) {
         this.$ajax({
           method: "post",
           url: "t_review/selectAllEvery",
-          data: {page, limit: 10}
+          data: {page, limit: 10,name}
         })
           .then(res => {
             if (res.data.code === 1) {
@@ -245,7 +248,7 @@
       }
     },
     mounted() {
-      this.pageChange(1);
+      this.pageChange(1,'');
     }
   };
 </script>

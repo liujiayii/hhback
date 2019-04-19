@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import {formatDate} from "../../../plugins/utils";
+  import {formatDate} from "../../../config/utils";
 
   export default {
     name: "homeTable",

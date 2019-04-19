@@ -19,7 +19,6 @@ import {
   Table,
   Header,
   Menu,
-  Avatar,
   Page,
   Drawer,
   Upload,
@@ -53,7 +52,6 @@ Vue.component('BreadcrumbItem', BreadcrumbItem)
 Vue.component('Table', Table)
 Vue.component('Header', Header)
 Vue.component('Menu', Menu)
-Vue.component('Avatar', Avatar)
 Vue.component('Page', Page)
 Vue.component('Drawer', Drawer)
 Vue.component('Upload', Upload)

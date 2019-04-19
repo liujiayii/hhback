@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import ajax from 'axios'
-/*注册Axios*/
 
+/*注册Axios*/
 const instance = ajax.create({
   baseURL: '/',
   transformRequest: [/*将JSON字符串转换成FormData*/

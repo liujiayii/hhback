@@ -2,41 +2,41 @@
   <div>
     <div class="top">
       <Input
-        search
-        placeholder="Enter something..."
-        style="width: 300px"
+              search
+              placeholder="Enter something..."
+              style="width: 300px"
       />
       <Button
-        type="primary"
-        shape="circle"
-        icon="md-add"
-        disabled
+              type="primary"
+              shape="circle"
+              icon="md-add"
+              disabled
       >
         添加
       </Button>
     </div>
     <Table
-      border
-      :columns="columns"
-      :data="tableData.data"
+            border
+            :columns="columns"
+            :data="tableData.data"
     >
       <template
-        slot-scope="{ row }"
-        slot="action"
+              slot-scope="{ row }"
+              slot="action"
       >
         <Button
-          type="primary"
-          size="small"
-          style="margin-right: 5px"
-          @click="show(row)"
-          disabled
+                type="primary"
+                size="small"
+                style="margin-right: 5px"
+                @click="show(row)"
+                disabled
         >
           查看
         </Button>
         <Button
-          type="error"
-          size="small"
-          @click="remove(row)"
+                type="error"
+                size="small"
+                @click="remove(row)"
         >
           退货
         </Button>
@@ -44,137 +44,137 @@
     </Table>
     <div class="page-box">
       <Page
-        :total="tableData.count"
-        @on-change="pageChange"
-        size="small"
-        show-elevator
-        show-total
+              :total="tableData.count"
+              @on-change="pageChange"
+              size="small"
+              show-elevator
+              show-total
       />
     </div>
     <Drawer
-      title="编辑"
-      v-model="drawerShow"
-      width="720"
-      :mask-closable="false"
-      :styles="styles"
+            title="编辑"
+            v-model="drawerShow"
+            width="720"
+            :mask-closable="false"
+            :styles="styles"
     >
       <Table
-        border
-        :columns="columnsGoods"
-        :data="tableDataGoods"
+              border
+              :columns="columnsGoods"
+              :data="tableDataGoods"
       />
       <Form :model="formData">
         <Row :gutter="32">
-          <Col span="12" >
-          <FormItem label="姓名">
-            <Input
-              v-model="formData.nickname"
-              size="large"
-              readonly
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem label="姓名">
+              <Input
+                      v-model="formData.nickname"
+                      size="large"
+                      readonly
+              />
+            </FormItem>
           </Col>
-          <Col span="12" >
-          <FormItem label="电话">
-            <Input
-              v-model="formData.goods_tel"
-              size="large"
-              readonly
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem label="电话">
+              <Input
+                      v-model="formData.goods_tel"
+                      size="large"
+                      readonly
+              />
+            </FormItem>
           </Col>
-          <Col span="12" >
-          <FormItem label="收货地址">
-            <Input
-              v-model="formData.goods_address"
-              size="large"
-              readonly
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem label="收货地址">
+              <Input
+                      v-model="formData.goods_address"
+                      size="large"
+                      readonly
+              />
+            </FormItem>
           </Col>
-          <Col span="12" >
-          <FormItem label="订单状态">
-            <Select
-              v-model="formData.order_state"
-              size="large"
-              readonly
-            >
-              <Option value="-1">
-                订单取消
-              </Option>
-              <Option value="0">
-                待付款
-              </Option>
-              <Option value="1">
-                已付款，代发货
-              </Option>
-              <Option value="2">
-                已发货
-              </Option>
-              <Option value="3">
-                已签收
-              </Option>
-              <Option value="4">
-                已完成
-              </Option>
-              <Option value="5">
-                退货中
-              </Option>
-              <Option value="6">
-                退货审核通过
-              </Option>
-              <Option value="7">
-                退货审核不通过
-              </Option>
-            </Select>
-          </FormItem>
-          </Col>
-          <Col
-            span="12"
-            v-show="formData.order_state>0"
-          >
-          <FormItem label="物流单号">
-            <Input
-              v-model="formData.order_shouhuo_id"
-              size="large"
-              readonly
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem label="订单状态">
+              <Select
+                      v-model="formData.order_state"
+                      size="large"
+                      readonly
+              >
+                <Option value="-1">
+                  订单取消
+                </Option>
+                <Option value="0">
+                  待付款
+                </Option>
+                <Option value="1">
+                  已付款，代发货
+                </Option>
+                <Option value="2">
+                  已发货
+                </Option>
+                <Option value="3">
+                  已签收
+                </Option>
+                <Option value="4">
+                  已完成
+                </Option>
+                <Option value="5">
+                  退货中
+                </Option>
+                <Option value="6">
+                  退货审核通过
+                </Option>
+                <Option value="7">
+                  退货审核不通过
+                </Option>
+              </Select>
+            </FormItem>
           </Col>
           <Col
-            span="12"
-            v-show="formData.order_state>0"
+                  span="12"
+                  v-show="formData.order_state>0"
           >
-          <FormItem label="货物状态">
-            <Input
-              v-model="formData.order_state"
-              size="large"
-            />
-          </FormItem>
+            <FormItem label="物流单号">
+              <Input
+                      v-model="formData.order_shouhuo_id"
+                      size="large"
+                      readonly
+              />
+            </FormItem>
           </Col>
           <Col
-            span="12"
-            v-show="formData.order_state>4"
+                  span="12"
+                  v-show="formData.order_state>0"
           >
-          <FormItem label="退款原因">
-            <Input
-              v-model="formData.sales_cause"
-              size="large"
-            />
-          </FormItem>
+            <FormItem label="货物状态">
+              <Input
+                      v-model="formData.order_state"
+                      size="large"
+              />
+            </FormItem>
+          </Col>
+          <Col
+                  span="12"
+                  v-show="formData.order_state>4"
+          >
+            <FormItem label="退款原因">
+              <Input
+                      v-model="formData.sales_cause"
+                      size="large"
+              />
+            </FormItem>
           </Col>
         </Row>
       </Form>
       <div class="demo-drawer-footer">
         <Button
-          style="margin-right: 8px"
-          @click="drawerShow = false"
+                style="margin-right: 8px"
+                @click="drawerShow = false"
         >
           取消
         </Button>
         <Button
-          type="primary"
-          @click="submit"
+                type="primary"
+                @click="drawerShow = false"
         >
           退货
         </Button>
@@ -184,142 +184,164 @@
 </template>
 
 <script>
-import { formatState ,ruleValidate} from "../../plugins/utils";
+  import {formatState, ruleValidate} from "../../config/utils";
 
-export default {
-  name: "Return",
-  data() {
-    return {
-      drawerShow: false,
-      styles: {
-        height: "calc(100% - 55px)",
-        overflow: "auto",
-        paddingBottom: "53px",
-        position: "static"
-      },
-      formData: {},
-      ruleValidate,
-      columnsGoods: [
-        {
-          title: "订单编号",
-          key: "order_id"
+  export default {
+    name: "Return",
+    data() {
+      return {
+        drawerShow: false,
+        styles: {
+          height: "calc(100% - 55px)",
+          overflow: "auto",
+          paddingBottom: "53px",
+          position: "static"
         },
-        {
-          title: "商品名称",
-          key: "name"
-        },
-        {
-          title: "单价",
-          key: "danjia"
-        },
-        {
-          title: "优惠金额",
-          key: "youhuijine"
-        },
-        {
-          title: "总价",
-          key: "zongjia"
-        }
-      ],
-      columns: [
-        {
-          title: "订单编号",
-          key: "order_id"
-        },
-        {
-          title: "订单金额(元)",
-          key: "zongjia"
-        },
-        {
-          title: "姓名",
-          key: "nickname"
-        },
-        {
-          title: "订单状态",
-          key: "order_state",
-          render: (h, params) => {
-            return h("div", formatState(params.row.order_state));
+        formData: {},
+        ruleValidate,
+        columnsGoods: [
+          {
+            title: "订单编号",
+            key: "order_id"
+          },
+          {
+            title: "商品名称",
+            key: "name"
+          },
+          {
+            title: "单价",
+            key: "danjia"
+          },
+          {
+            title: "优惠金额",
+            key: "youhuijine"
+          },
+          {
+            title: "总价",
+            key: "zongjia"
           }
+        ],
+        columns: [
+          {
+            title: "订单编号",
+            key: "order_id"
+          },
+          {
+            title: "订单金额(元)",
+            key: "zongjia"
+          },
+          {
+            title: "姓名",
+            key: "nickname"
+          },
+          {
+            title: "订单状态",
+            key: "order_state",
+            render: (h, params) => {
+              return h("div", formatState(params.row.order_state));
+            }
+          },
+          {
+            title: "操作",
+            slot: "action",
+            width: 150,
+            align: "center"
+          }
+        ],
+        tableData: {
+          data: [],
+          count: 0
         },
-        {
-          title: "操作",
-          slot: "action",
-          width: 150,
-          align: "center"
-        }
-      ],
-      tableData: {
-        data: [],
-        count: 0
-      },
-      tableDataGoods: []
-    };
-  },
-  methods: {
-    show(row) {
-      Object(this.formData, row);
-      this.drawerShow = true;
+        tableDataGoods: []
+      };
     },
-    remove(row) {
-      this.$Modal.confirm({
-        title: "提示",
-        content: "<p>是否退货</p>",
-        onOk: () => {
-          this.$ajax({
-            method: "post",
-            url: "/t_order/ordercan",
-            data: { order_id: row.order_id, order_state: 6 }
-          })
-            .then(res => {
-              if (res.data.code === 1) {
-                this.$Notice.success({
-                  title: res.data.msg
-                });
-                this.pageChange(1);
-              } else {
+    methods: {
+      show(row) {
+        Object(this.formData, row);
+        this.drawerShow = true;
+      },
+      remove(row) {
+        this.$Modal.confirm({
+          title: "提示",
+          content: "<p>是否退货</p>",
+          okText: '通过',
+          cancelText: '拒绝',
+          onOk: () => {
+            this.$ajax({
+              method: "post",
+              url: "/t_order/ordercan",
+              data: {order_id: row.order_id, order_state: 6}
+            })
+              .then(res => {
+                if (res.data.code === 1) {
+                  this.$Notice.success({
+                    title: res.data.msg
+                  });
+                  this.pageChange(1);
+                } else {
+                  this.$Notice.error({
+                    title: res.data.msg
+                  });
+                }
+              })
+              .catch(res => {
                 this.$Notice.error({
                   title: res.data.msg
                 });
-              }
+              });
+          },
+          onCancel: () => {
+            this.$ajax({
+              method: "post",
+              url: "/t_order/ordercan",
+              data: {order_id: row.order_id, order_state: 7}
             })
-            .catch(res => {
+              .then(res => {
+                if (res.data.code === 1) {
+                  this.$Notice.success({
+                    title: res.data.msg
+                  });
+                  this.pageChange(1);
+                } else {
+                  this.$Notice.error({
+                    title: res.data.msg
+                  });
+                }
+              })
+              .catch(res => {
+                this.$Notice.error({
+                  title: res.data.msg
+                });
+              });
+          }
+        });
+      },
+      pageChange(page) {
+        this.$ajax({
+          method: "post",
+          url: "t_sales/thlist",
+          data: {page, limit: 10}
+        })
+          .then(res => {
+            if (res.data.code === 1) {
+              this.tableData = res.data;
+            } else {
               this.$Notice.error({
                 title: res.data.msg
               });
-            });
-        },
-        onCancel: () => {
-          this.$Message.info("Clicked cancel");
-        }
-      });
-    },
-    pageChange(page) {
-      this.$ajax({
-        method: "post",
-        url: "t_sales/thlist",
-        data: { page, limit: 10 }
-      })
-        .then(res => {
-          if (res.data.code === 1) {
-            this.tableData = res.data;
-          } else {
+            }
+          })
+          .catch(res => {
             this.$Notice.error({
               title: res.data.msg
             });
-          }
-        })
-        .catch(res => {
-          this.$Notice.error({
-            title: res.data.msg
           });
-        });
+      }
     },
-    submit() {}
-  },
-  mounted() {
-    this.pageChange(1);
-  }
-};
+    mounted() {
+      this.pageChange(1);
+    }
+  };
 </script>
 
 <style scoped>

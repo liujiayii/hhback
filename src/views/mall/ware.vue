@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="top">
-      <Input search placeholder="Enter something..." style="width: 300px"/>
+      <Input search placeholder="输入关键词搜索……" style="width: 300px" @input="searchVal"/>
       <Button type="primary" shape="circle" icon="md-add" @click="drawerShow=true">
         添加
       </Button>
@@ -150,7 +150,7 @@
 </template>
 
 <script>
-  import {ruleValidate} from '../../plugins/utils'
+  import {ruleValidate} from '../../config/utils'
 
   export default {
     name: "Ware",
@@ -201,6 +201,10 @@
       };
     },
     methods: {
+      searchVal(productName) {
+        console.log(productName)
+        this.pageChange(1, productName)
+      },
       formatError() {
         this.$Notice.error({
           title: '文件格式错误'
@@ -305,12 +309,12 @@
         });
         this.drawerShow = true;
       },
-      pageChange(page) {
+      pageChange(page, productName) {
         this.currPage = page
         this.$ajax({
           method: "post",
-          url: "listAllProductById",
-          data: {page, limit: 10}
+          url: productName != undefined ? 'listProductByProductTypeId' : "listAllProductById",
+          data: {page, limit: 10, productName}
         })
           .then(res => {
             if (res.data.code === 1) {

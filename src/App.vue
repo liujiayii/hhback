@@ -36,7 +36,7 @@
   }
 
   .main-enter, .main-leave-to {
-    transform: translateX(-30px);
+    transform: translateX(30px);
     opacity: 0;
   }
 
@@ -45,7 +45,7 @@
   }
 
   .main-leave-active {
-    position: absolute;
+    transform: translateX(-30px);
     transition: all 0.1s;
   }
 

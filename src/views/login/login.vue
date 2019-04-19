@@ -3,46 +3,46 @@
     <div class="cont">
       <div class="aside">
         <img
-          src="../../assets/images/loginAside.png"
-          alt=""
+                src="../../assets/images/loginAside.png"
+                alt=""
         >
       </div>
       <div class="main">
         <div class="logo">
           <img
-            src="../../assets/images/loginLogo.png"
-            alt=""
+                  src="../../assets/images/loginLogo.png"
+                  alt=""
           >
         </div>
         <Form
-          ref="formVal"
-          :model="formVal"
-          :rules="rulesForm"
+                ref="formVal"
+                :model="formVal"
+                :rules="rulesForm"
         >
           <FormItem prop="username">
             <Input
-              v-model="formVal.username"
-              size="large"
-              prefix="md-contact"
-              placeholder="请输入账号…"
+                    v-model="formVal.username"
+                    size="large"
+                    prefix="md-contact"
+                    placeholder="请输入账号…"
             />
           </FormItem>
           <FormItem prop="password">
             <Input
-              v-model="formVal.password"
-              type="password"
-              size="large"
-              prefix="md-key"
-              placeholder="请输入密码……"
+                    v-model="formVal.password"
+                    type="password"
+                    size="large"
+                    prefix="md-key"
+                    placeholder="请输入密码……"
             />
           </FormItem>
           <FormItem>
             <Button
-              type="primary"
-              size="large"
-              shape="circle"
-              long
-              @click="submit('formVal')"
+                    type="primary"
+                    size="large"
+                    shape="circle"
+                    long
+                    @click="submit('formVal')"
             >
               登录
             </Button>
@@ -54,8 +54,6 @@
 </template>
 
 <script>
-  import Menu from '../../router'
-
   export default {
     name: 'Login',
     data() {
@@ -81,20 +79,23 @@
             this.$router.push({path: '/home'})
             this.$ajax({
               method: 'post',
-              url: 'admin',
+              url: 'login',
               data: this.formVal
             }).then((res) => {
-              if (res.data.code == 1) {
+              if (res.data.code === 1) {
+                let routerArr = res.data.data
                 window.sessionStorage.setItem('userName', this.formVal.username)
+                window.sessionStorage.setItem('routerPath', '/home')
+                window.sessionStorage.setItem('SkyLarkBack', JSON.stringify(routerArr))
                 this.$router.push({path: '/home'})
               } else {
                 this.$Notice.error({
-                  title: res.data.msg,
+                  title: res.data.data.msg
                 })
               }
             }).catch((res) => {
               this.$Notice.error({
-                title: res.data.msg,
+                title: res.data.msg
               })
             })
           } else {
@@ -103,16 +104,7 @@
             })
           }
         })
-      },
-      setMenu() {
-        const menu = Menu.options.routes.slice(2, Menu.options.routes.length - 2)
-        if (menu.length > 0) {
-          window.sessionStorage.setItem("SkyLarkBack", JSON.stringify(menu))
-        }
       }
-    },
-    mounted() {
-      this.setMenu()
     }
   }
 
