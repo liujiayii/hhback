@@ -1,0 +1,170 @@
+<template>
+  <a-layout :style="{position:'fixed',width:'100%',height:'100%'}">
+    <a-layout-sider
+            v-model="collapsed"
+            :trigger="null"
+            collapsible
+            :style="{ overflow: 'scroll', height: '100vh',background:'#fff',boxShadow: '2px 0 8px 0 rgba(29, 35, 41, 0.05)' }"
+    >
+      <div class="logo">ANT</div>
+      <a-menu
+              mode="inline"
+              :default-selected-keys="[$route.path.split('/')[2]||$route.path]"
+              :style="{ borderRight: 0 }"
+              :open-keys="openKeys"
+              @openChange="onOpenChange"
+              @click="menuClick"
+      >
+        <template v-for="(item) in Menu">
+          <a-sub-menu v-if="item.children.length>1" :key="item.path">
+              <span slot="title">
+                <a-icon :type="item.Ico" theme="filled" :spin="item.Ico==='setting'"/><span>{{ item.name}}</span>
+              </span>
+            <a-menu-item v-for="(item_c) in item.children" :key="item_c.path">
+              {{ item_c.name }}
+            </a-menu-item>
+          </a-sub-menu>
+          <a-menu-item v-else :key="item.children[0].path">
+            <a-icon :type="item.Ico"/>
+            <span>{{ item.children[0].name }}</span>
+          </a-menu-item>
+        </template>
+      </a-menu>
+    </a-layout-sider>
+    <a-layout :style="{overflow:'hidden',width:'100%'}">
+      <a-layout-header
+              :style="{ width: '100%',background: '#fff', padding: '0',zIndex:'2',position: 'absolute',top:'0',boxShadow:'0 1px 4px rgba(0,21,41,.08)',display:'flex',justifyContent:'space-between'}"
+      >
+        <a-icon class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="()=> collapsed = !collapsed"/>
+        <a-dropdown :style="collapsed?{marginRight:'100px',cursor:'pointer'}:{marginRight:'220px',cursor:'pointer'}">
+          <span class="ant-dropdown-link">{{time}}{{userName}}<a-icon type="down"/></span>
+          <a-menu slot="overlay">
+            <a-menu-divider/>
+            <a-menu-item key="3" @click="loginOut">退出登录</a-menu-item>
+          </a-menu>
+        </a-dropdown>
+      </a-layout-header>
+      <a-breadcrumb :style="{ margin: '80px 20px 20px' }">
+        <a-breadcrumb-item>首页</a-breadcrumb-item>
+        <template v-if="$route.path.split('/').length>2">
+          <a-breadcrumb-item>{{ $route.meta.title }}</a-breadcrumb-item>
+          <a-breadcrumb-item>{{ $route.name }}</a-breadcrumb-item>
+        </template>
+      </a-breadcrumb>
+      <a-layout-content :style="{ padding: '0 20px',overflow: 'scroll'}">
+        <div :style="{ minHeight: '100%',padding: '24px', background: '#fff'}">
+          <transition name="main" mode="out-in">
+            <router-view/>
+          </transition>
+        </div>
+      </a-layout-content>
+      <a-layout-footer style="text-align: center">
+        Ant Design ©2018 Created by Ant UED
+      </a-layout-footer>
+    </a-layout>
+  </a-layout>
+</template>
+
+<script>
+  export default {
+    name: "Layout",
+    data() {
+      return {
+        collapsed: false,
+        openKeys: [],
+        Menu: JSON.parse(window.sessionStorage.getItem('SkyLarkBack')),
+        userName: window.sessionStorage.getItem("userName"),
+        time: ''
+      }
+    },
+    mounted() {
+      this.openKeys.push('/' + this.$route.path.split('/')[1])
+      this.getTimes()
+    },
+    methods: {
+      menuClick(item) {
+        this.$router.push({path: (item.keyPath.length > 1 ? item.keyPath[1] + '/' : '') + item.keyPath[0]})
+      },
+      onOpenChange(openKeys) {
+        const latestOpenKey = openKeys.find(key => this.openKeys.indexOf(key) === -1)
+        this.openKeys = latestOpenKey ? [latestOpenKey] : []
+      },
+      loginOut() {
+        this.$confirm({
+          title: '提示',
+          content: '真的要注销登录吗 ?',
+          okText: "确认",
+          cancelText: "取消",
+          onOk: () => {
+            sessionStorage.clear()
+            this.$router.push({path: '/login'})
+          },
+          onCancel: () => {
+          }
+        });
+      },
+      getTimes() {
+        let now = new Date(), hour = now.getHours()
+        if (hour < 6) {
+          this.time = "凌晨好！"
+        } else if (hour < 9) {
+          this.time = "早上好！"
+        } else if (hour < 12) {
+          this.time = "上午好！"
+        } else if (hour < 14) {
+          this.time = "中午好！"
+        } else if (hour < 17) {
+          this.time = "下午好！"
+        } else if (hour < 19) {
+          this.time = "傍晚好！"
+        } else if (hour < 22) {
+          this.time = "晚上好！"
+        } else {
+          this.time = "夜里好！"
+        }
+      }
+    }
+  }
+</script>
+
+<style lang="less" scoped>
+  .ant-layout-sider::-webkit-scrollbar, .ant-layout-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .logo {
+    height: 32px;
+    background: rgba(0, 0, 0, .2);
+    margin: 16px;
+    font-size: 20px;
+    color: #fff;
+    text-align: center;
+    line-height: 32px;
+  }
+
+  .trigger {
+    font-size: 18px;
+    line-height: 64px;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: color .3s;
+
+    &:hover {
+      background: rgba(0, 0, 0, .025);
+    }
+  }
+
+  .main-enter, .main-leave-to {
+    transform: translateX(30px);
+    opacity: 0;
+  }
+
+  .main-enter-active {
+    transition: all 0.3s;
+  }
+
+  .main-leave-active {
+    transform: translateX(-30px);
+    transition: all 0.1s;
+  }
+</style>

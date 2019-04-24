@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="top">
-      <Input search placeholder="Enter something..." style="width: 300px"/>
-      <Button type="primary" shape="circle" icon="md-add" disabled>添加</Button>
+      <div></div>
+      <a-button type="primary" shape="circle" icon="plus" disabled>添加</a-button>
     </div>
     <Table border :columns="columns" :data="tableData.data">
       <template slot-scope="{row}" slot="action">
-        <Button type="primary" size="small" @click="show(row)">修改</Button>
+        <a-button type="primary" size="small" @click="show(row)">修改</a-button>
       </template>
     </Table>
     <div class="page-box">
@@ -35,7 +35,7 @@
         </FormItem>
       </Form>
       <div class="demo-drawer-footer">
-        <Button type="primary" @click="submit('formData')">保存</Button>
+        <a-button type="primary" @click="submit('formData')">保存</a-button>
       </div>
     </Drawer>
   </div>

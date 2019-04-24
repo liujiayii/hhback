@@ -3,7 +3,8 @@ import ajax from 'axios'
 
 /*注册Axios*/
 const instance = ajax.create({
-  baseURL: '/',
+  baseURL: 'http://192.168.1.125:8080/',
+  method: 'post', // 默认是 get
   transformRequest: [/*将JSON字符串转换成FormData*/
     function (data) {
       let ret = '';

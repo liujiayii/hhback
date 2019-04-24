@@ -1,75 +1,40 @@
 <template>
   <div>
     <div class="main">
-      <Card style="width: 500px;height: 130px;overflow: hidden;">
+      <a-card v-for="(item,index) in card" :key="index" hoverable style="width: 500px;height: 130px;overflow: hidden">
         <div class="card-main">
           <div>
-            <div class="num">
-              2121313次
-            </div>
-            <div class="info">
-              浏览网页次数
-            </div>
+            <div class="num">{{item.count}}次</div>
+            <div class="info">{{item.title}}</div>
           </div>
           <div class="shape">
-            <img
-                    src="../../assets/images/glass.png"
-                    alt=""
-            >
+            <img src="../../assets/images/glass.png" alt="">
           </div>
         </div>
-      </Card>
-      <Card style="width: 500px;height: 130px;overflow: hidden;">
-        <div class="card-main">
-          <div>
-            <div class="num">
-              2121313次
-            </div>
-            <div class="info">
-              查看次数
-            </div>
-          </div>
-          <div class="shape">
-            <img
-                    src="../../assets/images/glass.png"
-                    alt=""
-            >
-          </div>
-        </div>
-      </Card>
-      <Card style="width: 500px;height: 130px;overflow: hidden;">
-        <div class="card-main">
-          <div>
-            <div class="num">
-              2121313次
-            </div>
-            <div class="info">
-              联系次数
-            </div>
-          </div>
-          <div class="shape">
-            <img
-                    src="../../assets/images/glass.png"
-                    alt=""
-            >
-          </div>
-        </div>
-      </Card>
+      </a-card>
     </div>
+    <anTv/>
     <homeTable/>
   </div>
 </template>
 
 <script>
   import homeTable from './components/homeTable'
+  import anTv from './components/anTv'
 
   export default {
     name: "Home",
-    components: {homeTable},
+    components: {homeTable, anTv},
     data() {
-      return {}
+      return {
+        card: [
+          {title: '浏览网页次数', count: '2121313'},
+          {title: '查看次数', count: '2121313'},
+          {title: '联系次数', count: '2121313'}
+        ],
+        show: false
+      }
     },
-    methods: {},
     mounted() {
     },
   }
@@ -79,7 +44,6 @@
   .main {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
   }
 
   .card-main {

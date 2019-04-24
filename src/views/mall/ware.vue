@@ -2,9 +2,7 @@
   <div>
     <div class="top">
       <Input search placeholder="输入关键词搜索……" style="width: 300px" @input="searchVal"/>
-      <Button type="primary" shape="circle" icon="md-add" @click="drawerShow=true">
-        添加
-      </Button>
+      <a-button type="primary" shape="circle" icon="plus" @click="drawerShow=true">添加</a-button>
     </div>
     <Table border :columns="columns" :data="tableData.data">
       <template slot-scope="{ row }" slot="action">
@@ -12,16 +10,14 @@
                 @on-change="stateUpdate(row)"
                 :value="row.state"
                 size="large"
-                style="margin-right: 5px"
                 :true-value="1"
                 :false-value="2"
         >
           <span slot="open">上架</span>
           <span slot="close">下架</span>
         </iSwitch>
-        <Button type="primary" size="small" style="margin-right: 5px" @click="show(row)">
-          查看
-        </Button>
+        <a-button type="primary" size="small" style="margin:0 5px" @click="show(row)">查看</a-button>
+        <a-button size="small" @click="showSpecs(row)">规格</a-button>
       </template>
     </Table>
     <div class="page-box">
@@ -31,7 +27,7 @@
             title="编辑"
             v-model="drawerShow"
             @on-close="clearDrawer"
-            width="720"
+            width="740"
             :mask-closable="false"
             :styles="styles"
     >
@@ -39,7 +35,7 @@
         <Row :gutter="32">
           <Col span="12">
             <FormItem label="商品专区">
-              <Select v-model="formData.zoneid" size="large">
+              <Select v-model="formData.classificationIds" size="large">
                 <Option v-for="(item,index) in zoneList" :value="item.id" :key="index">
                   {{ item.name }}
                 </Option>
@@ -48,7 +44,7 @@
           </Col>
           <Col span="12">
             <FormItem label="满减优惠">
-              <Select v-model="formData.id" size="large">
+              <Select v-model="formData.discount_id" size="large">
                 <Option v-for="(item,index) in discountList" :value="item.id" :key="index">
                   满{{ item.price }}减{{ item.money }}
                 </Option>
@@ -75,28 +71,13 @@
             </FormItem>
           </Col>
           <Col span="12">
-            <FormItem label="商品价格" prop="price">
-              <Input v-model="formData.price" size="large" type="number"/>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="规格">
-              <Input v-model="formData.specifications" size="large"/>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="颜色">
-              <Input v-model="formData.color" size="large"/>
-            </FormItem>
-          </Col>
-          <Col span="12" v-if="!formData.productId">
-            <FormItem label="库存" prop="number">
-              <Input v-model="formData.number" size="large" type="number"/>
-            </FormItem>
-          </Col>
-          <Col span="12">
             <FormItem label="商品描述" prop="describion">
               <Input type="textarea" v-model="formData.describion" size="large"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="售后信息" prop="describion">
+              <Input type="textarea" v-model="formData.after_information" size="large"/>
             </FormItem>
           </Col>
         </Row>
@@ -107,9 +88,9 @@
                 :on-format-error="formatError"
                 :show-upload-list="false"
         >
-          <Button icon="ios-cloud-upload-outline">
+          <a-button icon="upload">
             上传商品小图
-          </Button>
+          </a-button>
         </Upload>
         <div class="img-cont">
           <div class="img-box">
@@ -124,26 +105,73 @@
                 :on-format-error="formatError"
                 :show-upload-list="false"
         >
-          <Button icon="ios-cloud-upload-outline">
-            上传商品详情图
-          </Button>
+          <a-button icon="upload">上传商品详情图</a-button>
         </Upload>
         <div class="img-cont">
-          <div
-                  v-for="(item,index) in fileList"
-                  :key="index"
-                  class="img-box"
-                  @click="delImg(index)"
-          >
+          <div v-for="(item,index) in fileList" :key="index" class="img-box" @click="delImg(index)">
             <div class="ico">
-              <Icon type="md-trash"/>
+              <a-icon type="delete" theme="filled"/>
             </div>
             <img :src="item" alt>
           </div>
         </div>
       </Form>
       <div class="demo-drawer-footer">
-        <Button type="primary" @click="submit('formData')">保存</Button>
+        <a-button type="primary" @click="submit('formData')">保存</a-button>
+      </div>
+    </Drawer>
+    <Drawer
+            title="编辑"
+            v-model="drawerShowSpecs"
+            @on-close="clearDrawer"
+            width="740"
+            :mask-closable="false"
+            :styles="styles"
+    >
+      <div class="top">
+        <div></div>
+        <a-button type="primary" shape="circle" icon="plus" @click="specsFormShow=!specsFormShow">添加</a-button>
+      </div>
+      <Table border :columns="columnsSpecs" :data="tableDataSpecs.data">
+        <template slot-scope="{ row }" slot="action">
+          <a-button type="primary" size="small" style="margin-right: 5px" @click="show(row)">修改</a-button>
+          <a-button type="danger" size="small" style="margin-right: 5px" @click="showSpecs(row)">删除</a-button>
+        </template>
+      </Table>
+      <Form v-show="specsFormShow" :model="formDataSpecs" ref="formDataSpecs" :rules="ruleValidate">
+        <Row :gutter="32">
+          <template v-for="(item,index) in specsList">
+            <Col span="12">
+              <FormItem :label="item.specificationsName" :key="index">
+                <Input size="large" @input="updateSpecs(item.specificationsName,$event)"/>
+              </FormItem>
+            </Col>
+          </template>
+          <Col span="12">
+            <FormItem label="库存" prop="brand">
+              <Input v-model="formDataSpecs.number" size="large"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="销售价格" prop="productName">
+              <Input v-model="formDataSpecs.price" size="large"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="折扣价格" prop="productName">
+              <Input v-model="formDataSpecs.discount_price" size="large"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="成本价格" prop="productName">
+              <Input v-model="formDataSpecs.cost_price" size="large"/>
+            </FormItem>
+          </Col>
+        </Row>
+        <a-button type="primary" @click="submitSpecs('formDataSpecs')">保存</a-button>
+      </Form>
+      <div class="demo-drawer-footer">
+        <a-button type="primary" @click="drawerShowSpecs=false">保存</a-button>
       </div>
     </Drawer>
   </div>
@@ -157,6 +185,7 @@
     data() {
       return {
         drawerShow: false,
+        drawerShowSpecs: false,
         styles: {
           height: "calc(100% - 55px)",
           overflow: "auto",
@@ -179,8 +208,8 @@
             key: "producttypename"
           },
           {
-            title: "价格(元)",
-            key: "price"
+            title: "品牌",
+            key: "brand"
           },
           {
             title: "操作",
@@ -188,6 +217,34 @@
             width: 200,
             align: "center"
           }
+        ],
+        columnsSpecs: [
+          {
+            title: "规格名称",
+            key: "specificationName"
+          },
+          {
+            title: "折扣价",
+            key: "discount_price"
+          },
+          {
+            title: "成本价",
+            key: "cost_price"
+          },
+          {
+            title: "价格(元)",
+            key: "price"
+          },
+          {
+            title: "库存",
+            key: "number"
+          },
+          /*   {
+               title: "操作",
+               slot: "action",
+               width: 160,
+               align: "center"
+             }*/
         ],
         tableData: {
           data: [],
@@ -197,12 +254,20 @@
         sortList: [],
         discountList: [],
         zoneList: [],
-        currPage: 1
+        currPage: 1,
+        specsList: [],
+        tableDataSpecs: [],
+        formDataSpecs: {specificationName: {}},
+        specsFormShow: false
       };
     },
     methods: {
+      updateSpecs(key, value) {
+        console.log(key)
+        console.log(value)
+        this.formDataSpecs.specificationName = Object.assign(this.formDataSpecs.specificationName, {[key]: value})
+      },
       searchVal(productName) {
-        console.log(productName)
         this.pageChange(1, productName)
       },
       formatError() {
@@ -217,7 +282,6 @@
           onOk: () => {
             if (this.formData.productImage[index].id) {
               this.$ajax({
-                method: "post",
                 url: "deleteImg",
                 data: {id: this.formData.productImage[index].id}
               })
@@ -228,24 +292,17 @@
                     });
                   }
                 })
-                .catch(res => {
-                  this.$Notice.error({
-                    title: res.data.msg
-                  });
-                });
             }
-
             this.fileList.splice(index, 1);
-            this.$Message.info("Clicked ok");
           },
           onCancel: () => {
-            this.$Message.info("Clicked cancel");
           }
         });
       },
       clearDrawer() {
         this.formData = {zoneid: -1}
         this.fileList = [];
+        this.formDataSpecs = {specificationName: {}}
       },
       handleUpload(res) {
         this.formData.image = res.data;
@@ -255,29 +312,33 @@
       },
       show(row) {
         this.$ajax({
-          method: "post",
-          url: "listProductByProductId",
+          url: "listProductByProductIds",
           data: {productId: row.id}
         }).then(res => {
           if (res.data.code === 1) {
-            this.$ajax({
-              method: "post",
-              url: "selectZoneByProductId",
-              data: {productaid: row.id}
-            }).then(res_c => {
-              if (res_c.data.code === 1) {
-                res.data.data[0].zoneid = res_c.data.data[0].id || ''
-                this.formData = res.data.data[0]
-              } else {
-                this.$Notice.error({
-                  title: res_c.data.msg
-                });
-              }
-            }).catch(res_c => {
-              this.$Notice.error({
-                title: res_c.data.msg
-              });
+            this.formData = res.data.data.result
+            this.formData.discount_id = res.data.data.s1.discountid
+            for (let i = 0; i < res.data.data.result.productImage.length; i++) {
+              this.fileList.push(res.data.data.result.productImage[i].img);
+            }
+          } else {
+            this.$Notice.error({
+              title: res.data.msg
             });
+          }
+        })
+        this.drawerShow = true;
+      },
+      showSpecs(row) {
+        this.drawerShowSpecs = true
+        this.formDataSpecs.product_id = row.id
+        this.$ajax({
+          method: "post",
+          url: "selectAllspecifi",
+          data: {product_id: row.id}
+        }).then(res => {
+          if (res.data.code === 1) {
+            this.tableDataSpecs = res.data
           } else {
             this.$Notice.error({
               title: res.data.msg
@@ -290,24 +351,23 @@
         });
         this.$ajax({
           method: "post",
-          url: "selectProductImageByProductId",
-          data: {productId: row.id}
-        }).then(res => {
-          if (res.data.code === 1) {
-            for (let i = 0; i < res.data.data.length; i++) {
-              this.fileList.push(res.data.data[i].img);
+          url: "listSpecificationsByproducttypeid",
+          data: {producttypeid: row.producttypeid, page: 1, limit: 100}
+        })
+          .then(res => {
+            if (res.data.code === 1) {
+              this.specsList = res.data.data[0].specificationOptionsListss
+            } else {
+              this.$Notice.error({
+                title: res.data.msg
+              });
             }
-          } else {
+          })
+          .catch(res => {
             this.$Notice.error({
               title: res.data.msg
             });
-          }
-        }).catch(res => {
-          this.$Notice.error({
-            title: res.data.msg
           });
-        });
-        this.drawerShow = true;
       },
       pageChange(page, productName) {
         this.currPage = page
@@ -367,7 +427,7 @@
             this.formData["file"] = this.fileList;
             this.$ajax({
               method: "post",
-              url: this.formData.productId ? "updateProduct" : "saveProduct",
+              url: this.formData.productId ? "updateProduct" : "addproductService",
               data: this.formData
             })
               .then(res => {
@@ -457,7 +517,38 @@
               title: res.data.msg
             });
           });
-      }
+      },
+      submitSpecs(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.formDataSpecs.specificationName = JSON.stringify(this.formDataSpecs.specificationName)
+            this.$ajax({
+              method: "post",
+              url: 'addSpecificationService',
+              data: this.formDataSpecs
+            })
+              .then(res => {
+                if (res.data.code === 1) {
+                  this.$Notice.success({
+                    title: res.data.msg
+                  });
+                  this.clearDrawer()
+                } else {
+                  this.$Notice.error({
+                    title: res.data.msg
+                  });
+                }
+              })
+              .catch(res => {
+                this.$Notice.error({
+                  title: res.data.msg
+                });
+              });
+          } else {
+            this.$Message.error('Fail!');
+          }
+        })
+      },
     },
     mounted() {
       this.pageChange(1);
@@ -468,38 +559,37 @@
   };
 </script>
 
-<style scoped>
+<style scoped lang="less">
   .img-cont {
     display: flex;
     flex-wrap: wrap;
-  }
 
-  .img-cont .img-box {
-    position: relative;
-    width: 100px;
-    height: 100px;
-  }
+    .img-box {
+      position: relative;
+      width: 100px;
+      height: 100px;
 
-  .img-cont .img-box:hover .ico {
-    opacity: 1;
-    transition: all 0.5s;
-  }
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
 
-  .img-cont .img-box .ico {
-    position: absolute;
-    font-size: 40px;
-    width: 100%;
-    height: 100%;
-    line-height: 100px;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.8);
-    opacity: 0;
-    cursor: pointer;
-  }
+    .img-box:hover .ico {
+      opacity: 1;
+      transition: all 0.5s;
+    }
 
-  .img-cont .img-box img {
-    width: 100%;
-    height: 100%;
+    .ico {
+      position: absolute;
+      font-size: 40px;
+      width: 100%;
+      height: 100%;
+      line-height: 100px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.8);
+      opacity: 0;
+      cursor: pointer;
+    }
   }
-
 </style>

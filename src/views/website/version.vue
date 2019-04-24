@@ -2,7 +2,7 @@
   <div>
     <div class="top">
       <div></div>
-      <Button type="primary" shape="circle" icon="md-add" @click="drawerShow=true">更新</Button>
+      <a-button type="primary" shape="circle" icon="plus" @click="drawerShow=true">更新</a-button>
     </div>
     <Table border :columns="columns" :data="tableData.data"></Table>
     <Drawer
@@ -28,14 +28,14 @@
         </FormItem>
         <FormItem label="上传文件" v-show="formData.app_type!=1">
           <Upload action="" :before-upload="handleUpload" :show-upload-list="false">
-            <Button icon="ios-cloud-upload-outline">
+            <a-button icon="upload">
               上传文件
-            </Button>
+            </a-button>
           </Upload>
         </FormItem>
       </Form>
       <div class="demo-drawer-footer">
-        <Button type="primary" @click="submit('formData')">保存</Button>
+        <a-button type="primary" @click="submit('formData')">保存</a-button>
       </div>
     </Drawer>
   </div>

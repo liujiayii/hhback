@@ -1,24 +1,10 @@
 <template>
   <div>
-    <Divider>{{ forumName }}</Divider>
+    <a-divider>{{ forumName }}</a-divider>
     <div class="top">
-      <Input search placeholder="Enter something..." style="width: 300px"/>
-      <Button type="primary" shape="circle" icon="md-add">
-        添加
-      </Button>
+      <a-input-search placeholder="input search text" style="width: 200px" @search="onSearch"/>
     </div>
-    <Table border :columns="columns12" :data="data6">
-      <template slot-scope="{ row }" slot="name">
-        <strong>{{ row.name }}</strong>
-      </template>
-      <template slot-scope="{ row, index }" slot="action">
-        <Button type="primary" size="small" style="margin-right: 5px" @click="show(index)">查看</Button>
-        <Button type="error" size="small" @click="remove(index)">删除</Button>
-      </template>
-    </Table>
-    <div class="page-box">
-      <Page :total="40" size="small" show-elevator show-total/>
-    </div>
+    <a-table :columns="columns" :dataSource="data"/>
   </div>
 </template>
 
@@ -28,52 +14,32 @@
     props: {'forumName': String},
     data() {
       return {
-        columns12: [
-          {
-            title: '贴主编号',
-            slot: 'name'
-          },
-          {
-            title: '贴主',
-            key: 'age'
-          },
-          {
-            title: '贴吧主题',
-            key: 'address'
-          },
-          {
-            title: '被评论数',
-            key: 'age'
-          },
-          {
-            title: '操作',
-            slot: 'action',
-            width: 150,
-            align: 'center'
-          }
-        ],
-        data6: [
-          {
-            name: 'John Brown',
-            age: 18,
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            name: 'Jim Green',
-            age: 24,
-            address: 'London No. 1 Lake Park'
-          },
-          {
-            name: 'Joe Black',
-            age: 30,
-            address: 'Sydney No. 1 Lake Park'
-          },
-          {
-            name: 'Jon Snow',
-            age: 26,
-            address: 'Ottawa No. 2 Lake Park'
-          }
-        ]
+        data: [{
+          key: '1',
+          name: 'John Brown',
+          age: 32,
+          address: 'New York No. 1 Lake Park',
+        }, {
+          key: '2',
+          name: 'Jim Green',
+          age: 42,
+          address: 'London No. 1 Lake Park',
+        }, {
+          key: '3',
+          name: 'Joe Black',
+          age: 32,
+          address: 'Sidney No. 1 Lake Park',
+        }],
+        columns: [{
+          title: 'Name',
+          dataIndex: 'name',
+        }, {
+          title: 'Age',
+          dataIndex: 'age',
+        }, {
+          title: 'Address',
+          dataIndex: 'address',
+        }]
       }
     },
     methods: {
@@ -95,7 +61,10 @@
             this.$Message.info('Clicked cancel');
           }
         });
-      }
+      },
+      onSearch(value) {
+        console.log(value)
+      },
     }
   }
 </script>

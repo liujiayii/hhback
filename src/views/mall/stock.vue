@@ -179,7 +179,7 @@
                     title: res.data.msg
                   });
                   this.drawerShow = false;
-                  this.pageChange(this.currPage,'');
+                  this.pageChange(this.currPage, '');
                 } else {
                   this.$Notice.error({
                     title: res.data.msg
@@ -215,7 +215,7 @@
                   this.$Notice.success({
                     title: res.data.msg
                   });
-                  this.pageChange(1,'');
+                  this.pageChange(1, '');
                 } else {
                   this.$Notice.error({
                     title: res.data.msg
@@ -239,7 +239,7 @@
         this.$ajax({
           method: "post",
           url: "listAllInventoryById",
-          data: {page, limit: 10, productName}
+          data: {page, limit: 10, productName: ''}
         })
           .then(res => {
             if (res.data.code === 1) {

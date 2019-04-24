@@ -2,52 +2,29 @@
   <div class="bg">
     <div class="cont">
       <div class="aside">
-        <img
-                src="../../assets/images/loginAside.png"
-                alt=""
-        >
+        <img src="../../assets/images/loginAside.png" alt="">
       </div>
       <div class="main">
         <div class="logo">
-          <img
-                  src="../../assets/images/loginLogo.png"
-                  alt=""
-          >
+          <img src="../../assets/images/loginLogo.png" alt="">
         </div>
-        <Form
-                ref="formVal"
-                :model="formVal"
-                :rules="rulesForm"
-        >
-          <FormItem prop="username">
-            <Input
-                    v-model="formVal.username"
-                    size="large"
-                    prefix="md-contact"
-                    placeholder="请输入账号…"
-            />
-          </FormItem>
-          <FormItem prop="password">
-            <Input
-                    v-model="formVal.password"
-                    type="password"
-                    size="large"
-                    prefix="md-key"
-                    placeholder="请输入密码……"
-            />
-          </FormItem>
-          <FormItem>
-            <Button
-                    type="primary"
-                    size="large"
-                    shape="circle"
-                    long
-                    @click="submit('formVal')"
-            >
-              登录
-            </Button>
-          </FormItem>
-        </Form>
+        <a-form id="components-form-demo-normal-login" :form="form" class="login-form" @submit="handleSubmit">
+          <a-form-item>
+            <a-input v-decorator="['username', { rules: [{ required: true, message: '请输入你的账号!' }] }
+        ]" placeholder="请输入账号…">
+              <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)"/>
+            </a-input>
+          </a-form-item>
+          <a-form-item>
+            <a-input v-decorator="[ 'password', { rules: [{ required: true, message: '请输入你的密码!' }] }
+        ]" type="password" placeholder="请输入密码……">
+              <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)"/>
+            </a-input>
+          </a-form-item>
+          <a-form-item>
+            <a-button type="primary" html-type="submit" block class="sub">登录</a-button>
+          </a-form-item>
+        </a-form>
       </div>
     </div>
   </div>
@@ -57,60 +34,46 @@
   export default {
     name: 'Login',
     data() {
-      return {
-        formVal: {
-          username: '',
-          password: ''
-        },
-        rulesForm: {
-          username: [
-            {required: true, message: '账号不能为空', trigger: 'blur'}
-          ],
-          password: [
-            {required: true, message: '密码不能为空', trigger: 'blur'}
-          ]
-        }
-      }
+      return {}
     },
     methods: {
-      submit(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.$router.push({path: '/home'})
+      handleSubmit(e) {
+        e.preventDefault();
+        this.form.validateFields((err, values) => {
+          if (!err) {
             this.$ajax({
-              method: 'post',
               url: 'login',
-              data: this.formVal
+              data: values
             }).then((res) => {
               if (res.data.code === 1) {
-                let routerArr = res.data.data
-                window.sessionStorage.setItem('userName', this.formVal.username)
-                window.sessionStorage.setItem('routerPath', '/home')
-                window.sessionStorage.setItem('SkyLarkBack', JSON.stringify(routerArr))
+                window.sessionStorage.setItem('userName', values.username)
+                window.sessionStorage.setItem('path', '/home')
+                window.sessionStorage.setItem('SkyLarkBack', JSON.stringify(res.data.data))
                 this.$router.push({path: '/home'})
               } else {
                 this.$Notice.error({
                   title: res.data.data.msg
                 })
               }
-            }).catch((res) => {
-              this.$Notice.error({
-                title: res.data.msg
-              })
             })
           } else {
             this.$Notice.error({
               title: '校验错误',
             })
           }
-        })
+        });
       }
-    }
+    },
+    beforeCreate() {
+      this.form = this.$form.createForm(this);
+    },
+  }
+</script>
+<style scoped lang="less">
+  .sub {
+    border-radius: 32px;
   }
 
-</script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
   .bg {
     width: 100%;
     height: 100%;
@@ -136,10 +99,11 @@
     margin-bottom: 90px;
     width: 90%;
     height: 90%;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
 
-  .logo img {
-    width: 100%;
-    height: 100%;
-  }
 </style>

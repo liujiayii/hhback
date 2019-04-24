@@ -26,32 +26,18 @@
               slot-scope="{ row }"
               slot="action"
       >
-        <Button
+        <a-button
                 type="primary"
                 size="small"
                 style="margin-right: 5px"
                 @click="show(row)"
         >
           查看
-        </Button>
-        <Button
-                type="error"
-                size="small"
-                @click="remove(index)"
-                disabled
-        >
-          删除
-        </Button>
+        </a-button>
       </template>
     </Table>
     <div class="page-box">
-      <Page
-              :total="tableData.count"
-              @on-change="pageChange"
-              size="small"
-              show-elevator
-              show-total
-      />
+      <Page :total="tableData.count" @on-change="pageChange" size="small" show-elevator show-total/>
     </div>
     <Drawer
             title="编辑"
@@ -60,20 +46,13 @@
             :mask-closable="false"
             :styles="styles"
     >
-      <Table
-              border
-              :columns="columnsGoods"
-              :data="tableDataGoods"
-      />
-      <Form :model="formData">
+      <Table border :columns="columnsGoods" :data="tableDataGoods"/>
+      <Form :model="formData" ref="formData"
+            :rules="ruleValidate">
         <Row :gutter="32">
           <Col span="12">
             <FormItem label="姓名">
-              <Input
-                      v-model="formData.goods_name"
-                      size="large"
-                      readonly
-              />
+              <Input v-model="formData.goods_name" size="large" readonly/>
             </FormItem>
           </Col>
           <Col span="12">
@@ -148,19 +127,19 @@
         </Row>
       </Form>
       <div class="demo-drawer-footer">
-        <Button
+        <a-button
                 style="margin-right: 8px"
                 @click="drawerShow = false"
         >
           取消
-        </Button>
-        <Button
+        </a-button>
+        <a-button
                 v-show="formData.order_state==1"
                 type="primary"
                 @click="submit('formData')"
         >
           发货
-        </Button>
+        </a-button>
       </div>
     </Drawer>
   </div>
@@ -244,9 +223,9 @@
         this.drawerShow = true;
         this.tableDataGoods = row.shping;
         this.formData.order_id = row.order_id;
-        this.formData.goods_name = row.t_goods.goods_name;
-        this.formData.goods_address = row.t_goods.goods_address;
-        this.formData.goods_tel = row.t_goods.goods_tel;
+        this.formData.goods_name = row.goods_name;
+        this.formData.goods_address = row.goods_address;
+        this.formData.goods_tel = row.goods_tel;
         this.formData.order_state = row.order_state;
         this.formData.order_shouhuo_id = row.order_shouhuo_id;
       },
@@ -255,30 +234,18 @@
           this.searchSelect = ''
         }
         this.$ajax({
-          method: "post",
           url: "t_order/orderweblist",
           data: {page, limit: 10, date: this.searchInput, order_state: this.searchSelect}
+        }).then(res => {
+          if (res.data.code === 1) {
+            this.tableData = res.data;
+          }
         })
-          .then(res => {
-            if (res.data.code === 1) {
-              this.tableData = res.data;
-            } else {
-              this.$Notice.error({
-                title: res.data.msg
-              });
-            }
-          })
-          .catch(res => {
-            this.$Notice.error({
-              title: res.data.msg
-            });
-          });
       },
       submit(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.$ajax({
-              method: "post",
               url: "/t_order/ordercan",
               data: {
                 order_id: this.formData.order_id,

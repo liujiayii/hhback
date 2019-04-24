@@ -1,9 +1,6 @@
 <template>
   <div id="app">
-    <transition
-            name="fade"
-            mode="out-in"
-    >
+    <transition name="fade" mode="out-in">
       <router-view/>
     </transition>
   </div>
@@ -27,28 +24,6 @@
     width: 100%;
   }
 
-  .ivu-layout, .layout {
-    height: 100%;
-  }
-
-  .ivu-menu-submenu-title {
-    color: #fff !important;
-  }
-
-  .main-enter, .main-leave-to {
-    transform: translateX(30px);
-    opacity: 0;
-  }
-
-  .main-enter-active {
-    transition: all 0.3s;
-  }
-
-  .main-leave-active {
-    transform: translateX(-30px);
-    transition: all 0.1s;
-  }
-
   .fade-enter-active,
   .fade-leave-active {
     transition: all .2s ease;
@@ -66,15 +41,21 @@
   }
 
   /*抽屉底部*/
-  .demo-drawer-footer {
+  .demo-drawer-footer, .drawer-footer {
     width: 100%;
     position: absolute;
     bottom: 0;
     left: 0;
-    border-top: 1px solid #e8e8e8;
+    border-top: 1px solid #e9e9e9;
     padding: 10px 16px;
     text-align: right;
     background: #fff;
+  }
+
+  .drawer-cont {
+    height: calc(100% - 108px);
+    overflow: auto;
+    padding-bottom: 108px;
   }
 
   /*分页盒子*/
@@ -92,5 +73,12 @@
 
   input[type="number"] {
     -moz-appearance: textfield
+  }
+
+  .ant-btn-circle, .ant-btn-circle-outline {
+    width: auto !important;
+    height: 32px !important;
+    padding: 0 15px !important;
+    border-radius: 32px !important;
   }
 </style>

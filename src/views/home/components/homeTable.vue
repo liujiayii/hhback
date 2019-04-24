@@ -1,9 +1,14 @@
 <template>
   <div>
-    <Table border :columns="columns" :data="tableData.data"></Table>
-    <div class="page-box">
-      <Page :total="tableData.count" @on-change="pageChange" size="small" show-elevator show-total/>
-    </div>
+    <a-table :columns="columns"
+             :rowKey="record => record.id"
+             :dataSource="data"
+             :pagination="pagination"
+             :loading="loading"
+             @change="handleTableChange"
+             bordered
+    >
+    </a-table>
   </div>
 </template>
 
@@ -17,69 +22,69 @@
         columns: [
           {
             title: "姓名",
-            key: "name"
+            dataIndex: "name"
           },
           {
             title: "地址",
-            key: "address"
+            dataIndex: "address"
           },
           {
             title: "联系方式",
-            key: "phone"
-          },
-          {
-            title: "地址",
-            key: "address"
+            dataIndex: "phone"
           },
           {
             title: "邮箱",
-            key: "emaill"
+            dataIndex: "emaill"
           },
           {
             title: "留言内容",
-            key: "content"
+            dataIndex: "content"
           },
           {
             title: "创建时间",
-            key: "create_time",
-            render: (h, params) => {
-              return h(
-                "div",
-                formatDate(new Date(params.row.create_time), "yyyy-MM-dd")
-              );
+            dataIndex: "create_time",
+            customRender: (text, record, index) => {
+              return formatDate(new Date(text), "yyyy-MM-dd")
             }
           }
         ],
-        tableData: {
-          data: [],
-          count: 0
-        }
+        data: [],
+        pagination: {},
+        loading: false
       };
     },
     methods: {
-      pageChange(page) {
-        this.currPage = page
+      handleTableChange(pagination, filters, sorter) {
+        console.log(pagination);
+        const pager = {...this.pagination};
+        pager.current = pagination.current;
+        this.pagination = pager;
+        this.fetch({
+          limit: pagination.pageSize,
+          page: pagination.current,
+          ...filters,
+        });
+      },
+      fetch(params = {}) {
+        console.log('params:', params);
+        this.loading = true
         this.$ajax({
           method: "post",
           url: "listAllOpinion",
-          data: {page, limit: 10}
-        }).then(res => {
-          if (res.data.code === 1) {
-            this.tableData = res.data;
-          } else {
-            this.$Notice.error({
-              title: res.data.msg
-            });
+          data: {
+            ...params,
           }
-        }).catch(res => {
-          this.$Notice.error({
-            title: res.data.msg
-          });
+        }).then((res) => {
+          const pagination = {...this.pagination};
+          pagination.total = res.data.count;
+          this.loading = false;
+          this.data = res.data.data;
+          this.pagination = pagination;
         });
       }
     },
     mounted() {
-      this.pageChange(1);
+      this.fetch({page: 1, limit: 10,})
     }
   };
 </script>

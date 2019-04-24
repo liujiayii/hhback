@@ -1,19 +1,15 @@
 <template>
   <div>
     <div class="top">
-      <Input
-              search
-              placeholder="Enter something..."
-              style="width: 300px"
-      />
-      <Button
+      <div></div>
+      <a-button
               type="primary"
               shape="circle"
-              icon="md-add"
+              icon="plus"
               @click="drawerShow=true"
       >
         添加
-      </Button>
+      </a-button>
     </div>
     <Table
             border
@@ -24,17 +20,17 @@
               slot-scope="{ row, index }"
               slot="action"
       >
-        <Button
+        <a-button
                 type="primary"
                 size="small"
                 style="margin-right: 5px"
                 @click="show(row)"
         >
           查看
-        </Button>
-        <Button type="error" size="small" @click="remove(index)">
+        </a-button>
+        <a-button type="danger" size="small" @click="remove(index)">
           删除
-        </Button>
+        </a-button>
       </template>
     </Table>
     <div class="page-box">
@@ -84,7 +80,7 @@
         </Row>
       </Form>
       <div class="demo-drawer-footer">
-        <Button type="primary" @click="submit('formData')">提交</Button>
+        <a-button type="primary" @click="submit('formData')">提交</a-button>
       </div>
     </Drawer>
   </div>
@@ -208,7 +204,7 @@
           });
       },
       remove(index) {
-        this.data6.splice(index, 1);
+
       }
     },
     mounted() {

@@ -1,13 +1,13 @@
 <template>
   <div>
     <div class="top">
-      <Input search placeholder="Enter something..." style="width: 300px"/>
-      <Button type="primary" shape="circle" icon="md-add" @click="drawerShow=true">添加</Button>
+      <div></div>
+      <a-button type="primary" icon="plus" @click="drawerShow=true" shape="circle">添加</a-button>
     </div>
     <Table border :columns="columns" :data="tableData.data">
       <template slot-scope="{row}" slot="action">
-        <Button type="primary" size="small" style="margin-right: 5px" @click="show(row)">修改</Button>
-        <Button type="error" size="small" @click="remove(row)">删除</Button>
+        <a-button type="primary" size="small" style="margin-right: 5px" @click="show(row)">修改</a-button>
+        <a-button type="danger" size="small" @click="remove(row)">删除</a-button>
       </template>
     </Table>
     <div class="page-box">
@@ -30,7 +30,7 @@
         </FormItem>
       </Form>
       <div class="demo-drawer-footer">
-        <Button type="primary" @click="submit('formData')">保存</Button>
+        <a-button type="primary" @click="submit('formData')">保存</a-button>
       </div>
     </Drawer>
   </div>

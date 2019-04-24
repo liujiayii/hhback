@@ -1,94 +1,83 @@
 <template>
   <div>
     <div class="top">
-      <Input
-        search
-        placeholder="Enter something..."
-        style="width: 300px"
-      />
-      <Button
-        type="primary"
-        shape="circle"
-        icon="md-add"
-        @click="drawerShow= true"
-      >
-        添加
-      </Button>
+      <div></div>
+      <a-button type="primary" shape="circle" icon="plus" @click="drawerShow= true">添加</a-button>
     </div>
     <Table
-      border
-      :columns="columns"
-      :data="tableData.data"
+            border
+            :columns="columns"
+            :data="tableData.data"
     >
       <template
-        slot-scope="{row}"
-        slot="action"
+              slot-scope="{row}"
+              slot="action"
       >
-        <Button
-          type="error"
-          size="small"
-          @click="remove(row)"
+        <a-button
+                type="danger"
+                size="small"
+                @click="remove(row)"
         >
           删除
-        </Button>
+        </a-button>
       </template>
     </Table>
     <div class="page-box">
       <Page
-        :total="tableData.count"
-        @on-change="pageChange"
-        size="small"
-        show-elevator
-        show-total
+              :total="tableData.count"
+              @on-change="pageChange"
+              size="small"
+              show-elevator
+              show-total
       />
     </div>
     <Drawer
-      title="编辑"
-      v-model="drawerShow"
-      @on-close="clearDrawer"
-      width="720"
-      :mask-closable="false"
-      :styles="styles"
+            title="编辑"
+            v-model="drawerShow"
+            @on-close="clearDrawer"
+            width="720"
+            :mask-closable="false"
+            :styles="styles"
     >
       <Form
-        :model="formData"
-        ref="formData"
-        :rules="ruleValidate"
+              :model="formData"
+              ref="formData"
+              :rules="ruleValidate"
       >
         <Row :gutter="32">
-          <Col span="12" >
-          <FormItem
-            label="优惠起始金额"
-            prop="price"
-          >
-            <Input
-              v-model="formData.price"
-              size="large"
-              type="number"
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem
+                    label="优惠起始金额"
+                    prop="price"
+            >
+              <Input
+                      v-model="formData.price"
+                      size="large"
+                      type="number"
+              />
+            </FormItem>
           </Col>
-          <Col span="12" >
-          <FormItem
-            label="优惠金额"
-            prop="money"
-          >
-            <Input
-              v-model="formData.money"
-              size="large"
-              type="number"
-            />
-          </FormItem>
+          <Col span="12">
+            <FormItem
+                    label="优惠金额"
+                    prop="money"
+            >
+              <Input
+                      v-model="formData.money"
+                      size="large"
+                      type="number"
+              />
+            </FormItem>
           </Col>
         </Row>
       </Form>
       <div class="demo-drawer-footer">
-        <Button
-          type="primary"
-          @click="submit('formData')"
+        <a-button
+                type="primary"
+                @click="submit('formData')"
         >
           保存
-        </Button>
+        </a-button>
       </div>
     </Drawer>
   </div>

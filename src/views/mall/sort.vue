@@ -1,47 +1,18 @@
 <template>
   <div>
-    <Divider orientation="left">
-      首页轮播图
-    </Divider>
+    <a-divider orientation="left">首页轮播图</a-divider>
     <div class="top">
-      <Input
-              search
-              placeholder="Enter something..."
-              style="width: 300px"
-      />
-      <Upload
-              action="/t_carousel/insert"
-              :show-upload-list="false"
-              :on-success="bannerSuc"
-              :format="['jpg','jpeg','png']"
-              :on-format-error="formatError"
-      >
-        <Button
-                type="primary"
-                shape="circle"
-                icon="md-add"
-                @click="drawerShowBanner=true"
-        >
-          上传图片
-        </Button>
+      <div></div>
+      <Upload action="/t_carousel/insert" :show-upload-list="false" :on-success="bannerSuc" :format="['jpg','jpeg','png']" :on-format-error="formatError">
+        <a-button type="primary" shape="circle" icon="plus" @click="drawerShowBanner=true">上传图片</a-button>
       </Upload>
     </div>
-    <Table
-            border
-            :columns="columnsBanner"
-            :data="tableDataBanner.data"
-    >
+    <Table border :columns="columnsBanner" :data="tableDataBanner.data">
       <template
               slot-scope="{ row }"
               slot="action"
       >
-        <Button
-                type="error"
-                size="small"
-                @click="removeBanner(row)"
-        >
-          删除
-        </Button>
+        <a-button type="danger" size="small" @click="removeBanner(row)">删除</a-button>
       </template>
     </Table>
     <div class="page-box">
@@ -53,23 +24,17 @@
               show-total
       />
     </div>
-    <Divider orientation="left">
-      商品专区
-    </Divider>
+    <a-divider orientation="left">商品专区</a-divider>
     <div class="top">
-      <Input
-              search
-              placeholder="Enter something..."
-              style="width: 300px"
-      />
-      <Button
+      <div></div>
+      <a-button
               type="primary"
               shape="circle"
-              icon="md-add"
+              icon="plus"
               @click="drawerShowSpec=true"
       >
         添加
-      </Button>
+      </a-button>
     </div>
     <Table
             border
@@ -80,21 +45,21 @@
               slot-scope="{ row }"
               slot="action"
       >
-        <Button
+        <a-button
                 type="primary"
                 size="small"
                 style="margin-right: 5px"
                 @click="editSpec(row)"
         >
           修改
-        </Button>
-        <Button
-                type="error"
+        </a-button>
+        <a-button
+                type="danger"
                 size="small"
                 @click="removeSpec(row)"
         >
           删除
-        </Button>
+        </a-button>
       </template>
     </Table>
     <div class="page-box">
@@ -106,23 +71,17 @@
               show-total
       />
     </div>
-    <Divider orientation="left">
-      一级分类
-    </Divider>
+    <a-divider orientation="left">一级分类</a-divider>
     <div class="top">
-      <Input
-              search
-              placeholder="Enter something..."
-              style="width: 300px"
-      />
-      <Button
+      <div></div>
+      <a-button
               type="primary"
               shape="circle"
-              icon="md-add"
+              icon="plus"
               @click="drawerShow=true"
       >
         添加
-      </Button>
+      </a-button>
     </div>
     <Table
             border
@@ -133,21 +92,21 @@
               slot-scope="{ row }"
               slot="action"
       >
-        <Button
+        <a-button
                 type="primary"
                 size="small"
                 style="margin-right: 5px"
                 @click="edit(row)"
         >
           修改
-        </Button>
-        <Button
-                type="error"
+        </a-button>
+        <a-button
+                type="danger"
                 size="small"
                 @click="remove(row)"
         >
           删除
-        </Button>
+        </a-button>
       </template>
     </Table>
     <div class="page-box">
@@ -159,23 +118,17 @@
               show-total
       />
     </div>
-    <Divider orientation="left">
-      二级分类
-    </Divider>
+    <a-divider orientation="left">二级分类</a-divider>
     <div class="top">
-      <Input
-              search
-              placeholder="Enter something..."
-              style="width: 300px"
-      />
-      <Button
+      <div></div>
+      <a-button
               type="primary"
               shape="circle"
-              icon="md-add"
+              icon="plus"
               @click="drawerShowSec=true"
       >
         添加
-      </Button>
+      </a-button>
     </div>
     <Table
             border
@@ -186,21 +139,21 @@
               slot-scope="{ row }"
               slot="action"
       >
-        <Button
+        <a-button
                 type="primary"
                 size="small"
                 style="margin-right: 5px"
                 @click="editSec(row)"
         >
           修改
-        </Button>
-        <Button
-                type="error"
+        </a-button>
+        <a-button
+                type="danger"
                 size="small"
                 @click="removeSec(row)"
         >
           删除
-        </Button>
+        </a-button>
       </template>
     </Table>
     <div class="page-box">
@@ -241,18 +194,18 @@
                 :on-format-error="formatError"
                 :show-upload-list="false"
         >
-          <Button icon="ios-cloud-upload-outline">
+          <a-button icon="upload">
             上传图标
-          </Button>
+          </a-button>
         </Upload>
       </Form>
       <div class="demo-drawer-footer">
-        <Button
+        <a-button
                 type="primary"
                 @click="submitSpec('formDataSpec')"
         >
           保存
-        </Button>
+        </a-button>
       </div>
     </Drawer>
     <Drawer
@@ -288,18 +241,18 @@
                 :on-format-error="formatError"
                 :show-upload-list="false"
         >
-          <Button icon="ios-cloud-upload-outline">
+          <a-button icon="upload">
             上传图标
-          </Button>
+          </a-button>
         </Upload>
       </Form>
       <div class="demo-drawer-footer">
-        <Button
+        <a-button
                 type="primary"
                 @click="submit('formData')"
         >
           保存
-        </Button>
+        </a-button>
       </div>
     </Drawer>
     <Drawer
@@ -354,18 +307,18 @@
                 :on-format-error="formatError"
                 :show-upload-list="false"
         >
-          <Button icon="ios-cloud-upload-outline">
+          <a-button icon="upload">
             上传图标
-          </Button>
+          </a-button>
         </Upload>
       </Form>
       <div class="demo-drawer-footer">
-        <Button
+        <a-button
                 type="primary"
                 @click="submitSec('formDataSec')"
         >
           保存
-        </Button>
+        </a-button>
       </div>
     </Drawer>
   </div>

@@ -1,18 +1,7 @@
 <template>
   <div>
     <div class="top">
-      <Input
-        search
-        placeholder="输入关键词搜索……" style="width: 300px" @input="searchVal"
-      />
-      <Button
-        type="primary"
-        shape="circle"
-        icon="md-add"
-        disabled
-      >
-        添加
-      </Button>
+      <Input search placeholder="输入关键词搜索……" style="width: 300px" @input="searchVal"/>
     </div>
     <Table
       border
@@ -23,22 +12,22 @@
         slot-scope="{row}"
         slot="action"
       >
-        <Button
+        <a-button
           type="primary"
           size="small"
           style="margin-right: 5px"
           @click="show(row)"
         >
           回复
-        </Button>
-        <Button
-          type="error"
+        </a-button>
+        <a-button
+          type="danger"
           size="small"
           @click="remove(row)"
           disabled
         >
           删除
-        </Button>
+        </a-button>
       </template>
     </Table>
     <div class="page-box">
@@ -80,12 +69,12 @@
         </Row>
       </Form>
       <div class="demo-drawer-footer">
-        <Button
+        <a-button
           type="primary"
           @click="submit('formData')"
         >
           保存
-        </Button>
+        </a-button>
       </div>
     </Drawer>
   </div>

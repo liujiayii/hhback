@@ -1,19 +1,10 @@
 <template>
   <div>
     <div class="top">
-      <Input
-              search
-              placeholder="Enter something..."
-              style="width: 300px"
-      />
-      <Button
-              type="primary"
-              shape="circle"
-              icon="md-add"
-              @click="drawerShow= true"
-      >
+      <div></div>
+      <a-button type="primary" shape="circle" icon="plus" @click="drawerShow= true">
         添加
-      </Button>
+      </a-button>
     </div>
     <Table
             border
@@ -24,13 +15,13 @@
               slot-scope="{row}"
               slot="action"
       >
-        <Button
-                type="error"
+        <a-button
+                type="danger"
                 size="small"
                 @click="remove(row)"
         >
           删除
-        </Button>
+        </a-button>
       </template>
     </Table>
     <div class="page-box">
@@ -95,12 +86,12 @@
         </Row>
       </Form>
       <div class="demo-drawer-footer">
-        <Button
+        <a-button
                 type="primary"
                 @click="submit('formData')"
         >
           保存
-        </Button>
+        </a-button>
       </div>
     </Drawer>
   </div>

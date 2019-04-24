@@ -1,45 +1,12 @@
 <template>
   <div>
     <div class="top">
-      <Input
-              search
-              placeholder="Enter something..."
-              style="width: 300px"
-      />
-      <Button
-              type="primary"
-              shape="circle"
-              icon="md-add"
-              disabled
-      >
-        添加
-      </Button>
+      <Input search placeholder="Enter something..." style="width: 300px"/>
+      <div></div>
     </div>
-    <Table
-            border
-            :columns="columns"
-            :data="tableData.data"
-    >
-      <template
-              slot-scope="{ row }"
-              slot="action"
-      >
-        <Button
-                type="primary"
-                size="small"
-                style="margin-right: 5px"
-                @click="show(row)"
-                disabled
-        >
-          查看
-        </Button>
-        <Button
-                type="error"
-                size="small"
-                @click="remove(row)"
-        >
-          退货
-        </Button>
+    <Table border :columns="columns" :data="tableData.data">
+      <template slot-scope="{ row }" slot="action">
+        <a-button type="primary" size="small" style="margin-right: 5px" @click="show(row)">查看</a-button>
       </template>
     </Table>
     <div class="page-box">
@@ -58,126 +25,64 @@
             :mask-closable="false"
             :styles="styles"
     >
-      <Table
-              border
-              :columns="columnsGoods"
-              :data="tableDataGoods"
-      />
+      <Table border :columns="columnsGoods" :data="tableDataGoods"/>
       <Form :model="formData">
         <Row :gutter="32">
           <Col span="12">
             <FormItem label="姓名">
-              <Input
-                      v-model="formData.nickname"
-                      size="large"
-                      readonly
-              />
+              <Input v-model="formData.nickname" size="large"/>
             </FormItem>
           </Col>
           <Col span="12">
             <FormItem label="电话">
-              <Input
-                      v-model="formData.goods_tel"
-                      size="large"
-                      readonly
-              />
+              <Input v-model="formData.phone" size="large"/>
             </FormItem>
           </Col>
           <Col span="12">
-            <FormItem label="收货地址">
-              <Input
-                      v-model="formData.goods_address"
-                      size="large"
-                      readonly
-              />
+            <FormItem label="退货类别">
+              <Select v-model="formData.cause_type" size="large" readonly>
+                <Option value="0">仅退款</Option>
+                <Option value="1">退货退款</Option>
+              </Select>
             </FormItem>
           </Col>
           <Col span="12">
-            <FormItem label="订单状态">
-              <Select
-                      v-model="formData.order_state"
-                      size="large"
-                      readonly
-              >
-                <Option value="-1">
-                  订单取消
-                </Option>
-                <Option value="0">
-                  待付款
-                </Option>
+            <FormItem label="退货说明">
+              <Input v-model="formData.cause_explain" size="large"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="退款金额">
+              <Input v-model="formData.sales_amount" size="large"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="退款数量">
+              <Input v-model="formData.sales_nunber" size="large"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="退款原因">
+              <Input v-model="formData.sales_cause" size="large"/>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="退货状态">
+              <Select v-model="formData.sales_stes" size="large" readonly>
                 <Option value="1">
-                  已付款，代发货
-                </Option>
-                <Option value="2">
-                  已发货
-                </Option>
-                <Option value="3">
-                  已签收
-                </Option>
-                <Option value="4">
-                  已完成
-                </Option>
-                <Option value="5">
-                  退货中
-                </Option>
-                <Option value="6">
                   退货审核通过
                 </Option>
-                <Option value="7">
+                <Option value="2">
                   退货审核不通过
                 </Option>
               </Select>
             </FormItem>
           </Col>
-          <Col
-                  span="12"
-                  v-show="formData.order_state>0"
-          >
-            <FormItem label="物流单号">
-              <Input
-                      v-model="formData.order_shouhuo_id"
-                      size="large"
-                      readonly
-              />
-            </FormItem>
-          </Col>
-          <Col
-                  span="12"
-                  v-show="formData.order_state>0"
-          >
-            <FormItem label="货物状态">
-              <Input
-                      v-model="formData.order_state"
-                      size="large"
-              />
-            </FormItem>
-          </Col>
-          <Col
-                  span="12"
-                  v-show="formData.order_state>4"
-          >
-            <FormItem label="退款原因">
-              <Input
-                      v-model="formData.sales_cause"
-                      size="large"
-              />
-            </FormItem>
-          </Col>
         </Row>
       </Form>
       <div class="demo-drawer-footer">
-        <Button
-                style="margin-right: 8px"
-                @click="drawerShow = false"
-        >
-          取消
-        </Button>
-        <Button
-                type="primary"
-                @click="drawerShow = false"
-        >
-          退货
-        </Button>
+        <a-button style="margin-right: 8px" @click="drawerShow = false">取消</a-button>
+        <a-button type="primary" @click="save" v-if="formData.stele=='0'">保存</a-button>
       </div>
     </Drawer>
   </div>
@@ -201,12 +106,12 @@
         ruleValidate,
         columnsGoods: [
           {
-            title: "订单编号",
-            key: "order_id"
+            title: "商品名称",
+            key: "producttypename"
           },
           {
-            title: "商品名称",
-            key: "name"
+            title: "规格",
+            key: "shoping_specifications"
           },
           {
             title: "单价",
@@ -223,22 +128,24 @@
         ],
         columns: [
           {
-            title: "订单编号",
+            title: "退单编号",
             key: "order_id"
           },
           {
-            title: "订单金额(元)",
-            key: "zongjia"
-          },
-          {
-            title: "姓名",
-            key: "nickname"
+            title: "订单编号",
+            key: "sales_no"
           },
           {
             title: "订单状态",
             key: "order_state",
             render: (h, params) => {
-              return h("div", formatState(params.row.order_state));
+              if (params.row.stele == 1) {
+                return h("div", '审核通过');
+              } else if (params.row.stele == 2) {
+                return h("div", '审核未通过');
+              } else {
+                return h("div", '未审核');
+              }
             }
           },
           {
@@ -257,20 +164,25 @@
     },
     methods: {
       show(row) {
-        Object(this.formData, row);
+        this.tableDataGoods = row.shopinglist
+        this.formData = row
         this.drawerShow = true;
       },
-      remove(row) {
+      save() {
         this.$Modal.confirm({
           title: "提示",
-          content: "<p>是否退货</p>",
-          okText: '通过',
-          cancelText: '拒绝',
+          content: "<p>是否保存</p>",
+          okText: '确认',
+          cancelText: '取消',
           onOk: () => {
             this.$ajax({
               method: "post",
-              url: "/t_order/ordercan",
-              data: {order_id: row.order_id, order_state: 6}
+              url: "t_sales/upodate",
+              data: {
+                sales_id: this.formData.sales_id,
+                stale: this.formData.sales_stes,
+                order_id: this.formData.order_id
+              }
             })
               .then(res => {
                 if (res.data.code === 1) {
@@ -291,28 +203,6 @@
               });
           },
           onCancel: () => {
-            this.$ajax({
-              method: "post",
-              url: "/t_order/ordercan",
-              data: {order_id: row.order_id, order_state: 7}
-            })
-              .then(res => {
-                if (res.data.code === 1) {
-                  this.$Notice.success({
-                    title: res.data.msg
-                  });
-                  this.pageChange(1);
-                } else {
-                  this.$Notice.error({
-                    title: res.data.msg
-                  });
-                }
-              })
-              .catch(res => {
-                this.$Notice.error({
-                  title: res.data.msg
-                });
-              });
           }
         });
       },
