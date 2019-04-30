@@ -76,50 +76,5 @@ let validPass = (rule, value, callback) => {
 }
 
 const ruleValidate = {
- /* name: [
-    {required: true, message: '必填项不能为空', trigger: 'blur'}
-  ],
-  post: [
-    {required: true, message: '必填项不能为空', trigger: 'blur'}
-  ],
-  phone: [
-    {required: true, message: '必填项不能为空', trigger: 'blur'},
-    {validator: validPhone, trigger: 'blur'}
-  ],
-  username: [
-    {required: true, message: '请输入用户名', trigger: 'blur'},
-    {validator: validUser, trigger: 'blur'},
-    {min: 6, max: 12, message: '长度在 6 到 12 个字符', trigger: 'blur'}
-  ],
-  passWord: [{validator: validPass, trigger: 'blur'}],
-  brand: [
-    {required: true, message: '必填项不能为空', trigger: 'blur'}
-  ],
-  productName: [
-    {required: true, message: '必填项不能为空', trigger: 'blur'}
-  ],
-  number: [
-    {required: true, message: '必填项不能为空', trigger: 'blur'}
-  ],
-  describion: [
-    {required: true, message: '必填项不能为空', trigger: 'blur'}
-  ],
-  price: [
-    {required: true, message: '必填项不能为空', trigger: 'blur'}
-  ],
-  money: [
-    {required: true, message: '必填项不能为空', trigger: 'blur'}
-  ],
-  prices: [
-    {required: true, message: '必填项不能为空', trigger: 'blur'}
-  ],
-  freight: [
-    {required: true, message: '必填项不能为空', trigger: 'blur'}
-  ],
-  order_shouhuo_id: [
-    {required: true, message: '必填项不能为空', trigger: 'blur'}
-  ],
-  classificationId: [
-    {required: true, message: '必填项不能为空', trigger: 'blur'}
-  ],*/
+
 }

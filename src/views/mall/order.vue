@@ -1,285 +1,231 @@
 <template>
   <div>
     <div class="top">
-      <Select style="width:300px" clearable @on-change="goSearch" v-model="searchSelect">
-        <Option value="-9">全部</Option>
-        <Option :value="-1">订单取消</Option>
-        <Option :value="0">待付款</Option>
-        <Option :value="1">已付款，待发货</Option>
-        <Option :value="2">已发货</Option>
-        <Option :value="3">已签收</Option>
-        <Option :value="4">已完成</Option>
-        <Option :value="5">退货中</Option>
-        <Option :value="6">退货审核通过</Option>
-        <Option :value="7">退货审核不通过</Option>
-      </Select>
+      <a-form :form="searchForm" layout="inline" @submit="handleSearch">
+        <a-form-item>
+          <a-select placeholder="选择订单状态" style="width: 300px" v-decorator="['order_state']">
+            <a-select-option value="">查看全部</a-select-option>
+            <a-select-option value="-1">订单取消</a-select-option>
+            <a-select-option value="0">待付款</a-select-option>
+            <a-select-option value="1">已付款，待发货</a-select-option>
+            <a-select-option value="2">已发货</a-select-option>
+            <a-select-option value="3">已签收</a-select-option>
+            <a-select-option value="4">已完成</a-select-option>
+            <a-select-option value="5">退货中</a-select-option>
+            <a-select-option value="6">退货审核通过</a-select-option>
+            <a-select-option value="7">退货审核不通过</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item>
+          <a-input placeholder="输入关键词搜索……" v-decorator="['date']" style="width: 300px"/>
+        </a-form-item>
+        <a-form-item>
+          <a-button type="primary" html-type="submit" style="margin-right: 6px">搜索</a-button>
+          <a-button @click="()=>searchForm.resetFields()">重置</a-button>
+        </a-form-item>
+      </a-form>
     </div>
-    <div class="top">
-      <Input search placeholder="输入订单编号搜索……" style="width: 300px" @input="goSearch" v-model="searchInput"/>
-    </div>
-    <Table
-            border
-            :columns="columns"
-            :data="tableData.data"
+    <a-table :columns="columns"
+             :rowKey="record => record.id"
+             :dataSource="tableData"
+             :pagination="pagination"
+             :loading="loading"
+             @change="handleTableChange"
+             bordered
     >
-      <template
-              slot-scope="{ row }"
-              slot="action"
-      >
-        <a-button
-                type="primary"
-                size="small"
-                style="margin-right: 5px"
-                @click="show(row)"
-        >
-          查看
-        </a-button>
+      <template slot="operation" slot-scope="text, record">
+        <a-button type="primary" size="small" @click="showDrawer(record)" style="margin-right: 6px">查看</a-button>
       </template>
-    </Table>
-    <div class="page-box">
-      <Page :total="tableData.count" @on-change="pageChange" size="small" show-elevator show-total/>
-    </div>
-    <Drawer
-            title="编辑"
-            v-model="drawerShow"
-            width="720"
-            :mask-closable="false"
-            :styles="styles"
+      <template slot="expandedRowRender" slot-scope="record">
+        <a-table :columns="columnsGoods" :dataSource="record.shping" size="small" :pagination="false" bordered/>
+      </template>
+    </a-table>
+    <a-drawer
+            title="订单详情"
+            :width="720"
+            @close="()=> drawerShow = false"
+            :visible="drawerShow"
+            wrapClassName="drawer-cont"
+            destroyOnClose
     >
-      <Table border :columns="columnsGoods" :data="tableDataGoods"/>
-      <Form :model="formData" ref="formData"
-            :rules="ruleValidate">
-        <Row :gutter="32">
-          <Col span="12">
-            <FormItem label="姓名">
-              <Input v-model="formData.goods_name" size="large" readonly/>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="电话">
-              <Input
-                      v-model="formData.goods_tel"
-                      size="large"
-                      readonly
-              />
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="收货地址">
-              <Input
-                      v-model="formData.goods_address"
-                      size="large"
-                      readonly
-              />
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="订单状态">
-              <Select
-                      v-model="formData.order_state"
-                      size="large"
-                      readonly
-              >
-                <Option value="-1">
-                  订单取消
-                </Option>
-                <Option value="0">
-                  待付款
-                </Option>
-                <Option value="1">
-                  已付款，代发货
-                </Option>
-                <Option value="2">
-                  已发货
-                </Option>
-                <Option value="3">
-                  已签收
-                </Option>
-                <Option value="4">
-                  已完成
-                </Option>
-                <Option value="5">
-                  退货中
-                </Option>
-                <Option value="6">
-                  退货审核通过
-                </Option>
-                <Option value="7">
-                  退货审核不通过
-                </Option>
-              </Select>
-            </FormItem>
-          </Col>
-          <Col
-                  span="12"
-                  v-show="formData.order_state>0"
-          >
-            <FormItem
-                    label="物流单号"
-                    prop="order_shouhuo_id"
-            >
-              <Input
-                      v-model="formData.order_shouhuo_id"
-                      size="large"
-              />
-            </FormItem>
-          </Col>
-        </Row>
-      </Form>
-      <div class="demo-drawer-footer">
-        <a-button
-                style="margin-right: 8px"
-                @click="drawerShow = false"
-        >
-          取消
-        </a-button>
-        <a-button
-                v-show="formData.order_state==1"
-                type="primary"
-                @click="submit('formData')"
-        >
-          发货
-        </a-button>
-      </div>
-    </Drawer>
+      <a-form :form="form" @submit="handleSubmit">
+        <a-row :gutter="16">
+          <a-col :span="12">
+            <a-form-item label="姓名">
+              <a-input v-decorator="['goods_name']" readOnly/>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="电话">
+              <a-input v-decorator="['goods_tel']" readOnly/>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="省">
+              <a-input v-decorator="['goods_Province']" readOnly/>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="市">
+              <a-input v-decorator="['goods_city']" readOnly/>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="县">
+              <a-input v-decorator="['goods_CountyArea']" readOnly/>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="详细地址">
+              <a-input v-decorator="['goods_address']" readOnly/>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="订单状态">
+              <a-select v-decorator="['order_state']" disabled>
+                <a-select-option value="-1">订单取消</a-select-option>
+                <a-select-option value="0">待付款</a-select-option>
+                <a-select-option value="1">已付款，待发货</a-select-option>
+                <a-select-option value="2">已发货</a-select-option>
+                <a-select-option value="3">已签收</a-select-option>
+                <a-select-option value="4">已完成</a-select-option>
+                <a-select-option value="5">退货中</a-select-option>
+                <a-select-option value="6">退货审核通过</a-select-option>
+                <a-select-option value="7">退货审核不通过</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12" v-show="isShow">
+            <a-form-item label="物流单号">
+              <a-input v-decorator="['order_shouhuo_id']"/>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <div class="drawer-footer">
+          <a-button :style="{marginRight: '8px'}" @click="()=> drawerShow = false">取消</a-button>
+          <a-button type="primary" html-type="submit" v-show="isShow">发货</a-button>
+        </div>
+      </a-form>
+    </a-drawer>
   </div>
 </template>
 
 <script>
-  import {formatState, ruleValidate} from "../../config/utils";
+  import {formatState} from "../../config/utils";
 
   export default {
     name: "Order",
     data() {
       return {
-        drawerShow: false,
-        styles: {
-          height: "calc(100% - 55px)",
-          overflow: "auto",
-          paddingBottom: "53px",
-          position: "static"
-        },
-        formData: {},
-        ruleValidate,
-        columnsGoods: [
-          {
-            title: "订单编号",
-            key: "order_id"
-          },
-          {
-            title: "商品名称",
-            key: "name"
-          },
-          {
-            title: "单价",
-            key: "danjia"
-          },
-          {
-            title: "优惠金额",
-            key: "youhuijine"
-          },
-          {
-            title: "总价",
-            key: "zongjia"
-          }
-        ],
         columns: [
+          {title: "订单编号", dataIndex: "order_no"},
           {
-            title: "订单编号",
-            key: "order_no"
-          },
-          {
-            title: "订单金额(元)",
-            key: "order_money"
-          },
-          {
-            title: "订单状态",
-            key: "order_state",
-            render: (h, params) => {
-              return h("div", formatState(params.row.order_state));
+            title: "订单状态", dataIndex: "order_state",
+            customRender: (text, record, index) => {
+              return formatState(text)
             }
           },
           {
-            title: "操作",
-            slot: "action",
-            width: 150,
-            align: "center"
+            title: '操作',
+            dataIndex: 'operation',
+            width: '160px',
+            scopedSlots: {customRender: 'operation'},
           }
         ],
-        tableData: {
-          data: [],
-          count: 0
-        },
-        tableDataGoods: [],
-        searchSelect: '',
-        searchInput: ''
+        columnsGoods: [
+          {title: "商品名称", dataIndex: "productName"},
+          {
+            title: "规格", dataIndex: "shoping_specifications",
+            customRender: (text, record, index) => {
+              return text.replace('{', '').replace('}', '').split('"')
+            }
+          },
+          {title: "单价", dataIndex: "danjia"},
+          {title: "优惠金额", dataIndex: "youhuijine"},
+          {title: "总价", dataIndex: "zongjia"}],
+        tableData: [],
+        pagination: {},
+        loading: false,
+        drawerShow: false,
+        form: this.$form.createForm(this),
+        searchForm: this.$form.createForm(this),
+        searchKey: {date: '', order_state: ''},
+        isShow: false
       };
     },
     methods: {
-      goSearch() {
-        this.pageChange(1)
-      },
-      show(row) {
-        this.drawerShow = true;
-        this.tableDataGoods = row.shping;
-        this.formData.order_id = row.order_id;
-        this.formData.goods_name = row.goods_name;
-        this.formData.goods_address = row.goods_address;
-        this.formData.goods_tel = row.goods_tel;
-        this.formData.order_state = row.order_state;
-        this.formData.order_shouhuo_id = row.order_shouhuo_id;
-      },
-      pageChange(page) {
-        if (!this.searchSelect || this.searchSelect == -9) {
-          this.searchSelect = ''
-        }
-        this.$ajax({
-          url: "t_order/orderweblist",
-          data: {page, limit: 10, date: this.searchInput, order_state: this.searchSelect}
-        }).then(res => {
-          if (res.data.code === 1) {
-            this.tableData = res.data;
+      handleSearch(e) {
+        e.preventDefault();
+        this.searchForm.validateFields((err, values) => {
+          if (!err) {
+            console.log(values)
+            this.searchKey = {date: values.date || '', order_state: values.order_state || ''}
+            this.fetch()
           }
-        })
+        });
       },
-      submit(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
+      handleSubmit(e) {
+        e.preventDefault();
+        this.form.validateFields((err, values) => {
+          if (!err) {
             this.$ajax({
-              url: "/t_order/ordercan",
+              url: 't_order/ordercan',
               data: {
-                order_id: this.formData.order_id,
+                order_id: values.order_id,
                 order_state: 2,
-                order_shouhuo_id: this.formData.order_shouhuo_id
+                order_shouhuo_id: values.order_shouhuo_id
+              }
+            }).then(res => {
+              if (res.data.code === 1) {
+                this.$message.success(res.data.msg)
+                this.fetch(this.pagination)
+                this.drawerShow = false;
+              } else {
+                this.$message.error(res.data.msg)
               }
             })
-              .then(res => {
-                if (res.data.code === 1) {
-                  this.$Notice.success({
-                    title: res.data.msg
-                  });
-                  this.pageChange(1);
-                  this.drawerShow = false;
-                } else {
-                  this.$Notice.error({
-                    title: res.data.msg
-                  });
-                }
-              })
-              .catch(res => {
-                this.$Notice.error({
-                  title: res.data.msg
-                });
-              });
-          } else {
-            this.$Message.error('Fail!');
           }
-        })
-
+        });
+      },
+      showDrawer(row) {
+        this.drawerShow = true;
+        this.isShow = row.order_state > 0
+        setTimeout(() => {
+          this.form.setFieldsValue(row)
+        }, 500)
+      },
+      handleTableChange(pagination, filters, sorter) {
+        console.log(pagination);
+        const pager = {...this.pagination};
+        pager.current = pagination.current;
+        this.pagination = pager;
+        this.fetch({
+          limit: pagination.pageSize,
+          page: pagination.current,
+          ...filters,
+        });
+      },
+      fetch(params = {}) {
+        params.page = params.page || params.current || 1
+        params.limit = params.limit || 10
+        this.loading = true
+        this.$ajax({
+          url: "t_order/orderweblist",
+          data: {
+            ...this.searchKey,
+            ...params,
+          }
+        }).then((res) => {
+          const pagination = {...this.pagination};
+          pagination.total = res.data.count
+          this.loading = false;
+          this.tableData = res.data.data;
+          this.pagination = pagination;
+        });
       }
     },
     mounted() {
-      this.pageChange(1);
+      this.fetch()
     }
   };
 </script>

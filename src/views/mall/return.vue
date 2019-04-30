@@ -1,235 +1,216 @@
 <template>
   <div>
     <div class="top">
-      <Input search placeholder="Enter something..." style="width: 300px"/>
-      <div></div>
+      <a-input-search placeholder="输入关键词搜索……" style="width: 300px" @search="onSearch"/>
     </div>
-    <Table border :columns="columns" :data="tableData.data">
-      <template slot-scope="{ row }" slot="action">
-        <a-button type="primary" size="small" style="margin-right: 5px" @click="show(row)">查看</a-button>
-      </template>
-    </Table>
-    <div class="page-box">
-      <Page
-              :total="tableData.count"
-              @on-change="pageChange"
-              size="small"
-              show-elevator
-              show-total
-      />
-    </div>
-    <Drawer
-            title="编辑"
-            v-model="drawerShow"
-            width="720"
-            :mask-closable="false"
-            :styles="styles"
+    <a-table :columns="columns"
+             :rowKey="record => record.id"
+             :dataSource="tableData"
+             :pagination="pagination"
+             :loading="loading"
+             @change="handleTableChange"
+             bordered
     >
-      <Table border :columns="columnsGoods" :data="tableDataGoods"/>
-      <Form :model="formData">
-        <Row :gutter="32">
-          <Col span="12">
-            <FormItem label="姓名">
-              <Input v-model="formData.nickname" size="large"/>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="电话">
-              <Input v-model="formData.phone" size="large"/>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="退货类别">
-              <Select v-model="formData.cause_type" size="large" readonly>
-                <Option value="0">仅退款</Option>
-                <Option value="1">退货退款</Option>
-              </Select>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="退货说明">
-              <Input v-model="formData.cause_explain" size="large"/>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="退款金额">
-              <Input v-model="formData.sales_amount" size="large"/>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="退款数量">
-              <Input v-model="formData.sales_nunber" size="large"/>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="退款原因">
-              <Input v-model="formData.sales_cause" size="large"/>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="退货状态">
-              <Select v-model="formData.sales_stes" size="large" readonly>
-                <Option value="1">
-                  退货审核通过
-                </Option>
-                <Option value="2">
-                  退货审核不通过
-                </Option>
-              </Select>
-            </FormItem>
-          </Col>
-        </Row>
-      </Form>
-      <div class="demo-drawer-footer">
-        <a-button style="margin-right: 8px" @click="drawerShow = false">取消</a-button>
-        <a-button type="primary" @click="save" v-if="formData.stele=='0'">保存</a-button>
-      </div>
-    </Drawer>
+      <template slot="operation" slot-scope="text, record">
+        <a-button type="primary" size="small" @click="showDrawer(record)" style="margin-right: 6px">查看</a-button>
+      </template>
+      <template slot="expandedRowRender" slot-scope="record">
+        <a-table :columns="columnsGoods" :dataSource="record.shopinglist" size="small" :pagination="false" bordered/>
+      </template>
+    </a-table>
+    <a-drawer
+            title="退货详情"
+            :width="720"
+            @close="()=> drawerShow = false"
+            :visible="drawerShow"
+            wrapClassName="drawer-cont"
+            destroyOnClose
+    >
+      <a-form :form="form" @submit="handleSubmit">
+        <a-form-item label="退货状态">
+          <a-input v-decorator="['sales_id']" type="hidden"/>
+          <a-input v-decorator="['order_id']" type="hidden"/>
+        </a-form-item>
+        <a-row :gutter="16">
+          <a-col :span="12">
+            <a-form-item label="姓名">
+              <a-input v-decorator="['nickname']" readOnly/>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="电话">
+              <a-input v-decorator="['phone']" readOnly/>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="退货类别">
+              <a-select v-decorator="['cause_type']" disabled>
+                <a-select-option :value="0">仅退款</a-select-option>
+                <a-select-option :value="1">退货退款</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="退货说明">
+              <a-input v-decorator="['cause_explain']" type="textarea" readOnly/>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="退款金额">
+              <a-input v-decorator="['sales_amount']" readOnly/>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="退款数量">
+              <a-input v-decorator="['sales_nunber']" readOnly/>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="退款原因">
+              <a-input v-decorator="['sales_cause']" type="textarea" readOnly/>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-form-item label="审核订单状态">
+          <a-select v-decorator="['stele']">
+            <a-select-option value="0">审核中</a-select-option>
+            <a-select-option value="1">退货审核通过</a-select-option>
+            <a-select-option value="2">退货审核不通过</a-select-option>
+          </a-select>
+        </a-form-item>
+        <div class="drawer-footer">
+          <a-button :style="{marginRight: '8px'}" @click="()=> drawerShow = false">取消</a-button>
+          <a-button type="primary" html-type="submit">保存</a-button>
+        </div>
+      </a-form>
+    </a-drawer>
   </div>
 </template>
 
 <script>
-  import {formatState, ruleValidate} from "../../config/utils";
 
   export default {
     name: "Return",
     data() {
       return {
-        drawerShow: false,
-        styles: {
-          height: "calc(100% - 55px)",
-          overflow: "auto",
-          paddingBottom: "53px",
-          position: "static"
-        },
-        formData: {},
-        ruleValidate,
+        columns: [
+          {title: "订单编号", dataIndex: "sales_no"},
+          {
+            title: "订单状态",
+            dataIndex: "stele",
+            customRender: (text, record, index) => {
+              if (text === '1') {
+                return '审核通过'
+              } else if (text === '2') {
+                return '审核未通过'
+              } else {
+                return '审核中'
+              }
+            }
+          },
+          {
+            title: '操作',
+            dataIndex: 'operation',
+            width: '160px',
+            scopedSlots: {customRender: 'operation'},
+          }
+        ],
         columnsGoods: [
           {
             title: "商品名称",
-            key: "producttypename"
+            dataIndex: "productName"
           },
           {
             title: "规格",
-            key: "shoping_specifications"
+            dataIndex: "shoping_specifications",
+            customRender: (text, record, index) => {
+              return text.replace('{', '').replace('}', '').split('"')
+            }
           },
           {
             title: "单价",
-            key: "danjia"
+            dataIndex: "danjia"
           },
           {
             title: "优惠金额",
-            key: "youhuijine"
+            dataIndex: "youhuijine"
           },
           {
             title: "总价",
-            key: "zongjia"
+            dataIndex: "zongjia"
           }
         ],
-        columns: [
-          {
-            title: "退单编号",
-            key: "order_id"
-          },
-          {
-            title: "订单编号",
-            key: "sales_no"
-          },
-          {
-            title: "订单状态",
-            key: "order_state",
-            render: (h, params) => {
-              if (params.row.stele == 1) {
-                return h("div", '审核通过');
-              } else if (params.row.stele == 2) {
-                return h("div", '审核未通过');
-              } else {
-                return h("div", '未审核');
-              }
-            }
-          },
-          {
-            title: "操作",
-            slot: "action",
-            width: 150,
-            align: "center"
-          }
-        ],
-        tableData: {
-          data: [],
-          count: 0
-        },
-        tableDataGoods: []
+        tableData: [],
+        pagination: {},
+        loading: false,
+        drawerShow: false,
+        form: this.$form.createForm(this)
       };
     },
     methods: {
-      show(row) {
-        this.tableDataGoods = row.shopinglist
-        this.formData = row
-        this.drawerShow = true;
-      },
-      save() {
-        this.$Modal.confirm({
-          title: "提示",
-          content: "<p>是否保存</p>",
-          okText: '确认',
-          cancelText: '取消',
-          onOk: () => {
+      handleSubmit(e) {
+        e.preventDefault();
+        this.form.validateFields((err, values) => {
+          if (!err) {
             this.$ajax({
-              method: "post",
-              url: "t_sales/upodate",
+              url: 't_sales/upodate',
               data: {
-                sales_id: this.formData.sales_id,
-                stale: this.formData.sales_stes,
-                order_id: this.formData.order_id
+                sales_id: values.sales_id,
+                stale: values.stele,
+                order_id: values.order_id
+              }
+            }).then(res => {
+              if (res.data.code === 1) {
+                this.$message.success(res.data.msg)
+                this.fetch(this.pagination)
+                this.drawerShow = false;
+              } else {
+                this.$message.error(res.data.msg)
               }
             })
-              .then(res => {
-                if (res.data.code === 1) {
-                  this.$Notice.success({
-                    title: res.data.msg
-                  });
-                  this.pageChange(1);
-                } else {
-                  this.$Notice.error({
-                    title: res.data.msg
-                  });
-                }
-              })
-              .catch(res => {
-                this.$Notice.error({
-                  title: res.data.msg
-                });
-              });
-          },
-          onCancel: () => {
           }
         });
       },
-      pageChange(page) {
+      showDrawer(row) {
+        this.drawerShow = true;
+        setTimeout(() => {
+          this.form.setFieldsValue(row)
+        }, 500)
+      },
+      handleTableChange(pagination, filters, sorter) {
+        console.log(pagination);
+        const pager = {...this.pagination};
+        pager.current = pagination.current;
+        this.pagination = pager;
+        this.fetch({
+          limit: pagination.pageSize,
+          page: pagination.current,
+          ...filters,
+        });
+      },
+      fetch(params = {}) {
+        params.page = params.page || params.current || 1
+        params.limit = params.limit || 10
+        this.loading = true
         this.$ajax({
-          method: "post",
           url: "t_sales/thlist",
-          data: {page, limit: 10}
-        })
-          .then(res => {
-            if (res.data.code === 1) {
-              this.tableData = res.data;
-            } else {
-              this.$Notice.error({
-                title: res.data.msg
-              });
-            }
-          })
-          .catch(res => {
-            this.$Notice.error({
-              title: res.data.msg
-            });
-          });
-      }
+          data: {
+            ...params,
+          }
+        }).then((res) => {
+          const pagination = {...this.pagination};
+          pagination.total = res.data.count
+          this.loading = false;
+          this.tableData = res.data.data;
+          this.pagination = pagination;
+        });
+      },
+      onSearch(value) {
+        console.log(value)
+      },
     },
     mounted() {
-      this.pageChange(1);
+      this.fetch()
     }
   };
 </script>

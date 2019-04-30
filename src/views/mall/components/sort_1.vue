@@ -2,7 +2,9 @@
   <div>
     <div class="top">
       <div></div>
-      <a-button type="primary" shape="circle" icon="plus" @click="drawerShow=true">添加</a-button>
+      <a-upload action="/t_carousel/insert" :showUploadList="false" @change="handleChange">
+        <a-button type="primary" shape="circle" icon="upload">上传图片</a-button>
+      </a-upload>
     </div>
     <a-table :columns="columns"
              :rowKey="record => record.id"
@@ -12,6 +14,9 @@
              @change="handleTableChange"
              bordered
     >
+      <template slot="img" slot-scope="text, record">
+        <img :src="text" alt="" height="100">
+      </template>
       <template slot="operation" slot-scope="text, record">
         <a-popconfirm title="确定删除？" cancelText="取消" okText="确认" @confirm="remove(record)">
           <a-icon slot="icon" type="question-circle-o" style="color: red"/>
@@ -19,46 +24,26 @@
         </a-popconfirm>
       </template>
     </a-table>
-    <a-drawer
-            title="运费"
-            :width="400"
-            @close="()=> drawerShow = false"
-            :visible="drawerShow"
-            wrapClassName="drawer-cont"
-            destroyOnClose
-    >
-      <a-form :form="form" @submit="handleSubmit">
-        <a-form-item label="价格区间">
-          <a-input v-decorator="['prices']" style="width: 46%"/>
-          ~
-          <a-input v-decorator="['price']" style="width: 48%"/>
-        </a-form-item>
-        <a-form-item label="运费">
-          <a-input v-decorator="['freight']"/>
-        </a-form-item>
-        <div class="drawer-footer">
-          <a-button :style="{marginRight: '8px'}" @click="()=> drawerShow = false">取消</a-button>
-          <a-button type="primary" html-type="submit">保存</a-button>
-        </div>
-      </a-form>
-    </a-drawer>
   </div>
 </template>
 
 <script>
+  import {formatDate} from "../../../config/utils";
 
   export default {
-    name: "express",
+    name: "sort_1",
     data() {
       return {
         columns: [
+          {title: "编号", dataIndex: "id"},
+          {title: "图片", dataIndex: "path", scopedSlots: {customRender: 'img'},},
           {
-            title: "价格区间(元)", dataIndex: "price",
+            title: "创建时间",
+            dataIndex: "creat_time",
             customRender: (text, record, index) => {
-              return `${record.prices}元~${record.price}元`
+              return formatDate(new Date(text), "yyyy-MM-dd")
             }
           },
-          {title: "运费(元)", dataIndex: "freight"},
           {
             title: '操作',
             dataIndex: 'operation',
@@ -70,35 +55,9 @@
         pagination: {},
         loading: false,
         drawerShow: false,
-        form: this.$form.createForm(this)
-      };
+      }
     },
     methods: {
-      handleSubmit(e) {
-        e.preventDefault();
-        this.form.validateFields((err, values) => {
-          if (!err) {
-            this.$ajax({
-              url: 't_freight/addt_freight',
-              data: values
-            }).then(res => {
-              if (res.data.code === 1) {
-                this.$message.success(res.data.msg)
-                this.fetch(this.pagination)
-                this.drawerShow = false;
-              } else {
-                this.$message.error(res.data.msg)
-              }
-            })
-          }
-        });
-      },
-      showDrawer(row) {
-        this.drawerShow = true;
-        setTimeout(() => {
-          this.form.setFieldsValue(row)
-        }, 500)
-      },
       handleTableChange(pagination, filters, sorter) {
         console.log(pagination);
         const pager = {...this.pagination};
@@ -115,7 +74,7 @@
         params.limit = params.limit || 10
         this.loading = true
         this.$ajax({
-          url: "t_freight/selt_freight",
+          url: "t_carousel/selectAll",
           data: {
             ...params,
           }
@@ -129,20 +88,27 @@
       },
       remove(row) {
         this.$ajax({
-          url: "t_freight/delt_freight",
-          data: {id: row.id}
+          url: "t_carousel/deleatById",
+          data: row
         }).then(res => {
           if (res.data.code === 1) {
             this.$message.success(res.data.msg)
             this.fetch(this.pagination)
           }
         })
-      }
+      },
+      handleChange(info) {
+        if (info.file.response.code === 1) {
+          this.fetch()
+        } else {
+          this.$message.error(info.file.response.msg)
+        }
+      },
     },
     mounted() {
       this.fetch()
     }
-  };
+  }
 </script>
 
 <style scoped>

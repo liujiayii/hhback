@@ -1,243 +1,160 @@
 <template>
   <div>
     <div class="top">
-      <Input search placeholder="输入关键词搜索……" style="width: 300px" @input="searchVal"/>
+      <a-input-search placeholder="输入关键词搜索……" style="width: 300px" @search="onSearch"/>
     </div>
-    <Table
-      border
-      :columns="columns"
-      :data="tableData.data"
+    <a-table :columns="columns"
+             :rowKey="record => record.id"
+             :dataSource="tableData"
+             :pagination="pagination"
+             :loading="loading"
+             @change="handleTableChange"
+             bordered
     >
-      <template
-        slot-scope="{row}"
-        slot="action"
-      >
-        <a-button
-          type="primary"
-          size="small"
-          style="margin-right: 5px"
-          @click="show(row)"
-        >
-          回复
-        </a-button>
-        <a-button
-          type="danger"
-          size="small"
-          @click="remove(row)"
-          disabled
-        >
-          删除
-        </a-button>
+      <template slot="operation" slot-scope="text, record">
+        <a-button type="primary" size="small" @click="showDrawer(record)" style="margin-right: 6px">回复</a-button>
+        <a-popconfirm title="确定删除？" cancelText="取消" okText="确认" @confirm="remove(record)">
+          <a-icon slot="icon" type="question-circle-o" style="color: red"/>
+          <a-button type="danger" size="small" disabled>删除</a-button>
+        </a-popconfirm>
       </template>
-    </Table>
-    <div class="page-box">
-      <Page
-        :total="tableData.count"
-        :current="1"
-        @on-change="pageChange"
-        size="small"
-        show-elevator
-        show-total
-      />
-    </div>
-    <Drawer
-      title="编辑"
-      v-model="drawerShow"
-      @on-close="closeDrawer"
-      width="720"
-      :mask-closable="false"
-      :styles="styles"
+    </a-table>
+    <a-drawer
+            title="商家回复"
+            :width="720"
+            @close="()=> drawerShow = false"
+            :visible="drawerShow"
+            wrapClassName="drawer-cont"
+            destroyOnClose
     >
-      <Form
-        :model="formData"
-        ref="formData"
-        :rules="ruleValidate"
-      >
-        <Row :gutter="32">
-          <Col span="12" >
-          <FormItem
-            label="商家回复"
-            prop="reply"
-          >
-            <Input
-              type="textarea"
-              v-model="formData.reply"
-              size="large"
-            />
-          </FormItem>
-          </Col>
-        </Row>
-      </Form>
-      <div class="demo-drawer-footer">
-        <a-button
-          type="primary"
-          @click="submit('formData')"
-        >
-          保存
-        </a-button>
-      </div>
-    </Drawer>
+      <a-form :form="form" @submit="handleSubmit">
+        <a-form-item>
+          <a-input v-decorator="['id']" type="hidden"/>
+        </a-form-item>
+        <a-form-item label="商家回复">
+          <a-input v-decorator="['reply']" type="textarea"/>
+        </a-form-item>
+        <div class="drawer-footer">
+          <a-button :style="{marginRight: '8px'}" @click="()=> drawerShow = false">取消</a-button>
+          <a-button type="primary" html-type="submit">保存</a-button>
+        </div>
+      </a-form>
+    </a-drawer>
   </div>
 </template>
 
 <script>
-  import {formatDate, ruleValidate} from "../../config/utils";
+  import {formatDate} from "../../config/utils";
 
   export default {
-    name: "Stock",
+    name: "rate",
     data() {
       return {
-        drawerShow: false,
-        styles: {
-          height: "calc(100% - 55px)",
-          overflow: "auto",
-          paddingBottom: "53px",
-          position: "static"
-        },
-        formData: {},
-        ruleValidate,
         columns: [
-          {
-            title: "评论ID",
-            key: "id"
-          },
-          {
-            title: "商品",
-            key: "name"
-          },
-          {
-            title: "评论内容",
-            key: "review_content"
-          },
+          {title: "商品", dataIndex: "name"},
+          {title: "评论内容", dataIndex: "review_content"},
           {
             title: "评论时间",
-            key: "create_time",
-            render: (h, params) => {
-              return h(
-                "div",
-                formatDate(new Date(params.row.review_time), "yyyy-MM-dd")
-              );
+            dataIndex: "review_time",
+            customRender: (text, record, index) => {
+              return formatDate(new Date(text), "yyyy-MM-dd")
+            }
+          },
+          {title: "商家回复", dataIndex: "reply"},
+          {
+            title: "回复时间",
+            dataIndex: "reply_time",
+            customRender: (text, record, index) => {
+              return formatDate(new Date(text), "yyyy-MM-dd")
             }
           },
           {
-            title: "商家回复",
-            key: "reply"
-          },
-          {
-            title: "操作",
-            slot: "action",
-            width: 150,
-            align: "center"
+            title: '操作',
+            dataIndex: 'operation',
+            width: '160px',
+            scopedSlots: {customRender: 'operation'},
           }
         ],
-        tableData: {
-          data: [],
-          count: 0
-        },
-        currPage: 1
+        tableData: [],
+        pagination: {},
+        loading: false,
+        drawerShow: false,
+        form: this.$form.createForm(this),
+        searchKey: ''
       };
     },
     methods: {
-      searchVal(name) {
-        console.log(name)
-        this.pageChange(1, name)
+      onSearch(value) {
+        this.searchKey = value
+        this.handleTableChange(this.pagination)
       },
-      closeDrawer() {
-        this.formData = {};
-      },
-      submit(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
+      handleSubmit(e) {
+        e.preventDefault();
+        this.form.validateFields((err, values) => {
+          if (!err) {
             this.$ajax({
-              method: "post",
-              url: "t_review/updateOnethin",
-              data: this.formData
+              url: 't_review/updateOnethin',
+              data: values
             }).then(res => {
               if (res.data.code === 1) {
-                this.$Notice.success({
-                  title: res.data.msg
-                });
+                this.$message.success(res.data.msg)
+                this.fetch(this.pagination)
                 this.drawerShow = false;
-                this.pageChange(1,'');
               } else {
-                this.$Notice.error({
-                  title: res.data.msg
-                });
+                this.$message.error(res.data.msg)
               }
             })
-              .catch(res => {
-                this.$Notice.error({
-                  title: res.data.msg
-                });
-              });
-          } else {
-            this.$Message.error('Fail!');
-          }
-        })
-
-      },
-      show(row) {
-        this.formData.id = row.id
-        this.drawerShow = true;
-      },
-      remove(row) {
-        this.$Modal.confirm({
-          title: "提示",
-          content: "<p>是否删除</p>",
-          onOk: () => {
-            this.$ajax({
-              method: "post",
-              url: "deleteInventoryById",
-              data: row
-            })
-              .then(res => {
-                if (res.data.code === 1) {
-                  this.$Notice.success({
-                    title: res.data.msg
-                  });
-                  this.pageChange(1,'');
-                } else {
-                  this.$Notice.error({
-                    title: res.data.msg
-                  });
-                }
-              })
-              .catch(res => {
-                this.$Notice.error({
-                  title: res.data.msg
-                });
-              });
-          },
-          onCancel: () => {
-            this.$Message.info("Clicked cancel");
           }
         });
-        this.data6.splice(row, 1);
       },
-      pageChange(page,name) {
+      showDrawer(row) {
+        this.drawerShow = true;
+        setTimeout(() => {
+          this.form.setFieldsValue(row)
+        }, 500)
+      },
+      handleTableChange(pagination, filters, sorter) {
+        const pager = {...this.pagination};
+        pager.current = pagination.current;
+        this.pagination = pager;
+        this.fetch({
+          limit: pagination.pageSize,
+          page: pagination.current,
+          name: this.searchKey,
+          ...filters,
+        });
+      },
+      fetch(params = {}) {
+        params.page = params.page || params.current || 1
+        params.limit = params.limit || 10
+        this.loading = true
         this.$ajax({
-          method: "post",
           url: "t_review/selectAllEvery",
-          data: {page, limit: 10,name}
-        })
-          .then(res => {
-            if (res.data.code === 1) {
-              this.tableData = res.data;
-            } else {
-              this.$Notice.error({
-                title: res.data.msg
-              });
-            }
-          })
-          .catch(res => {
-            this.$Notice.error({
-              title: res.data.msg
-            });
-          });
+          data: {
+            ...params,
+          }
+        }).then((res) => {
+          const pagination = {...this.pagination};
+          pagination.total = res.data.count
+          this.loading = false;
+          this.tableData = res.data.data;
+          this.pagination = pagination;
+        });
+      },
+      remove(row) {
+        /*this.$ajax({
+          url: "deleteInventoryById",
+          data: {id: row.id}
+        }).then(res => {
+          if (res.data.code === 1) {
+            this.$message.success(res.data.msg)
+            this.fetch(this.pagination)
+          }
+        })*/
       }
     },
     mounted() {
-      this.pageChange(1,'');
+      this.fetch()
     }
   };
 </script>

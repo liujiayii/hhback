@@ -1,159 +1,107 @@
 <template>
   <div>
-    <div class="top">
-      <div></div>
-      <a-button type="primary" shape="circle" icon="plus" disabled>添加</a-button>
-    </div>
-    <Table border :columns="columns" :data="tableData.data">
-      <template slot-scope="{row}" slot="action">
-        <a-button type="primary" size="small" @click="show(row)">修改</a-button>
-      </template>
-    </Table>
-    <div class="page-box">
-      <Page :total="tableData.count" @on-change="pageChange" size="small" show-elevator show-total/>
-    </div>
-    <Drawer
-            title="编辑"
-            v-model="drawerShow"
-            @on-close="closeDrawer"
-            width="720"
-            :mask-closable="false"
-            :styles="styles"
+    <a-list itemLayout="horizontal" :dataSource="listData">
+      <a-list-item slot="renderItem" slot-scope="item, index">
+        <a-list-item-meta :description="item.cont">
+          <a slot="title">{{item.title}}</a>
+        </a-list-item-meta>
+        <a type="primary" size="small" slot="actions" @click="showDrawer">修改</a>
+      </a-list-item>
+    </a-list>
+    <a-drawer
+            title="联系我们"
+            :width="400"
+            @close="()=> drawerShow = false"
+            :visible="drawerShow"
+            wrapClassName="drawer-cont"
     >
-      <Form :model="formData" ref="formData" :rules="ruleValidate">
-        <FormItem label="地址" prop="address">
-          <Input v-model="formData.address" size="large"/>
-        </FormItem>
-        <FormItem label="邮箱" prop="enterprise_email">
-          <Input v-model="formData.enterprise_email" size="large"/>
-        </FormItem>
-        <FormItem label="联系方式" prop="phone">
-          <Input v-model="formData.phone" size="large"/>
-        </FormItem>
-        <FormItem label="备案" prop="record">
-          <Input v-model="formData.record" size="large"/>
-        </FormItem>
-      </Form>
-      <div class="demo-drawer-footer">
-        <a-button type="primary" @click="submit('formData')">保存</a-button>
-      </div>
-    </Drawer>
+      <a-form :form="form" @submit="handleSubmit">
+        <a-form-item>
+          <a-input v-decorator="['id']" type="hidden"/>
+        </a-form-item>
+        <a-form-item label="地址">
+          <a-input v-decorator="['address']"/>
+        </a-form-item>
+        <a-form-item label="邮箱">
+          <a-input v-decorator="['enterprise_email']"/>
+        </a-form-item>
+        <a-form-item label="联系方式">
+          <a-input v-decorator="['phone']"/>
+        </a-form-item>
+        <a-form-item label="备案">
+          <a-input v-decorator="['record']"/>
+        </a-form-item>
+        <div class="drawer-footer">
+          <a-button :style="{marginRight: '8px'}" @click="()=> drawerShow = false">取消</a-button>
+          <a-button type="primary" html-type="submit">保存</a-button>
+        </div>
+      </a-form>
+    </a-drawer>
   </div>
 </template>
 
 <script>
-  import {ruleValidate} from "../../config/utils";
 
   export default {
-    name: "Stock",
+    name: "contact",
     data() {
       return {
         drawerShow: false,
-        styles: {
-          height: "calc(100% - 55px)",
-          overflow: "auto",
-          paddingBottom: "53px",
-          position: "static"
-        },
-        formData: {},
-        ruleValidate,
-        columns: [
-          {
-            title: "地址",
-            key: "address"
-          },
-          {
-            title: "邮箱",
-            key: "enterprise_email"
-          },
-          {
-            title: "联系方式",
-            key: "phone"
-          },
-          {
-            title: "备案",
-            key: "record"
-          },
-          {
-            title: "操作",
-            slot: "action",
-            width: 150,
-            align: "center"
-          }
+        listData: [
+          {title: '地址', cont: ''},
+          {title: '邮箱', cont: ''},
+          {title: '联系方式', cont: ''},
+          {title: '备案', cont: ''}
         ],
-        tableData: {
-          data: [],
-          count: 0
-        },
-        currPage: 1
+        form: this.$form.createForm(this),
+        formData: {}
       };
     },
     methods: {
-      closeDrawer() {
-        this.formData = {};
+      showDrawer() {
+        this.drawerShow = true
+        setTimeout(() => {
+          this.form.setFieldsValue(this.formData)
+        }, 500)
       },
-      submit(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            delete this.formData._index;
-            delete this.formData._rowKey;
-            this.$ajax({
-              method: "post",
-              url: 'updateContactUs',
-              data: this.formData
-            })
-              .then(res => {
-                if (res.data.code === 1) {
-                  this.$Notice.success({
-                    title: res.data.msg
-                  });
-                  this.drawerShow = false;
-                  this.pageChange(this.currPage);
-                } else {
-                  this.$Notice.error({
-                    title: res.data.msg
-                  });
-                }
-              })
-              .catch(res => {
-                this.$Notice.error({
-                  title: res.data.msg
-                });
-              });
+      getList() {
+        this.$ajax({
+          url: "selectAllContactUsListPage",
+          data: {page: 1, limit: 10}
+        }).then(res => {
+          if (res.data.code === 1) {
+            this.listData[0].cont = res.data.data[0].address
+            this.listData[1].cont = res.data.data[0].enterprise_email
+            this.listData[2].cont = res.data.data[0].phone
+            this.listData[3].cont = res.data.data[0].record
+            this.formData = res.data.data[0]
           } else {
-            this.$Message.error('Fail!');
+            this.$message.error(res.data.msg)
           }
         })
       },
-      show(row) {
-        this.formData = row;
-        this.drawerShow = true;
+      handleSubmit(e) {
+        e.preventDefault();
+        this.form.validateFields((err, values) => {
+          if (!err) {
+            this.$ajax({
+              url: 'updateContactUs',
+              data: values
+            }).then(res => {
+              if (res.data.code === 1) {
+                this.$message.success(res.data.msg)
+                this.getList()
+                this.drawerShow = false;
+              } else {
+                this.$message.error(res.data.msg)
+              }
+            })
+          }
+        });
       },
-      pageChange(page) {
-        this.currPage = page
-        this.$ajax({
-          method: "post",
-          url: "selectAllContactUsListPage",
-          data: {page, limit: 10}
-        })
-          .then(res => {
-            if (res.data.code === 1) {
-              this.tableData = res.data;
-            } else {
-              this.$Notice.error({
-                title: res.data.msg
-              });
-            }
-          })
-          .catch(res => {
-            this.$Notice.error({
-              title: res.data.msg
-            });
-          });
-      }
     },
     mounted() {
-      this.pageChange(1);
+      this.getList();
     }
   };
 </script>

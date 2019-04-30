@@ -1,8 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-import store from './router'
-import './config/iview'
+import store from './store'
 import './config/ant'
 import './config/axios'
 

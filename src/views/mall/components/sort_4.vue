@@ -13,16 +13,18 @@
              bordered
     >
       <template slot="operation" slot-scope="text, record">
-        <a-button type="primary" size="small" @click="showDrawer(record)">查看</a-button>
-        <a-button type="primary" size="small" @click="showAccess(record)" style="margin: 0 6px">权限</a-button>
+        <a-button type="primary" size="small" @click="showDrawer(record)" style="margin-right: 6px">查看</a-button>
         <a-popconfirm title="确定删除？" cancelText="取消" okText="确认" @confirm="remove(record)">
           <a-icon slot="icon" type="question-circle-o" style="color: red"/>
           <a-button type="danger" size="small">删除</a-button>
         </a-popconfirm>
       </template>
+      <template slot="img" slot-scope="text, record">
+        <img :src="text" alt="" height="100">
+      </template>
     </a-table>
     <a-drawer
-            title="角色信息"
+            title="二级分类"
             :width="720"
             @close="()=> drawerShow = false"
             :visible="drawerShow"
@@ -30,72 +32,61 @@
             destroyOnClose
     >
       <a-form :form="form" @submit="handleSubmit">
+        <a-form-item>
+          <a-input v-decorator="['id']" type="hidden"/>
+        </a-form-item>
         <a-row :gutter="16">
           <a-col :span="12">
-            <a-form-item label="角色名">
-              <a-input v-decorator="['id']" type="hidden"/>
-              <a-input v-decorator="['name']"/>
-            </a-form-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-item label="角色键值">
-              <a-input v-decorator="['role_key']"/>
-            </a-form-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-item label="角色状态">
-              <a-select v-decorator="['status']">
-                <a-select-option :value="0">正常</a-select-option>
-                <a-select-option :value="1">锁定</a-select-option>
+            <a-form-item label="一级分类">
+              <a-select v-decorator="['classificationId']">
+                <a-select-option v-for="item in class_one" :value="item.id">{{item.name}}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
+          <a-col :span="12">
+            <a-form-item label="二级分类">
+              <a-input v-decorator="['name']"/>
+            </a-form-item>
+          </a-col>
         </a-row>
+        <a-form-item label="二级分类图片">
+          <a-input v-decorator="['ioc']" readOnly/>
+        </a-form-item>
+        <a-upload action="/upload" :showUploadList="false" @change="handleChange">
+          <a-button type="primary" icon="upload">上传图片</a-button>
+        </a-upload>
         <div class="drawer-footer">
           <a-button :style="{marginRight: '8px'}" @click="()=> drawerShow = false">取消</a-button>
           <a-button type="primary" html-type="submit">保存</a-button>
         </div>
       </a-form>
     </a-drawer>
-    <a-drawer
-            title="角色权限"
-            :width="720"
-            @close="()=> drawerAccessShow = false"
-            :visible="drawerAccessShow"
-            wrapClassName="drawer-cont"
-            destroyOnClose
-    >
-      <div v-for="(item,index) in accessList" :key="index" class="menu-m">
-        <a-checkbox-group :options="[{label:item.name,value:item.id}]" v-model="checkedList.permission_ids"/>
-        <div v-for="(item_c,index_c) in item.child" :key="index+index_c" class="menu-c">
-          <a-checkbox-group :options="[{label:item_c.name,value:item_c.id}]" v-model="checkedList.permission_ids"/>
-          <span v-for="(item_f,index_f) in item_c.child" :key="index+index_c+index_f">
-            <a-checkbox-group :options="[{label:item_f.name,value:item_f.id}]" v-model="checkedList.permission_ids"/>
-          </span>
-        </div>
-      </div>
-      <div class="drawer-footer">
-        <a-button :style="{marginRight: '8px'}" @click="()=> drawerAccessShow = false">取消</a-button>
-        <a-button type="primary" @click="submitAccess">保存</a-button>
-      </div>
-    </a-drawer>
   </div>
 </template>
 
 <script>
+  import {formatDate} from "../../../config/utils";
 
   export default {
-    name: "roles",
+    name: "sort_4",
     data() {
       return {
         columns: [
           {title: "编号", dataIndex: "id"},
-          {title: "角色", dataIndex: "name"},
-          {title: "状态", dataIndex: "status"},
+          {title: "一级分类", dataIndex: "classificationName"},
+          {title: "二级", dataIndex: "name"},
+          {title: "图片", dataIndex: "ioc", scopedSlots: {customRender: 'img'},},
+          {
+            title: "创建时间",
+            dataIndex: "create_time",
+            customRender: (text, record, index) => {
+              return formatDate(new Date(text), "yyyy-MM-dd")
+            }
+          },
           {
             title: '操作',
             dataIndex: 'operation',
-            width: '200px',
+            width: '160px',
             scopedSlots: {customRender: 'operation'},
           }
         ],
@@ -104,10 +95,8 @@
         loading: false,
         drawerShow: false,
         form: this.$form.createForm(this),
-        checkedList: {role_id: '', permission_ids: []},
-        accessList: [],
-        drawerAccessShow: false,
-      }
+        class_one: []
+      };
     },
     methods: {
       handleSubmit(e) {
@@ -118,7 +107,7 @@
               delete values.id
             }
             this.$ajax({
-              url: values.id ? 'role/updateRole' : "role/addRole",
+              url: values.id ? 'updateProductType' : "saveProductType",
               data: values
             }).then(res => {
               if (res.data.code === 1) {
@@ -132,35 +121,11 @@
           }
         });
       },
-      submitAccess() {
-        this.$ajax({
-          url: 'role/addOrUpdatePermsForRole',
-          data: this.checkedList
-        }).then(res => {
-          if (res.data.code === 1) {
-            this.$message.success(res.data.msg)
-            this.drawerAccessShow = false;
-          } else {
-            this.$message.error(res.data.msg)
-          }
-        })
-      },
       showDrawer(row) {
         this.drawerShow = true;
         setTimeout(() => {
           this.form.setFieldsValue(row)
         }, 500)
-      },
-      showAccess(row) {
-        this.drawerAccessShow = true
-        this.checkedList.role_id = row.id
-        this.$ajax({
-          url: "role/selectPermsByRoleId",
-          data: {role_id: row.id}
-        }).then((res) => {
-          console.log(res)
-          this.checkedList.permission_ids = res.data.data
-        });
       },
       handleTableChange(pagination, filters, sorter) {
         console.log(pagination);
@@ -178,7 +143,7 @@
         params.limit = params.limit || 10
         this.loading = true
         this.$ajax({
-          url: "role/listRole",
+          url: "selectAllProductTypeList",
           data: {
             ...params,
           }
@@ -192,8 +157,8 @@
       },
       remove(row) {
         this.$ajax({
-          url: "role/deleteRole",
-          data: {id: row.id}
+          url: "deleteProductTypeById",
+          data: row
         }).then(res => {
           if (res.data.code === 1) {
             this.$message.success(res.data.msg)
@@ -201,32 +166,31 @@
           }
         })
       },
-      getAccessList() {
-        this.$ajax({
-          url: "perms/selectPermsTreeData",
-          data: {page: 1, limit: 10}
-        }).then((res) => {
-          console.log(res)
-          if (res.data.code === 1) {
-            this.accessList = res.data.data
-          }
-        });
+      handleChange(info) {
+        if (info['file']['response']['code'] === 0) {
+          this.form.setFieldsValue({ioc: info.file.response.data})
+        } else {
+          this.$message.error('info.file.response.msg')
+        }
       },
+      getClass_one() {
+        this.$ajax({
+          url: "listAllClassification",
+          data: {
+            page: 1, limit: 100
+          }
+        }).then((res) => {
+          this.class_one = res.data.data
+        });
+      }
     },
     mounted() {
-      this.getAccessList()
       this.fetch()
+      this.getClass_one()
     }
   }
 </script>
 
-<style lang="less" scoped>
-  .menu-m {
-    margin-bottom: 10px;
-
-    .menu-c {
-      margin: 6px 0 0 24px;
-    }
-  }
+<style scoped>
 
 </style>

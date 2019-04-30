@@ -15,7 +15,7 @@ import {
   //Collapse,
   //Carousel,
   //Cascader,
-  //Checkbox,
+  Checkbox,
   Col,
   //DatePicker,
   Divider,
@@ -25,7 +25,7 @@ import {
   Input,
   //InputNumber,
   Layout,
-  //List,
+  List,
   //LocaleProvider,
   message,
   Menu,
@@ -38,7 +38,7 @@ import {
   //Radio,
   //Rate,
   Row,
-  //Select,
+  Select,
   //Slider,
   //Spin,
   //Steps,
@@ -47,13 +47,13 @@ import {
   //Transfer,
   Tree,
   //TreeSelect,
-  //Tabs,
-  //Tag,
+  Tabs,
+  Tag,
   //TimePicker,
   //Timeline,
   //Tooltip,
   //Mention,
-  //Upload,
+  Upload,
   //version,
   Drawer,
   //Skeleton,
@@ -84,7 +84,7 @@ Vue.use(Card);
 //Vue.use(Collapse);
 //Vue.use(Carousel);
 //Vue.use(Cascader);
-//Vue.use(Checkbox);
+Vue.use(Checkbox);
 Vue.use(Col);
 //Vue.use(DatePicker);
 Vue.use(Divider);
@@ -95,10 +95,10 @@ Vue.use(Icon);
 Vue.use(Input);
 //Vue.use(InputNumber);
 Vue.use(Layout);
-//Vue.use(List);
+Vue.use(List);
 //Vue.use(LocaleProvider);
 Vue.use(Menu);
-//Vue.use(Modal);
+Vue.use(Modal);
 Vue.use(Pagination);
 Vue.use(Popconfirm);
 //Vue.use(Popover);
@@ -106,7 +106,7 @@ Vue.use(Popconfirm);
 //Vue.use(Radio);
 //Vue.use(Rate);
 Vue.use(Row);
-//Vue.use(Select);
+Vue.use(Select);
 //Vue.use(Slider);
 //Vue.use(Spin);
 //Vue.use(Steps);
@@ -115,12 +115,12 @@ Vue.use(Table);
 //Vue.use(Transfer);
 Vue.use(Tree);
 //Vue.use(TreeSelect);
-//Vue.use(Tabs);
-//Vue.use(Tag);
+Vue.use(Tabs);
+Vue.use(Tag);
 //Vue.use(TimePicker);
 //Vue.use(Timeline);
 //Vue.use(Tooltip);
-//Vue.use(Upload);
+Vue.use(Upload);
 //Vue.use(Skeleton);
 //Vue.use(Comment);
 //Vue.use(ConfigProvider);

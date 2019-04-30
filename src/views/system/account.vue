@@ -2,213 +2,168 @@
   <div>
     <div class="top">
       <div></div>
-      <a-button
-              type="primary"
-              shape="circle"
-              icon="plus"
-              @click="drawerShow=true"
-      >
-        添加
-      </a-button>
+      <a-button type="primary" shape="circle" icon="plus" @click="drawerShow=true">添加</a-button>
     </div>
-    <Table
-            border
-            :columns="columns"
-            :data="tableData.data"
+    <a-table :columns="columns"
+             :rowKey="record => record.id"
+             :dataSource="tableData"
+             :pagination="pagination"
+             :loading="loading"
+             @change="handleTableChange"
+             bordered
     >
-      <template
-              slot-scope="{ row, index }"
-              slot="action"
-      >
-        <a-button
-                type="primary"
-                size="small"
-                style="margin-right: 5px"
-                @click="show(row)"
-        >
-          查看
-        </a-button>
-        <a-button type="danger" size="small" @click="remove(index)">
-          删除
-        </a-button>
+      <template slot="operation" slot-scope="text, record">
+        <a-switch :checked="record.status===0" checkedChildren="正常" unCheckedChildren="锁定"
+                  @change="stateUpdate(record,$event)"/>
+        <a-button type="primary" size="small" @click="showDrawer(record)" style="margin:0 6px">查看</a-button>
+        <a-popconfirm title="确定删除？" cancelText="取消" okText="确认" @confirm="remove(record)">
+          <a-icon slot="icon" type="question-circle-o" style="color: red"/>
+          <a-button type="danger" size="small">删除</a-button>
+        </a-popconfirm>
       </template>
-    </Table>
-    <div class="page-box">
-      <Page
-              :total="tableData.count"
-              @on-change="pageChange"
-              size="small"
-              show-elevator
-              show-total
-      />
-    </div>
-    <Drawer
-            title="账号管理"
-            v-model="drawerShow"
-            width="720"
-            :mask-closable="false"
-            :styles="styles"
-            @on-close="clearDrawer"
+    </a-table>
+    <a-drawer
+            title="友情链接"
+            :width="400"
+            @close="()=> drawerShow = false"
+            :visible="drawerShow"
+            wrapClassName="drawer-cont"
+            destroyOnClose
     >
-      <Form :model="formData" ref="formData" :rules="ruleValidate">
-        <Row :gutter="32">
-          <Col span="12">
-            <FormItem label="姓名" label-position="top" prop="name">
-              <Input v-model="formData.name"/>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="身份" label-position="top" prop="post">
-              <Input v-model="formData.post"/>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="手机号" label-position="top" prop="phone">
-              <Input v-model="formData.phone" type="number"/>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="用户名" label-position="top" prop="username">
-              <Input v-model="formData.username"/>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="密码" label-position="top" prop="password">
-              <Input v-model="formData.password" type="password"/>
-            </FormItem>
-          </Col>
-        </Row>
-      </Form>
-      <div class="demo-drawer-footer">
-        <a-button type="primary" @click="submit('formData')">提交</a-button>
-      </div>
-    </Drawer>
+      <a-form :form="form" @submit="handleSubmit">
+        <a-form-item>
+          <a-input v-decorator="['id']" type="hidden"/>
+        </a-form-item>
+        <a-form-item label="姓名">
+          <a-input v-decorator="['name']"/>
+        </a-form-item>
+        <a-form-item label="身份">
+          <a-input v-decorator="['post']"/>
+        </a-form-item>
+        <a-form-item label="手机号">
+          <a-input v-decorator="['phone']"/>
+        </a-form-item>
+        <a-form-item label="用户名">
+          <a-input v-decorator="['username']"/>
+        </a-form-item>
+        <a-form-item label="密码">
+          <a-input v-decorator="['password']" type="password"/>
+        </a-form-item>
+        <div class="drawer-footer">
+          <a-button :style="{marginRight: '8px'}" @click="()=> drawerShow = false">取消</a-button>
+          <a-button type="primary" html-type="submit">保存</a-button>
+        </div>
+      </a-form>
+    </a-drawer>
   </div>
 </template>
 
 <script>
-  import {ruleValidate} from '../../config/utils'
+  import {formatDate} from "../../config/utils";
 
   export default {
-    name: "Account",
+    name: "account",
     data() {
       return {
         columns: [
+          {title: "编号", dataIndex: "id"},
+          {title: "姓名", dataIndex: "name"},
+          {title: "用户名", dataIndex: "username"},
+          {title: "手机号", dataIndex: "phone"},
+          {title: "身份", dataIndex: "post"},
           {
-            title: '编号',
-            key: 'id'
-          },
-          {
-            title: '姓名',
-            key: 'name'
-          },
-          {
-            title: '用户名',
-            key: 'username'
-          },
-          {
-            title: '手机号',
-            key: 'phone'
-          },
-          {
-            title: '身份',
-            key: 'post'
+            title: "创建时间",
+            dataIndex: "create_time",
+            customRender: (text, record, index) => {
+              return formatDate(new Date(text), "yyyy-MM-dd")
+            }
           },
           {
             title: '操作',
-            slot: 'action',
-            width: 150,
-            align: 'center'
+            dataIndex: 'operation',
+            width: '200px',
+            scopedSlots: {customRender: 'operation'},
           }
         ],
-        tableData: {
-          data: [],
-          count: 0
-        },
+        tableData: [],
+        pagination: {},
+        loading: false,
         drawerShow: false,
-        styles: {
-          height: 'calc(100% - 55px)',
-          overflow: 'auto',
-          paddingBottom: '53px',
-          position: 'static'
-        },
-        formData: {},
-        ruleValidate,
-        currPage: 1
+        form: this.$form.createForm(this)
       }
     },
     methods: {
-      clearDrawer() {
-        this.formData = {}
-      },
-      show(row) {
-        this.formData = row
-        this.drawerShow = true
-      },
-      submit(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            delete this.formData._index
-            delete this.formData._rowKey
-            //delete this.formData.password
-            delete this.formData.create_time
+      handleSubmit(e) {
+        e.preventDefault();
+        this.form.validateFields((err, values) => {
+          if (!err) {
+            if (values.id === undefined) {
+              delete values.id
+            }
             this.$ajax({
-              method: "post",
-              url: this.formData.id ? "updateAdmin" : "addAdmin",
-              data: this.formData
+              url: values.id ? 'updateAdmin' : "addAdmin",
+              data: values
+            }).then(res => {
+              if (res.data.code === 1) {
+                this.$message.success(res.data.msg)
+                this.fetch(this.pagination)
+                this.drawerShow = false;
+              } else {
+                this.$message.error(res.data.msg)
+              }
             })
-              .then(res => {
-                if (res.data.code === 1) {
-                  this.$Notice.success({
-                    title: res.data.msg
-                  });
-                  this.pageChange(this.currPage);
-                  this.drawerShow = false;
-                } else {
-                  this.$Notice.error({
-                    title: res.data.msg
-                  });
-                }
-              })
-              .catch(res => {
-                this.$Notice.error({
-                  title: res.data.msg
-                });
-              });
-          } else {
-            this.$Message.error('Fail!');
+          }
+        });
+      },
+      showDrawer(row) {
+        this.drawerShow = true;
+        setTimeout(() => {
+          this.form.setFieldsValue(row)
+        }, 500)
+      },
+      handleTableChange(pagination, filters, sorter) {
+        console.log(pagination);
+        const pager = {...this.pagination};
+        pager.current = pagination.current;
+        this.pagination = pager;
+        this.fetch({
+          limit: pagination.pageSize,
+          page: pagination.current,
+          ...filters,
+        });
+      },
+      fetch(params = {}) {
+        params.page = params.page || params.current || 1
+        params.limit = params.limit || 10
+        this.loading = true
+        this.$ajax({
+          url: "findAdminList",
+          data: {
+            ...params,
+          }
+        }).then((res) => {
+          const pagination = {...this.pagination};
+          pagination.total = res.data.count
+          this.loading = false;
+          this.tableData = res.data.data;
+          this.pagination = pagination;
+        });
+      },
+      remove(row) {
+        this.$ajax({
+          url: "deleteAdminById",
+          data: {id: row.id}
+        }).then(res => {
+          if (res.data.code === 1) {
+            this.$message.success(res.data.msg)
+            this.fetch(this.pagination)
           }
         })
-
       },
-      pageChange(page) {
-        this.currPage = page
-        this.$ajax({
-          method: "post",
-          url: "/findAdminList",
-          data: {page, limit: 10}
-        })
-          .then(res => {
-            if (res.data.code === 1) {
-              this.tableData = res.data;
-            } else {
-              this.$Notice.error({
-                title: res.data.msg
-              });
-            }
-          })
-          .catch(res => {
-            this.$Notice.error({
-              title: res.data.msg
-            });
-          });
-      },
-      remove(index) {
-
-      }
+      stateUpdate(row, status) {}
     },
     mounted() {
-      this.pageChange(1)
+      this.fetch()
     }
   }
 </script>

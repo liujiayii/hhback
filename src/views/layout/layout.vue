@@ -1,12 +1,7 @@
 <template>
-  <a-layout :style="{position:'fixed',width:'100%',height:'100%'}">
-    <a-layout-sider
-            v-model="collapsed"
-            :trigger="null"
-            collapsible
-            :style="{ overflow: 'scroll', height: '100vh',background:'#fff',boxShadow: '2px 0 8px 0 rgba(29, 35, 41, 0.05)' }"
-    >
-      <div class="logo">ANT</div>
+  <a-layout class="main">
+    <a-layout-sider v-model="collapsed" :trigger="null" collapsible class="menu">
+      <div class="logo" :style="{marginLeft:collapsed?'26px':'16px'}"></div>
       <a-menu
               mode="inline"
               :default-selected-keys="[$route.path.split('/')[2]||$route.path]"
@@ -32,13 +27,12 @@
       </a-menu>
     </a-layout-sider>
     <a-layout :style="{overflow:'hidden',width:'100%'}">
-      <a-layout-header
-              :style="{ width: '100%',background: '#fff', padding: '0',zIndex:'2',position: 'absolute',top:'0',boxShadow:'0 1px 4px rgba(0,21,41,.08)',display:'flex',justifyContent:'space-between'}"
-      >
+      <a-layout-header class="header" :style="{width: collapsed?'calc(100% - 80px)':'calc(100% - 200px)'}">
         <a-icon class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="()=> collapsed = !collapsed"/>
-        <a-dropdown :style="collapsed?{marginRight:'100px',cursor:'pointer'}:{marginRight:'220px',cursor:'pointer'}">
+        <a-dropdown :style="{cursor:'pointer',marginRight:'20px'}">
           <span class="ant-dropdown-link">{{time}}{{userName}}<a-icon type="down"/></span>
           <a-menu slot="overlay">
+            <a-menu-item key="1"><a href="https://github.com/jiyiyou/hhback" target="_blank">版本信息</a></a-menu-item>
             <a-menu-divider/>
             <a-menu-item key="3" @click="loginOut">退出登录</a-menu-item>
           </a-menu>
@@ -57,10 +51,10 @@
             <router-view/>
           </transition>
         </div>
+        <a-layout-footer style="text-align: center">
+          Ant Design ©2018 Created by Ant UED
+        </a-layout-footer>
       </a-layout-content>
-      <a-layout-footer style="text-align: center">
-        Ant Design ©2018 Created by Ant UED
-      </a-layout-footer>
     </a-layout>
   </a-layout>
 </template>
@@ -128,30 +122,53 @@
 </script>
 
 <style lang="less" scoped>
+  .main {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+
+    .menu {
+      overflow: scroll;
+      height: 100vh;
+      background: #fff;
+      box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
+
+      .logo {
+        height: 32px;
+        background: url("../../assets/images/logo.png") no-repeat;
+        background-size: cover;
+        margin: 16px;
+        transition: all .5s;
+      }
+    }
+
+    .header {
+      background: #fff;
+      padding: 0;
+      z-index: 2;
+      position: absolute;
+      top: 0;
+      box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+      display: flex;
+      justify-content: space-between;
+      transition: all .2s;
+
+      .trigger {
+        font-size: 18px;
+        line-height: 64px;
+        padding: 0 24px;
+        cursor: pointer;
+        transition: color .3s;
+
+        &:hover {
+          background: rgba(0, 0, 0, .025);
+        }
+      }
+    }
+  }
+
   .ant-layout-sider::-webkit-scrollbar, .ant-layout-content::-webkit-scrollbar {
     display: none;
-  }
-
-  .logo {
-    height: 32px;
-    background: rgba(0, 0, 0, .2);
-    margin: 16px;
-    font-size: 20px;
-    color: #fff;
-    text-align: center;
-    line-height: 32px;
-  }
-
-  .trigger {
-    font-size: 18px;
-    line-height: 64px;
-    padding: 0 24px;
-    cursor: pointer;
-    transition: color .3s;
-
-    &:hover {
-      background: rgba(0, 0, 0, .025);
-    }
   }
 
   .main-enter, .main-leave-to {

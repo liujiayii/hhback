@@ -1,12 +1,12 @@
 <template>
   <div class="bg">
     <div class="cont">
-      <div class="aside">
+      <div>
         <img src="../../assets/images/loginAside.png" alt="">
       </div>
       <div class="main">
         <div class="logo">
-          <img src="../../assets/images/loginLogo.png" alt="">
+          <img src="../../assets/images/logo.png" alt="">
         </div>
         <a-form id="components-form-demo-normal-login" :form="form" class="login-form" @submit="handleSubmit">
           <a-form-item>
@@ -51,15 +51,11 @@
                 window.sessionStorage.setItem('SkyLarkBack', JSON.stringify(res.data.data))
                 this.$router.push({path: '/home'})
               } else {
-                this.$Notice.error({
-                  title: res.data.data.msg
-                })
+                this.$message.error(res.data.msg);
               }
             })
           } else {
-            this.$Notice.error({
-              title: '校验错误',
-            })
+            this.$message.error('校验错误');
           }
         });
       }
@@ -85,11 +81,8 @@
 
   .cont {
     display: flex;
-    justify-content: space-around;
-    flex-direction: row;
     align-items: center;
-    width: 1200px;
-    height: 700px;
+    padding: 130px 70px;
     border-radius: 26px;
     box-shadow: 0 0 20px 20px #4057f9;
     background: #fff;
@@ -97,13 +90,6 @@
 
   .logo {
     margin-bottom: 90px;
-    width: 90%;
-    height: 90%;
-
-    img {
-      width: 100%;
-      height: 100%;
-    }
   }
 
 </style>

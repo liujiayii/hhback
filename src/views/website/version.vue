@@ -2,160 +2,169 @@
   <div>
     <div class="top">
       <div></div>
-      <a-button type="primary" shape="circle" icon="plus" @click="drawerShow=true">更新</a-button>
+      <a-button type="primary" shape="circle" icon="plus" @click="drawerShow=true">添加</a-button>
     </div>
-    <Table border :columns="columns" :data="tableData.data"></Table>
-    <Drawer
-            title="编辑"
-            v-model="drawerShow"
-            @on-close="closeDrawer"
-            width="720"
-            :mask-closable="false"
-            :styles="styles"
+    <a-table :columns="columns"
+             :rowKey="record => record.id"
+             :dataSource="tableData"
+             :pagination="pagination"
+             :loading="loading"
+             @change="handleTableChange"
+             bordered
     >
-      <Form :model="formData" ref="formData" :rules="ruleValidate">
-        <FormItem label="版本" prop="app_type">
-          <Select v-model="formData.app_type" size="large">
-            <Option :value="0">安卓</Option>
-            <Option :value="1">IOS</Option>
-          </Select>
-        </FormItem>
-        <FormItem label="版本号" prop="app_version">
-          <Input v-model="formData.app_version" size="large"/>
-        </FormItem>
-        <FormItem label="名称" prop="app_name">
-          <Input v-model="formData.app_name" size="large"/>
-        </FormItem>
-        <FormItem label="上传文件" v-show="formData.app_type!=1">
-          <Upload action="" :before-upload="handleUpload" :show-upload-list="false">
-            <a-button icon="upload">
-              上传文件
+      <template slot="operation" slot-scope="text, record">
+        <a-button type="primary" size="small" @click="showDrawer(record)" style="margin-right: 6px">查看</a-button>
+        <a-popconfirm title="确定删除？" cancelText="取消" okText="确认" @confirm="remove(record)">
+          <a-icon slot="icon" type="question-circle-o" style="color: red"/>
+          <a-button type="danger" size="small">删除</a-button>
+        </a-popconfirm>
+      </template>
+    </a-table>
+    <a-drawer
+            title="版本控制"
+            :width="720"
+            @close="()=> drawerShow = false"
+            :visible="drawerShow"
+            wrapClassName="drawer-cont"
+            destroyOnClose
+    >
+      <a-form :form="form" @submit="handleSubmit">
+        <a-form-item label="版本">
+          <a-select v-decorator="['app_type']">
+            <a-select-option value="0">安卓</a-select-option>
+            <a-select-option value="1">IOS</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="版本号">
+          <a-input v-decorator="['app_version']"/>
+        </a-form-item>
+        <a-form-item label="软件名称">
+          <a-input v-decorator="['app_name']"/>
+        </a-form-item>
+        <a-form-item>
+          <a-upload action="" :beforeUpload="handleChange" :showUploadList="false">
+            <a-button>
+              <a-icon type="upload"/>
+              安卓版本请上传安装包
             </a-button>
-          </Upload>
-        </FormItem>
-      </Form>
-      <div class="demo-drawer-footer">
-        <a-button type="primary" @click="submit('formData')">保存</a-button>
-      </div>
-    </Drawer>
+          </a-upload>
+          <p v-if="file!=null">{{file.name}}</p>
+        </a-form-item>
+        <div class="drawer-footer">
+          <a-button :style="{marginRight: '8px'}" @click="()=> drawerShow = false">取消</a-button>
+          <a-button type="primary" html-type="submit">保存</a-button>
+        </div>
+      </a-form>
+    </a-drawer>
   </div>
 </template>
 
 <script>
-  import {ruleValidate} from "../../config/utils";
 
   export default {
     name: "version",
     data() {
       return {
-        drawerShow: false,
-        styles: {
-          height: "calc(100% - 55px)",
-          overflow: "auto",
-          paddingBottom: "53px",
-          position: "static"
-        },
-        formData: {},
-        ruleValidate,
         columns: [
           {
-            title: "安装包类型",
-            key: "app_type"
+            title: "安装包类型", dataIndex: "app_type",
+            customRender: (text, record, index) => {
+              return text === '0' ? '安卓版本' : 'IOS版本'
+            }
           },
-          {
-            title: "名称",
-            key: "app_name"
-          },
-          {
-            title: "内部版本号",
-            key: "app_cood"
-          },
-          {
-            title: "路径",
-            key: "app_url"
-          },
-          {
-            title: "版本",
-            key: "app_version"
-          }
+          {title: "名称", dataIndex: "app_name"},
+          {title: "内部版本号", dataIndex: "app_cood"},
+          {title: "路径", dataIndex: "app_url", width: '50%'},
+          {title: "版本", dataIndex: "app_version"},
         ],
-        tableData: {
-          data: [],
-          count: 0
-        },
-        file: []
+        tableData: [],
+        pagination: {},
+        loading: false,
+        drawerShow: false,
+        form: this.$form.createForm(this),
+        file: null
       };
     },
     methods: {
-      handleUpload(file) {
-        this.file = file;
-        return false;
-      },
-      closeDrawer() {
-        this.formData = {};
-      },
-      submit(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
+      handleSubmit(e) {
+        e.preventDefault();
+        this.form.validateFields((err, values) => {
+          if (!err) {
             let newForm = new FormData()
-            if(this.formData.app_version == 0){
+            if (values.app_type == 0) {
               newForm.append('pic', this.file)
             }
-            newForm.append('app_version',this.formData.app_version)
-            newForm.append('app_name',this.formData.app_name)
-            newForm.append('app_type',this.formData.app_type)
-            newForm.append('app_cood',1)
-            this.$ajaxImg({
-              method: "post",
-              url: "t_app/inserttapp",
+            newForm.append('app_version', values.app_version)
+            newForm.append('app_name', values.app_name)
+            newForm.append('app_type', values.app_type)
+            newForm.append('app_cood', 1)
+            this.$ajax_({
+              url: 't_app/inserttapp',
               data: newForm
+            }).then(res => {
+              if (res.data.code === 1) {
+                this.$message.success(res.data.msg)
+                this.fetch(this.pagination)
+                this.drawerShow = false;
+              } else {
+                this.$message.error(res.data.msg)
+              }
             })
-              .then(res => {
-                if (res.data.code === 1) {
-                  this.$Notice.success({
-                    title: res.data.msg
-                  });
-                  this.drawerShow = false;
-                  this.formData = {}
-                } else {
-                  this.$Notice.error({
-                    title: res.data.msg
-                  });
-                }
-              })
-              .catch(res => {
-                this.$Notice.error({
-                  title: res.data.msg
-                });
-              });
-          } else {
-            this.$Message.error('Fail!');
+          }
+        });
+      },
+      showDrawer(row) {
+        this.drawerShow = true;
+        setTimeout(() => {
+          this.form.setFieldsValue(row)
+        }, 500)
+      },
+      handleTableChange(pagination, filters, sorter) {
+        console.log(pagination);
+        const pager = {...this.pagination};
+        pager.current = pagination.current;
+        this.pagination = pager;
+        this.fetch({
+          limit: pagination.pageSize,
+          page: pagination.current,
+          ...filters,
+        });
+      },
+      fetch(params = {}) {
+        params.page = params.page || params.current || 1
+        params.limit = params.limit || 10
+        this.loading = true
+        this.$ajax({
+          url: "t_app/insertlist",
+          data: {
+            ...params,
+          }
+        }).then((res) => {
+          const pagination = {...this.pagination};
+          pagination.total = res.data.count
+          this.loading = false;
+          this.tableData = res.data.data;
+          this.pagination = pagination;
+        });
+      },
+      remove(row) {
+        this.$ajax({
+          url: "delOne",
+          data: {id: row.id}
+        }).then(res => {
+          if (res.data.code === 1) {
+            this.$message.success(res.data.msg)
+            this.fetch(this.pagination)
           }
         })
       },
-      getTable() {
-        this.$ajax({
-          method: "post",
-          url: "t_app/insertlist",
-        })
-          .then(res => {
-            if (res.data.code === 1) {
-              this.tableData = res.data;
-            } else {
-              this.$Notice.error({
-                title: res.data.msg
-              });
-            }
-          })
-          .catch(res => {
-            this.$Notice.error({
-              title: res.data.msg
-            });
-          });
+      handleChange(file, fileList) {
+        this.file = file
+        return false
       }
     },
     mounted() {
-      this.getTable();
+      this.fetch()
     }
   }
 </script>
