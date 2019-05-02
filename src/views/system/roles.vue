@@ -198,6 +198,8 @@
           if (res.data.code === 1) {
             this.$message.success(res.data.msg)
             this.fetch(this.pagination)
+          }else {
+            this.$message.error(res.data.msg)
           }
         })
       },
@@ -209,6 +211,8 @@
           console.log(res)
           if (res.data.code === 1) {
             this.accessList = res.data.data
+          }else {
+            this.$message.error(res.data.msg)
           }
         });
       },

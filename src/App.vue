@@ -41,7 +41,7 @@
   }
 
   /*抽屉底部*/
-  .demo-drawer-footer, .drawer-footer {
+  .drawer-footer {
     width: 100%;
     position: absolute;
     bottom: 0;
@@ -56,13 +56,6 @@
     height: calc(100% - 108px);
     overflow: auto;
     padding-bottom: 108px;
-  }
-
-  /*分页盒子*/
-  .page-box {
-    display: flex;
-    justify-content: center;
-    margin: 20px auto;
   }
 
   /*数字输入框按钮*/

@@ -4,7 +4,7 @@ import {
   //Affix,
   //Anchor,
   //AutoComplete,
-  //Alert,
+  Alert,
   //Avatar,
   //BackTop,
   //Badge,
@@ -40,7 +40,7 @@ import {
   Row,
   Select,
   //Slider,
-  //Spin,
+  Spin,
   //Steps,
   Switch,
   Table,
@@ -73,7 +73,7 @@ Vue.prototype.$confirm = Modal.confirm;
 //Vue.use(Affix);
 //Vue.use(Anchor);
 //Vue.use(AutoComplete);
-//Vue.use(Alert);
+Vue.use(Alert);
 //Vue.use(Avatar);
 //Vue.use(BackTop);
 //Vue.use(Badge);
@@ -108,7 +108,7 @@ Vue.use(Popconfirm);
 Vue.use(Row);
 Vue.use(Select);
 //Vue.use(Slider);
-//Vue.use(Spin);
+Vue.use(Spin);
 //Vue.use(Steps);
 Vue.use(Switch);
 Vue.use(Table);

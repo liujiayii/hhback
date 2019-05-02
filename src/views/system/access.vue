@@ -1,5 +1,6 @@
 <template>
   <div>
+    <a-alert message="错误的设置项可能会导致系统崩溃" banner closable style="margin-bottom: 10px"/>
     <div class="top">
       <div></div>
       <a-button type="primary" shape="circle" icon="plus" @click="drawerShow=true">添加</a-button>
@@ -13,7 +14,8 @@
              bordered
     >
       <template slot="operation" slot-scope="text, record">
-        <a-button type="primary" size="small" @click="showDrawer(record)" style="margin-right: 6px">查看</a-button>
+        <a-button type="primary" size="small" @click="showDrawer(record)" style="margin-right: 6px">查看
+        </a-button>
         <a-popconfirm title="确定删除？" cancelText="取消" okText="确认" @confirm="remove(record)">
           <a-icon slot="icon" type="question-circle-o" style="color: red"/>
           <a-button type="danger" size="small">删除</a-button>
@@ -22,10 +24,12 @@
       <template slot="expandedRowRender" slot-scope="record">
         <a-table :columns="columnsC" :dataSource="record.child" size="small" :pagination="false" bordered>
           <template slot="expandedRowRender" slot-scope="record">
-            <a-table :columns="columnsF" :dataSource="record.child" size="small" :pagination="false" bordered
+            <a-table :columns="columnsF" :dataSource="record.child" size="small" :pagination="false"
+                     bordered
                      style="margin-left: 0">
               <template slot="operation" slot-scope="text, record">
-                <a-button type="primary" size="small" @click="showDrawer(record)" style="margin-right: 6px">查看
+                <a-button type="primary" size="small" @click="showDrawer(record)"
+                          style="margin-right: 6px">查看
                 </a-button>
                 <a-popconfirm title="确定删除？" cancelText="取消" okText="确认" @confirm="remove(record)">
                   <a-icon slot="icon" type="question-circle-o" style="color: red"/>
@@ -35,7 +39,8 @@
             </a-table>
           </template>
           <template slot="operation" slot-scope="text, record">
-            <a-button type="primary" size="small" @click="showDrawer(record)" style="margin-right: 6px">查看</a-button>
+            <a-button type="primary" size="small" @click="showDrawer(record)" style="margin-right: 6px">查看
+            </a-button>
             <a-popconfirm title="确定删除？" cancelText="取消" okText="确认" @confirm="remove(record)">
               <a-icon slot="icon" type="question-circle-o" style="color: red"/>
               <a-button type="danger" size="small">删除</a-button>
@@ -45,12 +50,12 @@
       </template>
     </a-table>
     <a-drawer
-            title="权限"
-            :width="720"
-            @close="()=> drawerShow = false"
-            :visible="drawerShow"
-            wrapClassName="drawer-cont"
-            destroyOnClose
+      title="权限"
+      :width="720"
+      @close="()=> drawerShow = false"
+      :visible="drawerShow"
+      wrapClassName="drawer-cont"
+      destroyOnClose
     >
       <a-form :form="form" @submit="handleSubmit">
         <a-row :gutter="16">
@@ -255,6 +260,8 @@
           if (res.data.code === 1) {
             this.$message.success(res.data.msg)
             this.fetch(this.pagination)
+          }else {
+            this.$message.error(res.data.msg)
           }
         })
       }

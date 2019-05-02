@@ -251,6 +251,8 @@
                 this.showSpecs({id: this.cacheId})
                 this.formSpecs.resetFields()
                 this.formSpecsShow = false
+              }else {
+                this.$message.error(res.data.msg)
               }
             })
           }
@@ -264,6 +266,8 @@
           if (res.data.code === 1) {
             this.showSpecs({id: this.cacheId})
             this.$message.success(res.data.msg)
+          }else {
+            this.$message.error(res.data.msg)
           }
         })
       },
@@ -313,6 +317,8 @@
               delete target.editable
               this.tableDataSpecs = newData
               this.cacheData = newData.map(item => ({...item}))
+            }else {
+              this.$message.error(res.data.msg)
             }
           })
         }
@@ -347,7 +353,7 @@
             }
             values.file = file
             this.$ajax({
-              url: values.productId ? 'updateProduct' : "addproductService",
+              url: values.productId ? 'updateProduct' : "saveProduct",
               data: values
             }).then(res => {
               if (res.data.code === 1) {
@@ -374,6 +380,8 @@
             setTimeout(() => {
               this.form.setFieldsValue(obj)
             }, 500)
+          }else {
+            this.$message.error(res.data.msg)
           }
         })
         this.$ajax({
@@ -383,6 +391,8 @@
           if (res.data.code === 1) {
             console.log(res)
             this.imageList = res.data.data
+          }else {
+            this.$message.error(res.data.msg)
           }
         })
       },
@@ -443,6 +453,8 @@
             }
             console.log(data)
             this.tableDataSpecs = data
+          }else {
+            this.$message.error(res.data.msg)
           }
         })
         this.$ajax({
@@ -462,6 +474,8 @@
               }
             }
             this.specsList = data
+          }else {
+            this.$message.error(res.data.msg)
           }
         })
       },
@@ -473,6 +487,8 @@
         }).then(res => {
           if (res.data.code === 1) {
             this.zoneList = res.data.data;
+          }else {
+            this.$message.error(res.data.msg)
           }
         })
       },
@@ -484,6 +500,8 @@
         }).then(res => {
           if (res.data.code === 1) {
             this.discountList = res.data.data;
+          }else {
+            this.$message.error(res.data.msg)
           }
         })
       },
@@ -495,6 +513,8 @@
         }).then(res => {
           if (res.data.code === 1) {
             this.sortList = res.data.data;
+          }else {
+            this.$message.error(res.data.msg)
           }
         })
       },

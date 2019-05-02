@@ -6,11 +6,6 @@ module.exports = {
     [
       "import",
       {"libraryName": "ant-design-vue", "libraryDirectory": "es", style: true}
-    ],
-    [
-      "import",
-      {"libraryName": "iview", "libraryDirectory": "src/components"},
-      'iview'
     ]
   ]
 }
