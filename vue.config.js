@@ -1,5 +1,4 @@
 module.exports = {
-  /*上线前要改的两个地方：publicPath和Axios的注册BaseURL*/
   publicPath: '/views/backer/',
   outputDir: undefined,
   assetsDir: undefined,
@@ -30,6 +29,15 @@ module.exports = {
   },
   lintOnSave: false,
   devServer: {
-    port: 8081
+    port: 8081,
+    proxy: {
+      '/': {
+        target: 'http://192.168.1.110:8080',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/': ''
+        }
+      }
+    }
   },
 }

@@ -82,11 +82,8 @@
     },
     methods: {
       menuClick(item) {
-        this.$router.push({
-          path:
-            (item.keyPath.length > 1 ? item.keyPath[1] + "/" : "") +
-            item.keyPath[0]
-        });
+        console.log((item.keyPath.length > 1 ? item.keyPath[1] + "/" : "") + item.keyPath[0])
+        this.$router.push({path: (item.keyPath.length > 1 ? item.keyPath[1] + "/" : "") + item.keyPath[0]});
       },
       onOpenChange(openKeys) {
         const latestOpenKey = openKeys.find(

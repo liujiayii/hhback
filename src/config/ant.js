@@ -40,7 +40,7 @@ import {
   Row,
   Select,
   //Slider,
-  Spin,
+  //Spin,
   //Steps,
   Switch,
   Table,
@@ -108,7 +108,7 @@ Vue.use(Popconfirm);
 Vue.use(Row);
 Vue.use(Select);
 //Vue.use(Slider);
-Vue.use(Spin);
+//Vue.use(Spin);
 //Vue.use(Steps);
 Vue.use(Switch);
 Vue.use(Table);

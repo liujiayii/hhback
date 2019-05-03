@@ -169,10 +169,8 @@
         })
       },
       handleChange(info) {
-        if (info['file']['response']['code'] === 0) {
+        if (info['file']['response']['code'] === 1) {
           this.form.setFieldsValue({ioc: info.file.response.data})
-        } else {
-          this.$message.error('info.file.response.msg')
         }
       },
       getClass_one() {

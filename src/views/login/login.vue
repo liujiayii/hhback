@@ -29,8 +29,9 @@
     </div>
   </div>
 </template>
-
 <script>
+  import {generator} from '../../router'
+
   export default {
     name: 'Login',
     data() {
@@ -49,6 +50,8 @@
                 window.sessionStorage.setItem('userName', values.username)
                 window.sessionStorage.setItem('path', '/home')
                 window.sessionStorage.setItem('SkyLarkBack', JSON.stringify(res.data.data))
+                this.$store.state.menu = res.data.data
+                this.$router.addRoutes(generator(res.data.data))
                 this.$router.push({path: '/home'})
               } else {
                 this.$message.error(res.data.msg);

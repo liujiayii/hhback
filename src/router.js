@@ -43,7 +43,7 @@ export default new Router({
 const constantRouterComponents = {
   Layout,// 基础页面 layout 必须引入
   // 你需要动态引入的页面组件
-  HomePage: () => () => import('@/views/home/home'),
+  HomePage: () => import('@/views/home/home'),
   Home: () => import('@/views/website/home'),
   Version: () => import('@/views/website/version'),
   About: () => import('@/views/website/about'),
@@ -82,8 +82,8 @@ const generator = (routerMap, parent) => {
       meta: item.meta
     }
     // 为了防止出现后端返回结果不规范，处理有可能出现拼接出两个 反斜杠
+    currentRouter.path = currentRouter.path.replace('#', '')
     currentRouter.path = currentRouter.path.replace('//', '/')
-    currentRouter.path = currentRouter.path.replace('///', '/')
     // 重定向
     item.redirect && (currentRouter.redirect = item.redirect)
     // 是否有子菜单，并递归处理
@@ -91,6 +91,7 @@ const generator = (routerMap, parent) => {
       // Recursion
       currentRouter.children = generator(item.children, currentRouter)
     }
+    currentRouter.path = currentRouter.path.replace('//', '/')
     return currentRouter
   })
 }

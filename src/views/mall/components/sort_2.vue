@@ -24,12 +24,12 @@
       </template>
     </a-table>
     <a-drawer
-            title="商品专区"
-            :width="720"
-            @close="()=> drawerShow = false"
-            :visible="drawerShow"
-            wrapClassName="drawer-cont"
-            destroyOnClose
+      title="商品专区"
+      :width="720"
+      @close="()=> drawerShow = false"
+      :visible="drawerShow"
+      wrapClassName="drawer-cont"
+      destroyOnClose
     >
       <a-form :form="form" @submit="handleSubmit">
         <a-form-item>
@@ -150,16 +150,14 @@
           if (res.data.code === 1) {
             this.$message.success(res.data.msg)
             this.fetch(this.pagination)
-          }else {
+          } else {
             this.$message.error(res.data.msg)
           }
         })
       },
       handleChange(info) {
-        if (info['file']['response']['code'] === 0) {
+        if (info['file']['response']['code'] === 1) {
           this.form.setFieldsValue({image: info.file.response.data})
-        } else {
-          this.$message.error('info.file.response.msg')
         }
       }
     },

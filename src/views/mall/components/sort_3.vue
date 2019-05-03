@@ -156,10 +156,12 @@
         })
       },
       handleChange(info) {
-        if (info['file']['response']['code'] === 0) {
-          this.form.setFieldsValue({image: info.file.response.data})
-        } else {
-          this.$message.error('info.file.response.msg')
+        console.log(info)
+        if (info['file']['response']) {
+         if(info['file']['response']['code'] === 1) {
+           console.log(info.file.response.data)
+           this.form.setFieldsValue({image: info.file.response.data})
+          }
         }
       }
     },
