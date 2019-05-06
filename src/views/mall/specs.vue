@@ -85,8 +85,6 @@
                 this.$message.success(res.data.msg)
                 this.fetch(this.pagination)
                 this.drawerShow = false;
-              } else {
-                this.$message.error(res.data.msg)
               }
             })
           }
@@ -133,8 +131,6 @@
           if (res.data.code === 1) {
             this.$message.success(res.data.msg)
             this.fetch(this.pagination)
-          }else {
-            this.$message.error(res.data.msg)
           }
         })
       },

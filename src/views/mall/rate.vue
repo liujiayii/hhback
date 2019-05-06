@@ -86,7 +86,7 @@
     methods: {
       onSearch(value) {
         this.searchKey = value
-        this.handleTableChange(this.pagination)
+        this.handleTableChange({current: 1})
       },
       handleSubmit(e) {
         e.preventDefault();
@@ -100,8 +100,6 @@
                 this.$message.success(res.data.msg)
                 this.fetch(this.pagination)
                 this.drawerShow = false;
-              } else {
-                this.$message.error(res.data.msg)
               }
             })
           }

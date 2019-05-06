@@ -19,12 +19,12 @@
       </template>
     </a-table>
     <a-drawer
-            title="退货详情"
-            :width="720"
-            @close="()=> drawerShow = false"
-            :visible="drawerShow"
-            wrapClassName="drawer-cont"
-            destroyOnClose
+      title="退货详情"
+      :width="720"
+      @close="()=> drawerShow = false"
+      :visible="drawerShow"
+      wrapClassName="drawer-cont"
+      destroyOnClose
     >
       <a-form :form="form" @submit="handleSubmit">
         <a-form-item label="退货状态">
@@ -89,6 +89,7 @@
 
 <script>
   import {formatDate} from "../../config/utils";
+
   export default {
     name: "Return",
     data() {
@@ -151,7 +152,8 @@
         pagination: {},
         loading: false,
         drawerShow: false,
-        form: this.$form.createForm(this)
+        form: this.$form.createForm(this),
+        searchKey: ''
       };
     },
     methods: {
@@ -171,8 +173,6 @@
                 this.$message.success(res.data.msg)
                 this.fetch(this.pagination)
                 this.drawerShow = false;
-              } else {
-                this.$message.error(res.data.msg)
               }
             })
           }
@@ -212,6 +212,8 @@
         });
       },
       onSearch(value) {
+        this.searchKey = value
+        //this.handleTableChange({current: 1})
       },
     },
     mounted() {

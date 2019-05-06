@@ -75,8 +75,6 @@
             this.listData[2].cont = res.data.data[0].phone
             this.listData[3].cont = res.data.data[0].record
             this.formData = res.data.data[0]
-          } else {
-            this.$message.error(res.data.msg)
           }
         })
       },
@@ -92,8 +90,6 @@
                 this.$message.success(res.data.msg)
                 this.getList()
                 this.drawerShow = false;
-              } else {
-                this.$message.error(res.data.msg)
               }
             })
           }

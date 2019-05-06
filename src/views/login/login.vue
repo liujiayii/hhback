@@ -58,8 +58,6 @@
                 this.$store.state.menu = generator(res.data.data)
                 this.$router.addRoutes(this.$store.state.menu)
                 this.$router.push({path: '/home'})
-              } else {
-                this.$message.error(res.data.msg);
               }
             })
           } else {

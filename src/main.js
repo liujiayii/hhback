@@ -38,7 +38,7 @@ router.beforeEach((to, form, next) => {
 router.afterEach(() => {
   NProgress.done()
 })
-new Vue({
+window.$Vue = new Vue({
   router,
   store,
   render: h => h(App)

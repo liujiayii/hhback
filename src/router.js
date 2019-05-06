@@ -96,4 +96,4 @@ const generator = (routerMap, parent) => {
     return currentRouter
   })
 }
-export {constantRouterComponents, generator}
+export {generator}

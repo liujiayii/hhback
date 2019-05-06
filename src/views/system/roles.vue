@@ -69,12 +69,16 @@
     >
       <div v-for="(item,index) in accessList" :key="index" class="menu-m">
         <a-checkbox-group :options="[{label:item.name,value:item.id}]" v-model="checkedList.permission_ids"/>
-        <div v-for="(item_c,index_c) in item.child" :key="index+index_c" class="menu-c">
-          <a-checkbox-group :options="[{label:item_c.name,value:item_c.id}]" v-model="checkedList.permission_ids"/>
-          <span v-for="(item_f,index_f) in item_c.child" :key="index+index_c+index_f">
-            <a-checkbox-group :options="[{label:item_f.name,value:item_f.id}]" v-model="checkedList.permission_ids"/>
-          </span>
-        </div>
+        <a-row :gutter="16" v-for="(item_c,index_c) in item.child" :key="index+index_c" class="menu-c">
+          <a-col :span="1"></a-col>
+          <a-col :span="6">
+            <a-checkbox-group :options="[{label:item_c.name,value:item_c.id}]" v-model="checkedList.permission_ids"/>
+          </a-col>
+          <a-col :span="17">
+            <a-checkbox-group v-for="(item_f,index_f) in item_c.child" :key="index+index_c+index_f"
+                              :options="[{label:item_f.name,value:item_f.id}]" v-model="checkedList.permission_ids"/>
+          </a-col>
+        </a-row>
       </div>
       <div class="drawer-footer">
         <a-button :style="{marginRight: '8px'}" @click="()=> drawerAccessShow = false">取消</a-button>
@@ -127,8 +131,6 @@
                 this.$message.success(res.data.msg)
                 this.fetch(this.pagination)
                 this.drawerShow = false;
-              } else {
-                this.$message.error(res.data.msg)
               }
             })
           }
@@ -142,8 +144,6 @@
           if (res.data.code === 1) {
             this.$message.success(res.data.msg)
             this.drawerAccessShow = false;
-          } else {
-            this.$message.error(res.data.msg)
           }
         })
       },
@@ -198,8 +198,6 @@
           if (res.data.code === 1) {
             this.$message.success(res.data.msg)
             this.fetch(this.pagination)
-          } else {
-            this.$message.error(res.data.msg)
           }
         })
       },
@@ -210,8 +208,6 @@
         }).then((res) => {
           if (res.data.code === 1) {
             this.accessList = res.data.data
-          } else {
-            this.$message.error(res.data.msg)
           }
         });
       },
@@ -223,8 +219,6 @@
           if (res.data.code === 1) {
             this.$message.success(res.data.msg)
             this.fetch(this.pagination)
-          } else {
-            this.$message.error(res.data.msg)
           }
         })
       }
@@ -238,10 +232,10 @@
 
 <style lang="less" scoped>
   .menu-m {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 
     .menu-c {
-      margin: 6px 0 0 24px;
+      margin: 6px 0 10px;
     }
   }
 

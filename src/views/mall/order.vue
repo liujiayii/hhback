@@ -167,7 +167,7 @@
         this.searchForm.validateFields((err, values) => {
           if (!err) {
             this.searchKey = {date: values.date || '', order_state: values.order_state || ''}
-            this.fetch()
+            this.handleTableChange({current: 1})
           }
         });
       },
@@ -187,8 +187,6 @@
                 this.$message.success(res.data.msg)
                 this.fetch(this.pagination)
                 this.drawerShow = false;
-              } else {
-                this.$message.error(res.data.msg)
               }
             })
           }

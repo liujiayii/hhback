@@ -251,8 +251,6 @@
                 this.showSpecs({id: this.cacheId})
                 this.formSpecs.resetFields()
                 this.formSpecsShow = false
-              } else {
-                this.$message.error(res.data.msg)
               }
             })
           }
@@ -266,8 +264,6 @@
           if (res.data.code === 1) {
             this.showSpecs({id: this.cacheId})
             this.$message.success(res.data.msg)
-          } else {
-            this.$message.error(res.data.msg)
           }
         })
       },
@@ -309,8 +305,6 @@
               delete target.editable
               this.tableDataSpecs = newData
               this.cacheData = newData.map(item => ({...item}))
-            } else {
-              this.$message.error(res.data.msg)
             }
           })
         }
@@ -326,7 +320,7 @@
       },
       onSearch(value) {
         this.searchKey = value
-        this.handleTableChange(this.pagination)
+        this.handleTableChange({current: 1})
       },
       handleSubmit(e) {
         e.preventDefault();
@@ -349,8 +343,6 @@
                 this.$message.success(res.data.msg)
                 this.fetch(this.pagination)
                 this.drawerShow = false;
-              } else {
-                this.$message.error(res.data.msg)
               }
             })
           }
@@ -369,8 +361,6 @@
             setTimeout(() => {
               this.form.setFieldsValue(obj)
             }, 500)
-          } else {
-            this.$message.error(res.data.msg)
           }
         })
         this.$ajax({
@@ -379,12 +369,11 @@
         }).then(res => {
           if (res.data.code === 1) {
             this.imageList = res.data.data
-          } else {
-            this.$message.error(res.data.msg)
           }
         })
       },
       handleTableChange(pagination, filters, sorter) {
+        console.log(pagination)
         const pager = {...this.pagination};
         pager.current = pagination.current;
         this.pagination = pager;
@@ -420,8 +409,6 @@
           if (res.data.code === 1) {
             row.state = state ? 1 : 2
             this.$message.success(res.data.msg)
-          } else {
-            this.$message.error(res.data.msg)
           }
         })
       },
@@ -439,8 +426,6 @@
               data[i] = {...data[i], ...JSON.parse(res.data.data[i].specificationName)}
             }
             this.tableDataSpecs = data
-          } else {
-            this.$message.error(res.data.msg)
           }
         })
         this.$ajax({
@@ -460,8 +445,6 @@
               }
             }
             this.specsList = data
-          } else {
-            this.$message.error(res.data.msg)
           }
         })
       },
@@ -473,8 +456,6 @@
         }).then(res => {
           if (res.data.code === 1) {
             this.zoneList = res.data.data;
-          } else {
-            this.$message.error(res.data.msg)
           }
         })
       },
@@ -486,8 +467,6 @@
         }).then(res => {
           if (res.data.code === 1) {
             this.discountList = res.data.data;
-          } else {
-            this.$message.error(res.data.msg)
           }
         })
       },
@@ -499,8 +478,6 @@
         }).then(res => {
           if (res.data.code === 1) {
             this.sortList = res.data.data;
-          } else {
-            this.$message.error(res.data.msg)
           }
         })
       },
@@ -528,8 +505,6 @@
               }).then(res => {
                 if (res.data.code === 1) {
                   this.imageList.splice(index, 1)
-                } else {
-                  this.$message.error(res.data.msg)
                 }
               })
             } else {
