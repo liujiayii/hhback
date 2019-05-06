@@ -55,7 +55,6 @@
     },
     methods: {
       handleTableChange(pagination, filters, sorter) {
-        console.log(pagination);
         const pager = {...this.pagination};
         pager.current = pagination.current;
         this.pagination = pager;
@@ -66,7 +65,6 @@
         });
       },
       fetch(params = {}) {
-        console.log('params:', params);
         this.loading = true
         this.$ajax({
           method: "post",

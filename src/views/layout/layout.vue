@@ -4,14 +4,14 @@
       <div class="logo" :style="{marginLeft:collapsed?'26px':'16px'}"></div>
       <a-menu
         mode="inline"
-        :default-selected-keys="[$route.path.split('/')[2]||$route.path]"
+        :default-selected-keys="[$route.path]"
         :style="{ borderRight: 0 }"
         :open-keys="openKeys"
         @openChange="onOpenChange"
         @click="menuClick"
       >
         <template v-for="(item) in Menu">
-          <a-sub-menu v-if="item.children.length>1" :key="item.path">
+          <a-sub-menu v-if="item.path!=='/'" :key="item.path">
             <span slot="title">
               <a-icon :type="item.Ico" theme="filled" :spin="item.Ico==='setting'"/>
               <span>{{ item.name}}</span>
@@ -82,8 +82,7 @@
     },
     methods: {
       menuClick(item) {
-        console.log((item.keyPath.length > 1 ? item.keyPath[1] + "/" : "") + item.keyPath[0])
-        this.$router.push({path: (item.keyPath.length > 1 ? item.keyPath[1] + "/" : "") + item.keyPath[0]});
+        this.$router.push({path: item.key});
       },
       onOpenChange(openKeys) {
         const latestOpenKey = openKeys.find(

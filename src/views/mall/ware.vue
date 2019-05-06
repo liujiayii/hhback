@@ -21,12 +21,12 @@
         </template>
       </a-table>
       <a-drawer
-              title="商品详情"
-              :width="720"
-              @close="()=> drawerShow = false"
-              :visible="drawerShow"
-              wrapClassName="drawer-cont"
-              destroyOnClose
+        title="商品详情"
+        :width="720"
+        @close="()=> drawerShow = false"
+        :visible="drawerShow"
+        wrapClassName="drawer-cont"
+        destroyOnClose
       >
         <a-form :form="form" @submit="handleSubmit">
           <a-row :gutter="16">
@@ -41,7 +41,7 @@
             </a-col>
             <a-col :span="12">
               <a-form-item label="商品专区">
-                <a-select v-decorator="['zoneid']" style="width: 100%">
+                <a-select v-decorator="['zoneid']" style="width: 100%" allowClear>
                   <a-select-option v-for="(item,index) in zoneList" :value="item.id">{{ item.name }}</a-select-option>
                 </a-select>
               </a-form-item>
@@ -55,7 +55,7 @@
             </a-col>
             <a-col :span="12">
               <a-form-item label="满减优惠">
-                <a-select v-decorator="['discount_id']" style="width: 100%">
+                <a-select v-decorator="['discount_id']" style="width: 100%" allowClear>
                   <a-select-option v-for="(item,index) in discountList" :value="item.id">满{{ item.price }}减{{ item.money
                     }}
                   </a-select-option>
@@ -104,14 +104,15 @@
         </a-form>
       </a-drawer>
       <a-drawer
-              title="规格设置"
-              :width="720"
-              @close="()=> drawerShowSpecs = false"
-              :visible="drawerShowSpecs"
-              wrapClassName="drawer-cont"
-              destroyOnClose
+        title="规格设置"
+        :width="720"
+        @close="()=> drawerShowSpecs = false"
+        :visible="drawerShowSpecs"
+        wrapClassName="drawer-cont"
+        destroyOnClose
       >
-        <a-button class="editable-add-btn" @click="()=>formSpecsShow=!formSpecsShow" style="margin-bottom: 6px">添加</a-button>
+        <a-button class="editable-add-btn" @click="()=>formSpecsShow=!formSpecsShow" style="margin-bottom: 6px">添加
+        </a-button>
         <a-table :columns="[...specsList,...columnsSpecs]" :dataSource="tableDataSpecs" size="small" :pagination="false"
                  bordered>
           <template v-for="col in newColumns" :slot="col" slot-scope="text, record, index">
@@ -124,11 +125,11 @@
           <template slot="operation" slot-scope="text, record, index">
             <div class='editable-row-operations'>
             <span v-if="record.editable">
-              <a @click="() => save(record.id)">保存</a>
+              <a @click="() => save(record.id)" style="margin-right: 10px">保存</a>
               <a-popconfirm title='确定取消?' @confirm="() => cancel(record.id)"><a>取消</a></a-popconfirm>
             </span>
               <span v-else>
-              <a @click="() => edit(record.id)">编辑</a>
+              <a @click="() => edit(record.id)" style="margin-right: 10px">编辑</a>
                 <a-popconfirm title='确定删除?' @confirm="() => removeSpecs(record)"><a>删除</a></a-popconfirm>
             </span>
             </div>
@@ -233,7 +234,6 @@
         e.preventDefault();
         this.formSpecs.validateFields((err, values) => {
           if (!err) {
-            console.log(values)
             let newObj = {}
             for (let key in values) {
               if (!/^[a-zA-Z_]*$/.test(key)) {
@@ -251,7 +251,7 @@
                 this.showSpecs({id: this.cacheId})
                 this.formSpecs.resetFields()
                 this.formSpecsShow = false
-              }else {
+              } else {
                 this.$message.error(res.data.msg)
               }
             })
@@ -266,16 +266,10 @@
           if (res.data.code === 1) {
             this.showSpecs({id: this.cacheId})
             this.$message.success(res.data.msg)
-          }else {
+          } else {
             this.$message.error(res.data.msg)
           }
         })
-      },
-      handleAdd() {
-        const newData = {
-          id: 0,
-        }
-        this.tableDataSpecs = [...this.tableDataSpecs, newData]
       },
       handleEdit(value, key, column) {
         const newData = [...this.tableDataSpecs]
@@ -288,7 +282,6 @@
       edit(key) {
         const newData = [...this.tableDataSpecs]
         const target = newData.filter(item => key === item.id)[0]
-        console.log(target)
         if (target) {
           target.editable = true
           this.tableDataSpecs = newData
@@ -300,7 +293,6 @@
         if (target) {
           let newObj = {}
           for (let key in target) {
-            //console.log(/^[a-zA-Z_]*$/.test(key) + key)
             if (!/^[a-zA-Z_]*$/.test(key)) {
               newObj[key] = target[key]
             }
@@ -317,7 +309,7 @@
               delete target.editable
               this.tableDataSpecs = newData
               this.cacheData = newData.map(item => ({...item}))
-            }else {
+            } else {
               this.$message.error(res.data.msg)
             }
           })
@@ -340,11 +332,8 @@
         e.preventDefault();
         this.form.validateFields((err, values) => {
           if (!err) {
-            if (values.productId === undefined) {
-              delete values.productId
-            }
-            if (values.state === undefined) {
-              delete values.state
+            for (let key in values) {
+              if (!values[key]) delete values[key]
             }
             values.image = this.image
             let file = []
@@ -380,7 +369,7 @@
             setTimeout(() => {
               this.form.setFieldsValue(obj)
             }, 500)
-          }else {
+          } else {
             this.$message.error(res.data.msg)
           }
         })
@@ -389,15 +378,13 @@
           data: {productId: row.id}
         }).then(res => {
           if (res.data.code === 1) {
-            console.log(res)
             this.imageList = res.data.data
-          }else {
+          } else {
             this.$message.error(res.data.msg)
           }
         })
       },
       handleTableChange(pagination, filters, sorter) {
-        console.log(pagination);
         const pager = {...this.pagination};
         pager.current = pagination.current;
         this.pagination = pager;
@@ -451,9 +438,8 @@
             for (let i = 0; i < res.data.data.length; i++) {
               data[i] = {...data[i], ...JSON.parse(res.data.data[i].specificationName)}
             }
-            console.log(data)
             this.tableDataSpecs = data
-          }else {
+          } else {
             this.$message.error(res.data.msg)
           }
         })
@@ -474,7 +460,7 @@
               }
             }
             this.specsList = data
-          }else {
+          } else {
             this.$message.error(res.data.msg)
           }
         })
@@ -487,7 +473,7 @@
         }).then(res => {
           if (res.data.code === 1) {
             this.zoneList = res.data.data;
-          }else {
+          } else {
             this.$message.error(res.data.msg)
           }
         })
@@ -500,7 +486,7 @@
         }).then(res => {
           if (res.data.code === 1) {
             this.discountList = res.data.data;
-          }else {
+          } else {
             this.$message.error(res.data.msg)
           }
         })
@@ -513,7 +499,7 @@
         }).then(res => {
           if (res.data.code === 1) {
             this.sortList = res.data.data;
-          }else {
+          } else {
             this.$message.error(res.data.msg)
           }
         })

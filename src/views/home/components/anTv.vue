@@ -1,12 +1,16 @@
 <template>
-  <div style="display: flex;justify-content: space-between;margin: 20px 0">
-    <a-card hoverable style="width: 49%">
-      <div id="c1"></div>
-    </a-card>
-    <a-card hoverable style="width: 50%">
-      <div id="c2"></div>
-    </a-card>
-  </div>
+  <a-row :gutter="16" style="margin: 20px 0">
+    <a-col :span="10">
+      <a-card hoverable>
+        <div id="c1"></div>
+      </a-card>
+    </a-col>
+    <a-col :span="14">
+      <a-card hoverable>
+        <div id="c2"></div>
+      </a-card>
+    </a-col>
+  </a-row>
 </template>
 
 <script>
@@ -14,22 +18,33 @@
 
   export default {
     name: "anTv",
+    data() {
+      const barData = [{item: '事例一', count: 40, percent: 0.4},
+        {item: '事例二', count: 21, percent: 0.21},
+        {item: '事例三', count: 17, percent: 0.17},
+        {item: '事例四', count: 13, percent: 0.13},
+        {item: '事例五', count: 9, percent: 0.09}]
+      const pieData = [{year: '1951 年', sales: 38},
+        {year: '1952 年', sales: 52},
+        {year: '1956 年', sales: 61},
+        {year: '1957 年', sales: 145},
+        {year: '1958 年', sales: 48},
+        {year: '1959 年', sales: 38},
+        {year: '1960 年', sales: 38},
+        {year: '1962 年', sales: 38}];
+      return {
+        barData,
+        pieData
+      }
+    },
     methods: {
       charts() {
-        const data = [{item: '事例一', count: 40, percent: 0.4},
-          {item: '事例二', count: 21, percent: 0.21},
-          {item: '事例三', count: 17, percent: 0.17},
-          {item: '事例四', count: 13, percent: 0.13},
-          {item: '事例五', count: 9, percent: 0.09}]; // G2 对数据源格式的要求，仅仅是 JSON 数组，数组的每个元素是一个标准 JSON 对象。
-// Step 1: 创建 Chart 对象
-        const chart = new G2.Chart({
+        const chart = new G2.Chart({// Step 1: 创建 Chart 对象
           container: 'c1', // 指定图表容器 ID
           forceFit: true,
-          width: 600, // 指定图表宽度
           height: 300 // 指定图表高度
         });
-// Step 2: 载入数据源
-        chart.source(data, {
+        chart.source(this.barData, { // Step 2: 载入数据源
           percent: {
             formatter: function formatter(val) {
               val = val * 100 + '%';
@@ -58,30 +73,26 @@
           lineWidth: 1,
           stroke: '#fff'
         });
-// Step 4: 渲染图表
-        chart.render();
+        chart.render();// Step 4: 渲染图表
+        setTimeout(()=>{
+          chart.forceFit(); // 手动调用自适应函数
+        })
       },
       charts2() {
-        const data = [{year: '1951 年', sales: 38},
-          {year: '1952 年', sales: 52},
-          {year: '1956 年', sales: 61},
-          {year: '1957 年', sales: 145},
-          {year: '1958 年', sales: 48},
-          {year: '1959 年', sales: 38},
-          {year: '1960 年', sales: 38},
-          {year: '1962 年', sales: 38}];
         const chart = new G2.Chart({
           container: 'c2',
           forceFit: true,
-          width: 600, // 指定图表宽度
-          height: 300 // 指定图表高度
+          height: 300, // 指定图表高度
         });
-        chart.source(data);
+        chart.source(this.pieData);
         chart.scale('sales', {
           tickInterval: 20
         });
         chart.interval().position('year*sales');
-        chart.render();
+        chart.render();// Step 4: 渲染图表
+        setTimeout(()=>{
+          chart.forceFit(); // 手动调用自适应函数
+        })
       }
     },
     mounted() {

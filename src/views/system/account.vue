@@ -23,12 +23,12 @@
       </template>
     </a-table>
     <a-drawer
-            title="友情链接"
-            :width="400"
-            @close="()=> drawerShow = false"
-            :visible="drawerShow"
-            wrapClassName="drawer-cont"
-            destroyOnClose
+      title="友情链接"
+      :width="400"
+      @close="()=> drawerShow = false"
+      :visible="drawerShow"
+      wrapClassName="drawer-cont"
+      destroyOnClose
     >
       <a-form :form="form" @submit="handleSubmit">
         <a-form-item>
@@ -37,8 +37,10 @@
         <a-form-item label="姓名">
           <a-input v-decorator="['name']"/>
         </a-form-item>
-        <a-form-item label="身份">
-          <a-input v-decorator="['post']"/>
+        <a-form-item label="角色">
+          <a-select v-decorator="['post']">
+            <a-select-option v-for="(item,index) in roles" :value="item.id">{{item.name}}</a-select-option>
+          </a-select>
         </a-form-item>
         <a-form-item label="手机号">
           <a-input v-decorator="['phone']"/>
@@ -89,7 +91,8 @@
         pagination: {},
         loading: false,
         drawerShow: false,
-        form: this.$form.createForm(this)
+        form: this.$form.createForm(this),
+        roles: []
       }
     },
     methods: {
@@ -122,7 +125,6 @@
         }, 500)
       },
       handleTableChange(pagination, filters, sorter) {
-        console.log(pagination);
         const pager = {...this.pagination};
         pager.current = pagination.current;
         this.pagination = pager;
@@ -157,15 +159,39 @@
           if (res.data.code === 1) {
             this.$message.success(res.data.msg)
             this.fetch(this.pagination)
-          }else {
+          } else {
             this.$message.error(res.data.msg)
           }
         })
       },
-      stateUpdate(row, status) {}
+      stateUpdate(row, status) {
+        this.$ajax({
+          url: 'updateAdmin',
+          data: {id: row.id, status: row.status === 0 ? 1 : 0}
+        }).then(res => {
+          if (res.data.code === 1) {
+            this.$message.success(res.data.msg)
+            row.status = row.status === 0 ? 1 : 0
+            this.fetch(this.pagination)
+          } else {
+            this.$message.error(res.data.msg)
+          }
+        })
+      },
+      getRoles() {
+        this.$ajax({
+          url: "role/listRole",
+          data: {page: 1, limit: 100}
+        }).then(res => {
+          if (res.data.code === 1) {
+            this.roles = res.data.data
+          }
+        })
+      }
     },
     mounted() {
       this.fetch()
+      this.getRoles()
     }
   }
 </script>

@@ -53,6 +53,7 @@
           <a-col :span="12">
             <a-form-item label="姓名">
               <a-input v-decorator="['goods_name']" readOnly/>
+              <a-input v-decorator="['order_id']" type="hidden"/>
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -111,7 +112,7 @@
 </template>
 
 <script>
-  import {formatState} from "../../config/utils";
+  import {formatState,formatDate} from "../../config/utils";
 
   export default {
     name: "Order",
@@ -123,6 +124,13 @@
             title: "订单状态", dataIndex: "order_state",
             customRender: (text, record, index) => {
               return formatState(text)
+            }
+          },
+          {
+            title: "创建时间",
+            dataIndex: "order_time",
+            customRender: (text, record, index) => {
+              return formatDate(new Date(text), "yyyy-MM-dd hh:mm:ss")
             }
           },
           {
@@ -158,7 +166,6 @@
         e.preventDefault();
         this.searchForm.validateFields((err, values) => {
           if (!err) {
-            console.log(values)
             this.searchKey = {date: values.date || '', order_state: values.order_state || ''}
             this.fetch()
           }
@@ -195,7 +202,6 @@
         }, 500)
       },
       handleTableChange(pagination, filters, sorter) {
-        console.log(pagination);
         const pager = {...this.pagination};
         pager.current = pagination.current;
         this.pagination = pager;

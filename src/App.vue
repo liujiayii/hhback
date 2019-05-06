@@ -13,15 +13,12 @@
 </script>
 
 <style>
-  #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
   html, body, #app {
     height: 100%;
     width: 100%;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   .fade-enter-active,
@@ -56,6 +53,10 @@
     height: calc(100% - 108px);
     overflow: auto;
     padding-bottom: 108px;
+  }
+
+  .ant-drawer-body {
+    padding-bottom: 60px !important;
   }
 
   /*数字输入框按钮*/

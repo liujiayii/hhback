@@ -88,7 +88,7 @@
 </template>
 
 <script>
-
+  import {formatDate} from "../../config/utils";
   export default {
     name: "Return",
     data() {
@@ -106,6 +106,13 @@
               } else {
                 return '审核中'
               }
+            }
+          },
+          {
+            title: "创建时间",
+            dataIndex: "cause_time",
+            customRender: (text, record, index) => {
+              return formatDate(new Date(text), "yyyy-MM-dd hh:mm:ss")
             }
           },
           {
@@ -178,7 +185,6 @@
         }, 500)
       },
       handleTableChange(pagination, filters, sorter) {
-        console.log(pagination);
         const pager = {...this.pagination};
         pager.current = pagination.current;
         this.pagination = pager;
@@ -206,7 +212,6 @@
         });
       },
       onSearch(value) {
-        console.log(value)
       },
     },
     mounted() {

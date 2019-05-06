@@ -19,8 +19,10 @@ router.beforeEach((to, form, next) => {
     return next({path: '/login'})
   }
   if (registerRouteFresh) {
-    store.state.menu = JSON.parse(window.sessionStorage.getItem('SkyLarkBack'))
-    if (store.state.menu != null) router.addRoutes(generator(store.state.menu))
+    if (window.sessionStorage.getItem('SkyLarkBack')) {
+      store.state.menu = generator(JSON.parse(window.sessionStorage.getItem('SkyLarkBack')))
+      router.addRoutes(store.state.menu)
+    }
     registerRouteFresh = false
     if (to.path === '/404') {
       next({path: window.sessionStorage.getItem('path')})

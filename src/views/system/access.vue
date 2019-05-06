@@ -218,14 +218,12 @@
         });
       },
       showDrawer(row) {
-        console.log(row)
         this.drawerShow = true
         setTimeout(() => {
           this.form.setFieldsValue(row)
         }, 500)
       },
       handleTableChange(pagination, filters, sorter) {
-        console.log(pagination);
         const pager = {...this.pagination};
         pager.current = pagination.current;
         this.pagination = pager;

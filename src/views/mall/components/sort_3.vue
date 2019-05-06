@@ -115,7 +115,6 @@
         }, 500)
       },
       handleTableChange(pagination, filters, sorter) {
-        console.log(pagination);
         const pager = {...this.pagination};
         pager.current = pagination.current;
         this.pagination = pager;
@@ -145,7 +144,7 @@
       remove(row) {
         this.$ajax({
           url: "deleteClassificationById",
-          data: row.id
+          data: row
         }).then(res => {
           if (res.data.code === 1) {
             this.$message.success(res.data.msg)
@@ -156,10 +155,8 @@
         })
       },
       handleChange(info) {
-        console.log(info)
         if (info['file']['response']) {
          if(info['file']['response']['code'] === 1) {
-           console.log(info.file.response.data)
            this.form.setFieldsValue({image: info.file.response.data})
           }
         }

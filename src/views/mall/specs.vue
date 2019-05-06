@@ -74,7 +74,6 @@
         e.preventDefault();
         this.form.validateFields((err, values) => {
           if (!err) {
-            console.log(values.producttypeid)
             let cacheObj = values.producttypeid
             values.producttypeid = cacheObj.key
             values.producttypename = cacheObj.label
@@ -100,7 +99,6 @@
         }, 500)
       },
       handleTableChange(pagination, filters, sorter) {
-        console.log(pagination);
         const pager = {...this.pagination};
         pager.current = pagination.current;
         this.pagination = pager;

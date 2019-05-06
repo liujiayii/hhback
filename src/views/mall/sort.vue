@@ -29,7 +29,6 @@
     components: {sort_1, sort_2, sort_3, sort_4},
     methods: {
       callback(key) {
-        console.log(key)
       },
     },
     mounted() {

@@ -13,7 +13,9 @@
              bordered
     >
       <template slot="operation" slot-scope="text, record">
-        <a-button type="primary" size="small" @click="showDrawer(record)">查看</a-button>
+        <a-switch :checked="record.status===0" checkedChildren="正常" unCheckedChildren="锁定"
+                  @change="stateUpdate(record,$event)"/>
+        <a-button type="primary" size="small" @click="showDrawer(record)" style="margin: 0 6px">查看</a-button>
         <a-button type="primary" size="small" @click="showAccess(record)" style="margin: 0 6px">权限</a-button>
         <a-popconfirm title="确定删除？" cancelText="取消" okText="确认" @confirm="remove(record)">
           <a-icon slot="icon" type="question-circle-o" style="color: red"/>
@@ -22,12 +24,12 @@
       </template>
     </a-table>
     <a-drawer
-            title="角色信息"
-            :width="720"
-            @close="()=> drawerShow = false"
-            :visible="drawerShow"
-            wrapClassName="drawer-cont"
-            destroyOnClose
+      title="角色信息"
+      :width="720"
+      @close="()=> drawerShow = false"
+      :visible="drawerShow"
+      wrapClassName="drawer-cont"
+      destroyOnClose
     >
       <a-form :form="form" @submit="handleSubmit">
         <a-row :gutter="16">
@@ -58,12 +60,12 @@
       </a-form>
     </a-drawer>
     <a-drawer
-            title="角色权限"
-            :width="720"
-            @close="()=> drawerAccessShow = false"
-            :visible="drawerAccessShow"
-            wrapClassName="drawer-cont"
-            destroyOnClose
+      title="角色权限"
+      :width="720"
+      @close="()=> drawerAccessShow = false"
+      :visible="drawerAccessShow"
+      wrapClassName="drawer-cont"
+      destroyOnClose
     >
       <div v-for="(item,index) in accessList" :key="index" class="menu-m">
         <a-checkbox-group :options="[{label:item.name,value:item.id}]" v-model="checkedList.permission_ids"/>
@@ -91,11 +93,11 @@
         columns: [
           {title: "编号", dataIndex: "id"},
           {title: "角色", dataIndex: "name"},
-          {title: "状态", dataIndex: "status"},
+          {title: "角色键值", dataIndex: "role_key"},
           {
             title: '操作',
             dataIndex: 'operation',
-            width: '200px',
+            width: '260px',
             scopedSlots: {customRender: 'operation'},
           }
         ],
@@ -158,12 +160,10 @@
           url: "role/selectPermsByRoleId",
           data: {role_id: row.id}
         }).then((res) => {
-          console.log(res)
           this.checkedList.permission_ids = res.data.data
         });
       },
       handleTableChange(pagination, filters, sorter) {
-        console.log(pagination);
         const pager = {...this.pagination};
         pager.current = pagination.current;
         this.pagination = pager;
@@ -198,7 +198,7 @@
           if (res.data.code === 1) {
             this.$message.success(res.data.msg)
             this.fetch(this.pagination)
-          }else {
+          } else {
             this.$message.error(res.data.msg)
           }
         })
@@ -208,14 +208,26 @@
           url: "perms/selectPermsTreeData",
           data: {page: 1, limit: 10}
         }).then((res) => {
-          console.log(res)
           if (res.data.code === 1) {
             this.accessList = res.data.data
-          }else {
+          } else {
             this.$message.error(res.data.msg)
           }
         });
       },
+      stateUpdate(row, status) {
+        this.$ajax({
+          url: 'role/updateRole',
+          data: {id: row.id, status: row.status === 0 ? 1 : 0}
+        }).then(res => {
+          if (res.data.code === 1) {
+            this.$message.success(res.data.msg)
+            this.fetch(this.pagination)
+          } else {
+            this.$message.error(res.data.msg)
+          }
+        })
+      }
     },
     mounted() {
       this.getAccessList()
