@@ -139,24 +139,10 @@
           this.pagination = pagination;
         });
       },
-      remove(row) {
-        /*this.$ajax({
-          url: "deleteInventoryById",
-          data: {id: row.id}
-        }).then(res => {
-          if (res.data.code === 1) {
-            this.$message.success(res.data.msg)
-            this.fetch(this.pagination)
-          }
-        })*/
-      }
+      remove(row) {}
     },
     mounted() {
       this.fetch()
     }
   };
 </script>
-
-<style scoped>
-
-</style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-tabs @change="callback">
+    <a-tabs>
       <a-tab-pane tab="首页轮播图" key="1">
         <sort_1/>
       </a-tab-pane>
@@ -18,7 +18,6 @@
 </template>
 
 <script>
-
   import sort_1 from './components/sort_1'
   import sort_2 from './components/sort_2'
   import sort_3 from './components/sort_3'
@@ -26,17 +25,6 @@
 
   export default {
     name: "Sort",
-    components: {sort_1, sort_2, sort_3, sort_4},
-    methods: {
-      callback(key) {
-      },
-    },
-    mounted() {
-
-    }
+    components: {sort_1, sort_2, sort_3, sort_4}
   };
 </script>
-
-<style scoped>
-
-</style>

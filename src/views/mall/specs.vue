@@ -151,7 +151,3 @@
     }
   }
 </script>
-
-<style scoped>
-
-</style>

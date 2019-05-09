@@ -73,12 +73,13 @@
         collapsed: false,
         openKeys: [],
         Menu: this.$store.state.menu,
-        userName: window.sessionStorage.getItem("userName")
+        userName: this.$store.state.userInfo.name
       };
     },
     mounted() {
       this.openKeys.push("/" + this.$route.path.split("/")[1]);
       this.getTimes();
+      this.getAccess()
     },
     methods: {
       menuClick(item) {
@@ -99,6 +100,7 @@
           onOk: () => {
             sessionStorage.clear();
             this.$store.state.menu = [];
+            this.$store.state.userInfo = {};
             this.$router.push({path: "/login"});
           },
           onCancel: () => {
@@ -109,6 +111,18 @@
         const time = new Date();
         const hour = time.getHours();
         return hour < 9 ? "早上好," : hour <= 11 ? "上午好," : hour <= 13 ? "中午好," : hour < 20 ? "下午好," : "晚上好,";
+      },
+      getAccess() {
+        this.$ajax({
+          url: "role/selectPermsByRoleId",
+          data: {
+            role_id: this.$store.state.userInfo.roles[0].id
+          }
+        }).then((res) => {
+          if (res.data.code === 1) {
+            this.$store.state.access = res.data.data
+          }
+        });
       }
     }
   };

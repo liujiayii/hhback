@@ -12,7 +12,3 @@
     components: {forumTable}
   }
 </script>
-
-<style scoped>
-
-</style>

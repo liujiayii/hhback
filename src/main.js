@@ -13,19 +13,19 @@ import {generator} from './router'
 /*路由守卫*/
 let registerRouteFresh = true
 router.beforeEach((to, form, next) => {
-  /!*判断如果没有名字就返回登录页，不判断to.path会陷入死循环*!/
   NProgress.start()
-  if (!window.sessionStorage.getItem('userName') && to.path !== '/login') {
+  if (!window.sessionStorage.getItem('userInfo') && to.path !== '/login') {
     return next({path: '/login'})
   }
-  if (registerRouteFresh) {
+  if (registerRouteFresh || (form.path === '/login')) {
     if (window.sessionStorage.getItem('SkyLarkBack')) {
       store.state.menu = generator(JSON.parse(window.sessionStorage.getItem('SkyLarkBack')))
+      store.state.userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))
       router.addRoutes(store.state.menu)
     }
     registerRouteFresh = false
     if (to.path === '/404') {
-      next({path: window.sessionStorage.getItem('path')})
+      next({path: window.sessionStorage.getItem('path') || '/home'})
     } else {
       next()
     }

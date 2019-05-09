@@ -213,7 +213,6 @@
       },
       onSearch(value) {
         this.searchKey = value
-        //this.handleTableChange({current: 1})
       },
     },
     mounted() {
@@ -221,7 +220,3 @@
     }
   };
 </script>
-
-<style scoped>
-
-</style>

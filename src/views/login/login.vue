@@ -36,7 +36,6 @@
   </div>
 </template>
 <script>
-  import {generator} from '../../router'
 
   export default {
     name: 'Login',
@@ -53,10 +52,8 @@
               data: values
             }).then((res) => {
               if (res.data.code === 1) {
-                window.sessionStorage.setItem('userName', values.username)
+                window.sessionStorage.setItem('userInfo', JSON.stringify(res.data.admin))
                 window.sessionStorage.setItem('SkyLarkBack', JSON.stringify(res.data.data))
-                this.$store.state.menu = generator(res.data.data)
-                this.$router.addRoutes(this.$store.state.menu)
                 this.$router.push({path: '/home'})
               }
             })
@@ -68,6 +65,7 @@
     },
     beforeCreate() {
       this.form = this.$form.createForm(this);
+      sessionStorage.clear()
     },
   }
 </script>

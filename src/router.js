@@ -5,39 +5,37 @@ import Login from './views/login/login'
 import Layout from './views/layout/layout'
 
 Vue.use(Router)
-let defaultRouter = [{
-  path: '/',
-  redirect: '/login'
-},
-  {
-    path: '/login',
-    name: 'login',
-    component: Login
-  }, {
-    path: '',
-    component: Layout,
-    children: [
-      {
-        component: () => import('@/views/exception/404'),
-        name: "404",
-        path: "/404",
-      }, {
-        component: () => import('@/views/exception/403'),
-        name: "403",
-        path: "/403",
-      }, {
-        component: () => import('@/views/exception/500'),
-        name: "500",
-        path: "/500",
-      }
-    ]
-  }, {
-    path: '*',
-    redirect: '/404'
-  }]
-
 export default new Router({
-  routes: defaultRouter
+  routes: [{
+    path: '/',
+    redirect: '/login'
+  },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
+    }, {
+      path: '',
+      component: Layout,
+      children: [
+        {
+          component: () => import('@/views/exception/404'),
+          name: "404",
+          path: "/404",
+        }, {
+          component: () => import('@/views/exception/403'),
+          name: "403",
+          path: "/403",
+        }, {
+          component: () => import('@/views/exception/500'),
+          name: "500",
+          path: "/500",
+        }
+      ]
+    }, {
+      path: '*',
+      redirect: '/404'
+    }]
 })
 // 前端路由表
 const constantRouterComponents = {

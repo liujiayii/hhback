@@ -373,7 +373,6 @@
         })
       },
       handleTableChange(pagination, filters, sorter) {
-        console.log(pagination)
         const pager = {...this.pagination};
         pager.current = pagination.current;
         this.pagination = pager;
@@ -431,7 +430,7 @@
         this.$ajax({
           method: "post",
           url: "listSpecificationsByproducttypeid",
-          data: {producttypeid: row.producttypeid, page: 1, limit: 100}
+          data: {producttypeid: row.producttypeid || this.cacheId, page: 1, limit: 100}
         }).then(res => {
           if (res.data.code === 1) {
             let data = []

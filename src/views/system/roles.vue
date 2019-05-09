@@ -69,13 +69,14 @@
     >
       <div v-for="(item,index) in accessList" :key="index" class="menu-m">
         <a-checkbox-group :options="[{label:item.name,value:item.id}]" v-model="checkedList.permission_ids"/>
-        <a-row :gutter="16" v-for="(item_c,index_c) in item.child" :key="index+index_c" class="menu-c">
+        <a-row class="menu-r" type="flex" justify="start" :gutter="16" v-for="(item_c,index_c) in item.child"
+               :key="index+index_c">
           <a-col :span="1"></a-col>
-          <a-col :span="6">
+          <a-col :span="5">
             <a-checkbox-group :options="[{label:item_c.name,value:item_c.id}]" v-model="checkedList.permission_ids"/>
           </a-col>
           <a-col :span="17">
-            <a-checkbox-group v-for="(item_f,index_f) in item_c.child" :key="index+index_c+index_f"
+            <a-checkbox-group class="menu-c" v-for="(item_f,index_f) in item_c.child" :key="index+index_c+index_f"
                               :options="[{label:item_f.name,value:item_f.id}]" v-model="checkedList.permission_ids"/>
           </a-col>
         </a-row>
@@ -234,9 +235,12 @@
   .menu-m {
     margin-bottom: 20px;
 
-    .menu-c {
-      margin: 6px 0 10px;
+    .menu-r {
+      margin-top: 6px;
+
+      .menu-c {
+        margin-bottom: 10px;
+      }
     }
   }
-
 </style>

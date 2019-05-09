@@ -1,4 +1,4 @@
-export {formatDate, formatState, ruleValidate}
+export {formatDate, formatState}
 
 function formatState(state) {/*格式化订单状态*/
   if (state == -1) {
@@ -73,8 +73,4 @@ let validPass = (rule, value, callback) => {
   } else {
     callback();
   }
-}
-
-const ruleValidate = {
-
 }

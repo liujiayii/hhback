@@ -176,7 +176,7 @@
         this.form.validateFields((err, values) => {
           if (!err) {
             this.$ajax({
-              url: 't_order/ordercan',
+              url: 't_order/ordercant',
               data: {
                 order_id: values.order_id,
                 order_state: 2,
@@ -233,7 +233,3 @@
     }
   };
 </script>
-
-<style scoped>
-
-</style>

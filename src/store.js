@@ -5,7 +5,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    menu: []
+    menu: [],
+    userInfo: {},
+    access:[]
   },
   mutations: {},
   actions: {}

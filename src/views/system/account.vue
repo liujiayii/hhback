@@ -118,8 +118,11 @@
       },
       showDrawer(row) {
         this.drawerShow = true;
+        let post = this.roles.find(item => {
+          return row.post === item.name
+        })
         setTimeout(() => {
-          this.form.setFieldsValue(row)
+          this.form.setFieldsValue({...row, post: post.id})
         }, 500)
       },
       handleTableChange(pagination, filters, sorter) {
@@ -189,7 +192,3 @@
     }
   }
 </script>
-
-<style scoped>
-
-</style>
