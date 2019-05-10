@@ -55,7 +55,8 @@
       </a-breadcrumb>
       <a-layout-content :style="{ padding: '0 20px',overflow: 'scroll'}">
         <div :style="{ minHeight: 'calc(100% - 69px)',padding: '24px', background: '#fff'}">
-          <transition name="main" mode="out-in">
+          <transition name="main" mode="out-in" enter-active-class="animated bounceIn"
+                      leave-active-class="animated bounceOut" :duration="200">
             <router-view/>
           </transition>
         </div>
@@ -177,20 +178,5 @@
   .ant-layout-sider::-webkit-scrollbar,
   .ant-layout-content::-webkit-scrollbar {
     display: none;
-  }
-
-  .main-enter,
-  .main-leave-to {
-    transform: translateX(30px);
-    opacity: 0;
-  }
-
-  .main-enter-active {
-    transition: all 0.3s;
-  }
-
-  .main-leave-active {
-    transform: translateX(-30px);
-    transition: all 0.1s;
   }
 </style>

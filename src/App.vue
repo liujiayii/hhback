@@ -1,6 +1,7 @@
 <template>
-  <div id="app">
-    <transition name="fade" mode="out-in">
+  <div id="app" class="animated lightSpeedIn">
+    <transition name="fade" mode="out-in" enter-active-class="animated bounceIn"
+                leave-active-class="animated hinge">
       <router-view/>
     </transition>
   </div>
@@ -19,16 +20,6 @@
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  }
-
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: all .2s ease;
-  }
-
-  .fade-enter,
-  .fade-leave-active {
-    opacity: 0;
   }
 
   .top {

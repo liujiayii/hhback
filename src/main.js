@@ -6,6 +6,7 @@ import './config/ant'
 import './config/axios'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
+import 'animate.css'
 
 Vue.config.productionTip = false
 import {generator} from './router'
