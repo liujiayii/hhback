@@ -1,6 +1,6 @@
 <template>
   <a-layout class="main">
-    <a-layout-sider v-model="collapsed" :trigger="null" collapsible class="menu">
+    <a-layout-sider v-model="collapsed" :trigger="null" collapsible class="menu" breakpoint="xl">
       <div class="logo" :style="{marginLeft:collapsed?'26px':'16px'}"></div>
       <a-menu
         mode="inline"
