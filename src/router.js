@@ -70,10 +70,10 @@ const constantRouterComponents = {
 const generator = (routerMap, parent) => {
   return routerMap.map(item => {
     const currentRouter = {
+      // 路由名称，建议唯一
+      name: item.path || item.key || '',
       // 路由地址 动态拼接生成如 /dashboard/workplace
       path: `${parent && parent.path || ''}/${item.path}`,
-      // 路由名称，建议唯一
-      name: item.name || item.key || '',
       Ico: item.Ico || '',
       // 该路由对应页面的 组件
       component: constantRouterComponents[item.component || item.key],
@@ -87,7 +87,7 @@ const generator = (routerMap, parent) => {
       // Recursion
       currentRouter.children = generator(item.children, currentRouter)
     }
-    // 为了防止出现后端返回结果不规范，处理有可能出现拼接出两个 反斜杠
+    // 为了防止出现后端返回结果不规范，处理有可能出现拼接出两个 反斜杠.
     currentRouter.path = currentRouter.path.replace('//', '/')
     currentRouter.path = currentRouter.path.replace('#', '')
     currentRouter.path = currentRouter.path.replace('//', '/')

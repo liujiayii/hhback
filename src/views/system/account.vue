@@ -121,9 +121,9 @@
         let post = this.roles.find(item => {
           return row.post === item.name
         })
-        setTimeout(() => {
+        this.$nextTick(()=>{
           this.form.setFieldsValue({...row, post: post.id})
-        }, 500)
+        })
       },
       handleTableChange(pagination, filters, sorter) {
         const pager = {...this.pagination};

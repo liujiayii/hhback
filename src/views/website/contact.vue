@@ -60,9 +60,9 @@
     methods: {
       showDrawer() {
         this.drawerShow = true
-        setTimeout(() => {
+        this.$nextTick(()=>{
           this.form.setFieldsValue(this.formData)
-        }, 500)
+        })
       },
       getList() {
         this.$ajax({

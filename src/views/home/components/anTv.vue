@@ -74,7 +74,7 @@
           stroke: '#fff'
         });
         chart.render();// Step 4: 渲染图表
-        setTimeout(()=>{
+        this.$nextTick(()=>{
           chart.forceFit(); // 手动调用自适应函数
         })
       },
@@ -90,7 +90,7 @@
         });
         chart.interval().position('year*sales');
         chart.render();// Step 4: 渲染图表
-        setTimeout(()=>{
+        this.$nextTick(()=>{
           chart.forceFit(); // 手动调用自适应函数
         })
       }

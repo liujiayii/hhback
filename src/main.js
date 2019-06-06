@@ -2,8 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import './config/ant'
-import './config/axios'
+import {i18n} from './config'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import 'animate.css'
@@ -42,5 +41,6 @@ router.afterEach(() => {
 window.$Vue = new Vue({
   router,
   store,
+  i18n,
   render: h => h(App)
 }).$mount('#app')

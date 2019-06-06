@@ -1,96 +1,121 @@
 <template>
-  <a-layout class="main">
-    <a-layout-sider v-model="collapsed" :trigger="null" collapsible class="menu" breakpoint="xl">
-      <div class="logo" :style="{marginLeft:collapsed?'26px':'16px'}"></div>
-      <a-menu
-        mode="inline"
-        :default-selected-keys="[$route.path]"
-        :style="{ borderRight: 0 }"
-        :open-keys="openKeys"
-        @openChange="onOpenChange"
-        @click="menuClick"
-      >
-        <template v-for="(item) in Menu">
-          <a-sub-menu v-if="item.path!=='/'" :key="item.path">
-            <span slot="title">
-              <a-icon :type="item.Ico" theme="filled" :spin="item.Ico==='setting'"/>
-              <span>{{ item.name}}</span>
-            </span>
-            <a-menu-item v-for="(item_c) in item.children" :key="item_c.path">{{ item_c.name }}</a-menu-item>
-          </a-sub-menu>
-          <a-menu-item v-else :key="item.children[0].path">
-            <a-icon :type="item.Ico"/>
-            <span>{{ item.children[0].name }}</span>
-          </a-menu-item>
-        </template>
-      </a-menu>
-    </a-layout-sider>
-    <a-layout :style="{overflow:'hidden',width:'100%'}">
-      <a-layout-header class="header" :style="{width: collapsed?'calc(100% - 80px)':'calc(100% - 200px)'}">
-        <a-icon
-          class="trigger"
-          :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-          @click="()=> collapsed = !collapsed"
-        />
-        <a-dropdown :style="{cursor:'pointer',marginRight:'20px'}">
-          <span class="ant-dropdown-link">
-            {{getTimes()}}{{userName}}
-            <a-icon type="down"/>
-          </span>
-          <a-menu slot="overlay">
-            <a-menu-item key="1">
-              <a href="https://github.com/jiyiyou/hhback" target="_blank">版本信息</a>
-            </a-menu-item>
-            <a-menu-divider/>
-            <a-menu-item key="3" @click="loginOut">退出登录</a-menu-item>
-          </a-menu>
-        </a-dropdown>
-      </a-layout-header>
-      <a-breadcrumb :style="{ margin: '80px 20px 20px' }">
-        <a-breadcrumb-item>首页</a-breadcrumb-item>
-        <template v-if="$route.path.split('/').length>2">
-          <a-breadcrumb-item>{{ $route.meta.title }}</a-breadcrumb-item>
-          <a-breadcrumb-item>{{ $route.name }}</a-breadcrumb-item>
-        </template>
-      </a-breadcrumb>
-      <a-layout-content :style="{ padding: '0 20px',overflow: 'scroll'}">
-        <div :style="{ minHeight: 'calc(100% - 69px)',padding: '24px', background: '#fff'}">
-          <transition name="main" mode="out-in" enter-active-class="animated bounceIn"
-                      leave-active-class="animated bounceOut" :duration="200">
-            <router-view/>
-          </transition>
-        </div>
-        <a-layout-footer style="text-align: center">Ant Design ©2018 Created by Ant UED</a-layout-footer>
-      </a-layout-content>
+  <a-locale-provider :locale="locale">
+    <a-layout class="main" has-sider>
+      <a-row type="flex" justify="start">
+        <a-col :span="24" :xs="0" :sm="0" :md="24">
+          <a-layout-sider v-model="collapsed" :breakpoint="'xl'" :trigger="null" collapsible>
+            <slide :collapsed="collapsed"/>
+          </a-layout-sider>
+        </a-col>
+      </a-row>
+      <a-drawer :visible="visible" placement="left" :closable="false" wrap-class-name="drawer" @close="onClose">
+        <slide v-on:changeVisible="(item)=>visible=item"/>
+      </a-drawer>
+      <a-layout :style="{overflow:'hidden',width:'100%',background:'#f0f0f8'}">
+        <a-row type="flex" justify="space-between">
+          <a-col :span="24">
+            <a-layout-header class="header" :style="{width: '100%'}">
+              <a-row type="flex" justify="space-between" :style="{width: '100%'}">
+                <a-col :xs="0" :sm="0" :md="4">
+                  <a-icon class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+                          @click="()=> collapsed = !collapsed"/>
+                </a-col>
+                <a-col :xs="4" :sm="4" :md="0">
+                  <a-icon class="trigger" type="menu-unfold" @click="()=> visible = !visible"/>
+                </a-col>
+                <a-col>
+                  <div class="user-wrap">
+                    <a-icon class="trigger" type="fullscreen" @click="fullScreen"/>
+                    <a href="https://github.com/jiyiyou/hhback" target="_blank">
+                      <a-icon class="trigger" type="question-circle"/>
+                    </a>
+                    <a-dropdown :style="{cursor:'pointer',marginRight:'20px',display:'inline-block'}">
+                      <span><a-icon class="trigger" type="global"/></span>
+                      <a-menu slot="overlay" @click="lang">
+                        <a-menu-item key="zh_CN">
+                          简体中文
+                        </a-menu-item>
+                        <a-menu-item key="en_US">
+                          English
+                        </a-menu-item>
+                      </a-menu>
+                    </a-dropdown>
+                    <a-dropdown :style="{cursor:'pointer',marginRight:'20px',display:'inline-block'}">
+                      <span class="ant-dropdown-link">
+                        {{ $t(`header.HeadMenu.${getTimes()}`) }},{{ userName }}
+                        <a-icon type="down"/>
+                      </span>
+                      <a-menu slot="overlay">
+                        <a-menu-divider/>
+                        <a-menu-item key="3" @click="loginOut">
+                          {{ $t('header.HeadMenu.logout') }}
+                        </a-menu-item>
+                      </a-menu>
+                    </a-dropdown>
+                  </div>
+                </a-col>
+              </a-row>
+            </a-layout-header>
+          </a-col>
+        </a-row>
+        <a-breadcrumb :style="{ margin: '80px 20px 20px' }">
+          <a-breadcrumb-item>{{ $t(`routerName./home`) }}</a-breadcrumb-item>
+          <template v-if="$route.path.split('/').length>2">
+            <a-breadcrumb-item>{{ $t(`routerName.${$route.meta.title}`) }}</a-breadcrumb-item>
+            <a-breadcrumb-item>{{ $t(`routerName.${$route.name}`) }}</a-breadcrumb-item>
+          </template>
+        </a-breadcrumb>
+        <a-layout-content :style="{ padding: '0 20px',overflow: 'scroll'}">
+          <div :style="{ minHeight: 'calc(100% - 69px)',padding: '24px', background: '#fff'}">
+            <transition
+              name="main"
+              mode="out-in"
+              enter-active-class="animated bounceIn"
+              leave-active-class="animated bounceOut"
+              :duration="200"
+            >
+              <router-view/>
+            </transition>
+          </div>
+          <a-layout-footer style="text-align: center">
+            Ant Design ©2018 Created by Ant UED
+          </a-layout-footer>
+        </a-layout-content>
+      </a-layout>
     </a-layout>
-  </a-layout>
+  </a-locale-provider>
 </template>
 
 <script>
+  import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN'
+  import en_US from 'ant-design-vue/lib/locale-provider/en_US'
+  import slide from './components/Slide'
+  import screenfull from 'screenfull'
+
   export default {
     name: "Layout",
+    components: {slide},
     data() {
       return {
         collapsed: false,
-        openKeys: [],
-        Menu: this.$store.state.menu,
-        userName: this.$store.state.userInfo.name
+        userName: this.$store.state.userInfo.name,
+        locale: zh_CN,
+        visible: false,
+        isFullscreen: false
       };
     },
     mounted() {
-      this.openKeys.push("/" + this.$route.path.split("/")[1]);
       this.getTimes();
       this.getAccess()
     },
     methods: {
-      menuClick(item) {
-        this.$router.push({path: item.key});
+      onClose() {
+        this.visible = false
       },
-      onOpenChange(openKeys) {
-        const latestOpenKey = openKeys.find(
-          key => this.openKeys.indexOf(key) === -1
-        );
-        this.openKeys = latestOpenKey ? [latestOpenKey] : [];
+      lang({key}) {
+        let lang = {zh_CN, en_US}
+        this.$i18n.locale = key
+        this.locale = lang[key]
       },
       loginOut() {
         this.$confirm({
@@ -101,7 +126,6 @@
           onOk: () => {
             sessionStorage.clear();
             this.$store.state.menu = [];
-            this.$store.state.userInfo = {};
             this.$router.push({path: "/login"});
           },
           onCancel: () => {
@@ -111,7 +135,15 @@
       getTimes() {
         const time = new Date();
         const hour = time.getHours();
-        return hour < 9 ? "早上好," : hour <= 11 ? "上午好," : hour <= 13 ? "中午好," : hour < 20 ? "下午好," : "晚上好,";
+        return hour < 9 ? "a" : hour <= 11 ? "b" : hour <= 13 ? "c" : hour < 20 ? "d" : "e";
+      },
+      fullScreen() {
+        if (!screenfull.enabled) { // 如果不允许进入全屏，发出不允许提示
+          this.$message.error('不支持全屏')
+          return false
+        }
+        screenfull.toggle()
+        this.$message.success('全屏啦')
       },
       getAccess() {
         this.$ajax({
@@ -140,6 +172,10 @@
       height: 100vh;
       background: #fff;
       box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
 
       .logo {
         height: 32px;

@@ -102,9 +102,9 @@
       },
       showDrawer(row) {
         this.drawerShow = true;
-        setTimeout(() => {
+        this.$nextTick(()=>{
           this.form.setFieldsValue(row)
-        }, 500)
+        })
       },
       handleTableChange(pagination, filters, sorter) {
         const pager = {...this.pagination};

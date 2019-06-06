@@ -32,7 +32,7 @@ module.exports = {
     port: 8081,
     proxy: {
       '/': {
-        target: 'http://192.168.1.125:8080',
+        target: 'http://192.168.1.184:8080',
         changeOrigin: true,
         pathRewrite: {
           '^/': ''

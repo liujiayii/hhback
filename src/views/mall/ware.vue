@@ -358,9 +358,9 @@
             let obj = res.data.data.result
             obj.discount_id = res.data.data.s1 ? res.data.data.s1.discountid : ''
             this.image = res.data.data.result.image
-            setTimeout(() => {
+            this.$nextTick(()=>{
               this.form.setFieldsValue(obj)
-            }, 500)
+            })
           }
         })
         this.$ajax({

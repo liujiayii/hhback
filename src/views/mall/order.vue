@@ -195,9 +195,9 @@
       showDrawer(row) {
         this.drawerShow = true;
         this.isShow = row.order_state > 0
-        setTimeout(() => {
+        this.$nextTick(()=>{
           this.form.setFieldsValue(row)
-        }, 500)
+        })
       },
       handleTableChange(pagination, filters, sorter) {
         const pager = {...this.pagination};

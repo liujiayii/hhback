@@ -150,9 +150,9 @@
       },
       showDrawer(row) {
         this.drawerShow = true;
-        setTimeout(() => {
+        this.$nextTick(()=>{
           this.form.setFieldsValue(row)
-        }, 500)
+        })
       },
       showAccess(row) {
         this.drawerAccessShow = true
